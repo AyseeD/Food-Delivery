@@ -1,0 +1,51 @@
+.header {
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 40px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.search-bar {
+  flex: 1;
+  margin: 0 20px;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+}
+
+#header-my-cart {
+  margin-left: 10px;
+  color: #ff7043;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 20px;
+  background-color: #fff;
+}
+
+#header-my-account {
+  margin-left: 10px;
+  color: #ff7043;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 20px;
+  
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .search-bar {
+    width: 100%;
+  }
+}
+
