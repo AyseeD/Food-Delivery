@@ -1,0 +1,154 @@
+-- -------------------------
+-- USERS & AUTH
+-- -------------------------
+
+CREATE TABLE users (
+    user_id SERIAL PRIMARY KEY,
+    full_name VARCHAR(150) NOT NULL,
+    email VARCHAR(150) UNIQUE NOT NULL,
+    phone VARCHAR(20),
+    password_hash TEXT NOT NULL,
+    role VARCHAR(20) NOT NULL DEFAULT 'customer',   -- customer | restaurant_admin | delivery_driver | system_admin
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- -------------------------
+-- RESTAURANTS
+-- -------------------------
+
+CREATE TABLE restaurants (
+    restaurant_id SERIAL PRIMARY KEY,
+    owner_id INT NOT NULL REFERENCES users(user_id),
+    name VARCHAR(150) NOT NULL,
+    description TEXT,
+    address TEXT NOT NULL,
+    phone VARCHAR(20),
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Restaurant operating hours
+CREATE TABLE restaurant_hours (
+    hours_id SERIAL PRIMARY KEY,
+    restaurant_id INT REFERENCES restaurants(restaurant_id),
+    day_of_week INT NOT NULL,  -- 0 = Sunday ... 6 = Saturday
+    open_time TIME NOT NULL,
+    close_time TIME NOT NULL
+);
+
+-- -------------------------
+-- MENU STRUCTURE
+-- -------------------------
+
+CREATE TABLE menu_categories (
+    category_id SERIAL PRIMARY KEY,
+    restaurant_id INT REFERENCES restaurants(restaurant_id),
+    name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE menu_items (
+    item_id SERIAL PRIMARY KEY,
+    restaurant_id INT REFERENCES restaurants(restaurant_id),
+    category_id INT REFERENCES menu_categories(category_id),
+    name VARCHAR(150) NOT NULL,
+    description TEXT,
+    price NUMERIC(10,2) NOT NULL,
+    image_url TEXT,
+    is_available BOOLEAN DEFAULT TRUE
+);
+
+-- Customization options (e.g., size, toppings)
+CREATE TABLE item_options (
+    option_id SERIAL PRIMARY KEY,
+    item_id INT REFERENCES menu_items(item_id),
+    name VARCHAR(100),
+    additional_price NUMERIC(10,2) DEFAULT 0
+);
+
+-- -------------------------
+-- ORDER MANAGEMENT
+-- -------------------------
+
+CREATE TABLE orders (
+    order_id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(user_id),
+    restaurant_id INT REFERENCES restaurants(restaurant_id),
+    status VARCHAR(30) NOT NULL DEFAULT 'pending',  
+        -- pending, accepted, preparing, picked_up, delivering, delivered, cancelled
+    total_amount NUMERIC(10,2) NOT NULL,
+    delivery_address TEXT NOT NULL,
+    placed_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE order_items (
+    order_item_id SERIAL PRIMARY KEY,
+    order_id INT REFERENCES orders(order_id),
+    item_id INT REFERENCES menu_items(item_id),
+    quantity INT NOT NULL,
+    price_at_purchase NUMERIC(10,2) NOT NULL
+);
+
+-- options selected for each item
+CREATE TABLE order_item_options (
+    order_item_option_id SERIAL PRIMARY KEY,
+    order_item_id INT REFERENCES order_items(order_item_id),
+    option_id INT REFERENCES item_options(option_id)
+);
+
+-- -------------------------
+-- DELIVERY & TRACKING
+-- -------------------------
+
+-- which driver is assigned to order
+CREATE TABLE delivery_assignments (
+    assignment_id SERIAL PRIMARY KEY,
+    order_id INT UNIQUE REFERENCES orders(order_id),
+    driver_id INT REFERENCES users(user_id),
+    assigned_at TIMESTAMP DEFAULT NOW()
+);
+
+-- real-time GPS location tracking logs
+CREATE TABLE delivery_tracking (
+    tracking_id SERIAL PRIMARY KEY,
+    order_id INT REFERENCES orders(order_id),
+    latitude DECIMAL(10, 6),
+    longitude DECIMAL(10, 6),
+    recorded_at TIMESTAMP DEFAULT NOW()
+);
+
+-- -------------------------
+-- PAYMENTS
+-- -------------------------
+
+CREATE TABLE payments (
+    payment_id SERIAL PRIMARY KEY,
+    order_id INT REFERENCES orders(order_id),
+    amount NUMERIC(10,2) NOT NULL,
+    method VARCHAR(50) NOT NULL,   -- PayPal, Stripe, Credit Card, Cash on Delivery
+    status VARCHAR(30) NOT NULL DEFAULT 'pending', 
+        -- pending, paid, failed, refunded
+    transaction_id VARCHAR(200),
+    paid_at TIMESTAMP
+);
+
+-- -------------------------
+-- PROMOTIONS
+-- -------------------------
+
+CREATE TABLE promotions (
+    promo_id SERIAL PRIMARY KEY,
+    restaurant_id INT REFERENCES restaurants(restaurant_id),
+    code VARCHAR(50) UNIQUE,
+    description TEXT,
+    discount_percent INT,
+    valid_from DATE,
+    valid_until DATE,
+    is_active BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE orders_promotions (
+    order_promo_id SERIAL PRIMARY KEY,
+    order_id INT REFERENCES orders(order_id),
+    promo_id INT REFERENCES promotions(promo_id)
+);
