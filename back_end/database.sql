@@ -6,9 +6,8 @@ CREATE TABLE users (
     user_id SERIAL PRIMARY KEY,
     full_name VARCHAR(150) NOT NULL,
     email VARCHAR(150) UNIQUE NOT NULL,
-    phone VARCHAR(20),
     password_hash TEXT NOT NULL,
-    role VARCHAR(20) NOT NULL DEFAULT 'customer',   -- customer | restaurant_admin | delivery_driver | system_admin
+    role VARCHAR(20) NOT NULL DEFAULT 'customer',   -- customer | delivery_driver | system_admin
     created_at TIMESTAMP DEFAULT NOW()
 );
 
@@ -18,11 +17,9 @@ CREATE TABLE users (
 
 CREATE TABLE restaurants (
     restaurant_id SERIAL PRIMARY KEY,
-    owner_id INT NOT NULL REFERENCES users(user_id),
     name VARCHAR(150) NOT NULL,
     description TEXT,
     address TEXT NOT NULL,
-    phone VARCHAR(20),
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT NOW()
 );
@@ -109,13 +106,13 @@ CREATE TABLE delivery_assignments (
 );
 
 -- real-time GPS location tracking logs
-CREATE TABLE delivery_tracking (
-    tracking_id SERIAL PRIMARY KEY,
-    order_id INT REFERENCES orders(order_id),
-    latitude DECIMAL(10, 6),
-    longitude DECIMAL(10, 6),
-    recorded_at TIMESTAMP DEFAULT NOW()
-);
+-- CREATE TABLE delivery_tracking (
+--     tracking_id SERIAL PRIMARY KEY,
+--     order_id INT REFERENCES orders(order_id),
+--     latitude DECIMAL(10, 6),
+--     longitude DECIMAL(10, 6),
+--     recorded_at TIMESTAMP DEFAULT NOW()
+-- );
 
 -- -------------------------
 -- PAYMENTS
