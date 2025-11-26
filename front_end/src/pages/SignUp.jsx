@@ -9,27 +9,23 @@ function SignUp(){
     const [active, setActive] = useState(false);
     const navigate = useNavigate();
 
-
-
     return(
-
         <div id="signup-page-wrapper">
             <div className = {`container ${active ? "right-panel-active" : ""}`}
             id="container">
                 <div className="form-container sign-up-container">
-                    <form 
-                    onSubmit={(e) => {
+                    <form onSubmit={(e) => {
                         e.preventDefault();
                         navigate("/home");
                     }}
                     >
                         <h1 className="crt-acc-text">Create Account</h1>
-                        <div className="social-container">
+                        {/* <div className="social-container">
                             <a href="#" className="social"><i class="fab fa-facebook-f"></i></a>
                             <a href="#" className="social"><i class="fab fa-google-plus-g"></i></a>
                             <a href="#" className="social"><i class="fab fa-linkedin-in"></i></a>
                         </div>
-                        <span className="sign-up-span">or use your email for registration</span>
+                        <span className="sign-up-span">or use your email for registration</span> */}
                         <input type="text" placeholder="Name" />
                         <input type="email" placeholder="Email" />
                         <input type="password" placeholder="Password" />
@@ -44,12 +40,12 @@ function SignUp(){
                     }}
                     >
                         <h1 className="crt-acc-text">Sign in</h1>
-                        <div className="social-container">
+                        {/* <div className="social-container">
                             <a href="#" className="social"><i class="fab fa-facebook-f"></i></a>
                             <a href="#" className="social"><i class="fab fa-google-plus-g"></i></a>
                             <a href="#" className="social"><i class="fab fa-linkedin-in"></i></a>
                         </div>
-                        <span className="sign-up-span">or use your account</span>
+                        <span className="sign-up-span">or use your account</span> */}
                         <input type="email" placeholder="Email" />
                         <input type="password" placeholder="Password" />
                         <a href="#" className="sign-up-a">Forgot your password?</a>

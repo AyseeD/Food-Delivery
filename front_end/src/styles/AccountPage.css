@@ -1,15 +1,20 @@
 .account-container {
-  display: flex;
-  gap: 40px;
-  padding: 40px 60px;
   background: #fafafa;
 }
 
-/* Sidebar */
+.account-page-wrapper{
+  display: flex;
+  padding: 20px;
+  gap: 30px;
+  width: 100%;
+}
+
+/* SIDEBAR */
 .account-sidebar {
   width: 250px;
   background: #efefef;
-  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.05);
+  border-radius: 18px;
   padding: 20px;
 }
 
@@ -44,24 +49,207 @@
 }
 
 .account-nav button:hover {
-  background: #ff7a3c;
+  background: #f58803;
   color: #fff;
 }
 
 .account-nav .active {
-  background: #ff7a3c;
+  background: #f58803;
   color: #fff;
   font-weight: 600;
 }
 
+.side-btn{
+  padding: 5px;
+}
+
+/* LOGOUT BUTTON */
 .logout-btn {
   background: #ddd;
   margin-top: 10px;
 }
 
-/* Content */
+
+
+
+/* SECTION WRAPPER */
+.account-details {
+  background-color: #ffffff;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px;
+}
+
+/* TITLE */
+.details-header {
+  font-size: 26px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+/* FORM LAYOUT */
+.details-form {
+  width: 100%;
+  max-width: 620px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+
+.row {
+  display: flex;
+  gap: 20px;
+  position: relative;
+  right: 50px;
+}
+
+/* INPUT GROUP */
+.field {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.field.full {
+  width: 100%;
+  position: relative;
+  right: 50px;
+}
+
+/* LABEL */
+.field label {
+  font-size: 15px;
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 6px;
+  text-align: justify;
+}
+
+/* INPUT */
+.field input {
+  padding: 14px 16px;
+  font-size: 16px;
+  border-radius: 12px;
+  border: 1px solid #d7d7d7;
+  background: #fff;
+  color: #333;
+  outline: none;
+  transition: 0.2s ease;
+}
+
+.field input:focus {
+  border-color: #ff8a00;
+  box-shadow: 0 0 5px rgba(255, 138, 0, 0.25);
+}
+
+/* INFO TEXT */
+.info {
+  font-size: 14px;
+  color: #777;
+  line-height: 1.4;
+  margin-top: -8px;
+}
+
+/* UPDATE BUTTON */
+.update-btn {
+  margin-top: 6px;
+  padding: 12px 50px;
+  border: none;
+  border-radius: 20px;
+  background: #ff8a00;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.update-btn:hover {
+  background: #ff7b00;
+}
+
+
+/* ACCOUNT DETAILS */
+.account-content-inner {
+  width: 100%;
+  max-width: 600px;   
+  margin-left: 20px;  
+}
+
+.details-header {
+  text-align: left;
+  margin-bottom: 25px;
+  font-size: 24px;
+}
+
+.details-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.row {
+  display: flex;
+  gap: 15px;
+  justify-content: flex-start;
+}
+
+.row .field {
+  flex: 1;
+}
+
+
+
+/* Status Badge */
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  text-transform: capitalize;
+}
+
+
+.status-badge.delivered {
+  background-color: #28c76f;  
+}
+
+.status-badge.preparing {
+  background-color: #ff9f43;   
+}
+
+.status-badge.on-the-way {
+  background-color: #00cfe8;   
+}
+
+.status-badge.pending {
+  background-color: #a1a1a1;   
+}
+
+.order-status-line {
+  margin: 4px 0 8px;
+}
+
+.status-icon {
+  margin-right: 6px;
+}
+
+
+
+/* CONTENT */
 .account-content {
   flex: 1;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 20px 40px;
 }
 
 .section-title {
@@ -70,46 +258,104 @@
   color: #222;
 }
 
-/* Order Card */
+
+
+
+/* ORDER HISTORY */
+/* ORDER CARD BASE */
 .order-card {
-  background: #f8f9fa;
-  border-radius: 12px;
-  padding: 20px;
+  width: 420px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 18px 22px;
+  margin-bottom: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.26);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.07);
+  transition: 0.2s;
 }
 
-.order-info p {
-  margin: 4px 0;
-  color: #444;
+.order-card:hover {
+  box-shadow: 0 5px 12px rgba(0,0,0,0.1);
 }
 
-/* Status Block */
-.order-status {
-  text-align: center;
+/* LEFT */
+.order-card-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.status-icon {
-  width: 50px;
-  height: 50px;
-  object-fit: contain;
-  margin-bottom: 6px;
+.order-restaurant {
+  font-size: 17px;
+  font-weight: 600;
 }
 
-.status-label {
-  font-size: 0.9rem;
+.order-items {
+  font-size: 14px;
   color: #666;
 }
 
-/* Responsive Design
-@media (max-width: 900px) {
-  .account-container {
-    flex-direction: column;
-  }
-  .account-sidebar {
-    width: 100%;
-  }
-} */
+/* STATUS */
+.order-status-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.order-status-text {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ICON COLORS */
+.delivered {
+  color: #00b14f;
+}
+
+.preparing {
+  color: #ff7a00;
+}
+
+.on-the-way {
+  color: #007aff;
+}
+
+.pending {
+  color: #888;
+}
+
+/* RIGHT SIDE */
+.order-card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.order-date {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.order-price {
+  font-size: 16px;
+  font-weight: 700;
+  color: #ff8c24;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

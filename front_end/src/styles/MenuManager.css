@@ -1,0 +1,89 @@
+
+.menu-manager-box {
+  width: 520px !important;
+  padding: 25px;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+/* MENU LIST */
+.menu-list {
+  max-height: 260px;
+  overflow-y: auto;
+  margin-bottom: 22px;
+  padding-right: 6px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.menu-item img {
+  width: 65px;
+  height: 65px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.menu-item .price {
+  margin-left: auto;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+/* ADD MENU FORM */
+/* Buton grubu */
+.modal-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+  width: 100%;
+}
+
+/* Add Menu Button */
+.add-menu-btn {
+  width: 100%;
+  background: #007bff;
+  color: white;
+  padding: 12px 0;
+  border-radius: 8px;
+  border: none;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Close Button */
+.close-menu-btn {
+  width: 100%;
+  background: #333;
+  color: white;
+  padding: 12px 0;
+  border-radius: 8px;
+  border: none;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.add-menu-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.add-menu-form input {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  margin-bottom: 12px;
+}
+
+
+
+

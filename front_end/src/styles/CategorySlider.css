@@ -29,7 +29,7 @@
   transition: transform .2s, border .2s;
 }
 .category-card:hover { transform: scale(1.05); }
-.category-card.active { border: 2px solid #ff7043; }
+.category-card.active { border: 2px solid #f58803; }
 
 .category-image-wrapper {
   width: 80px; height: 80px;
@@ -53,7 +53,7 @@
   position: absolute; z-index: 5;
   transition: background .2s;
 }
-.arrow-btn:hover { background: #ff7043; color: #fff; }
+.arrow-btn:hover { background: #f58803; color: #fff; }
 .arrow-btn.left { left: 4px; }
 .arrow-btn.right { right: 4px; }
 

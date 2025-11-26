@@ -1,8 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import logoImg1 from "../assets/logo-1.png";
+import logoImg2 from "../assets/logo-2.png";
 
 
-import "../styles/landing.css";
+import "../styles/Landing.css";
 
 function LandingPage() {
   return (
@@ -12,14 +14,13 @@ function LandingPage() {
     <header className="lp-header">
           <div className="lp-header-inner">
     
-            {/* Sol: Logo + icon */}
+            {/* Left: Logo + icon */}
             <div className="lp-header-left">
-              <div className="lp-avatar-icon" />
-              <span className="lp-logo-text">Logo</span>
+              <img src={logoImg1} alt="logo" className="lp-logo-image" />
             </div>
     
     
-            {/* Sağ: Sign Up butonu */}
+            {/* Right: Sign Up butonu */}
             <div className="lp-header-right">
               <div className="lp-nav-links">
                 <a href="#about">Home</a>
@@ -40,7 +41,9 @@ function LandingPage() {
       <section 
         className="lp-hero" >
         <div className="lp-hero-left">
-          <h1></h1>
+          <h1>
+              <span className="fast">Fast</span> Food <br /> Delivery
+          </h1>
           <p className="lp-hero-text">
             Craving something tasty? From gourmet burgers to fresh salads and  
             comforting pasta bowls — your favorite meals are now just a tap away.  
@@ -63,14 +66,16 @@ function LandingPage() {
 
           {/* Logo column */}
           <div className="lp-footer-col lp-footer-logo">
-            <h3 className="lp-footer-logo-text">Logo</h3>
+
+            <img src={logoImg2} alt="logo" className="lp-logo-image" />
+
             <p className="lp-footer-desc">
               Delivering your favorite meals fresh and fast — anytime, anywhere.
             </p>
             <div className="lp-socials">
-              <span className="lp-social-circle" />
-              <span className="lp-social-circle" />
-              <span className="lp-social-circle" />
+              <i className="fa-brands fa-facebook lp-social-circle"></i>
+              <i className ="fa-brands fa-twitter lp-social-circle"></i>
+              <i className="fa-brands fa-instagram lp-social-circle"></i>
             </div>
           </div>
 

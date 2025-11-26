@@ -1,6 +1,8 @@
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import "../styles/RestaurantPage.css";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 export default function RestaurantPage() {
   const { id } = useParams();
@@ -39,70 +41,75 @@ export default function RestaurantPage() {
 
   return (
     <div className="restaurant-page">
-      {/* Page Title */}
-      <div className="restaurant-top">
-        <div className="restaurant-image">
-          <img src={restaurant.image} alt={restaurant.name} />
-        </div>
-        <div className="restaurant-details">
-          <h2>{restaurant.name}</h2>
-          <p>{restaurant.description}</p>
-          <p>{restaurant.distance} km • {restaurant.time} min </p>
-        </div>
-      </div>
 
-      {/* Page Content */}
-      <div className="restaurant-content">
-        {/* Left Side: Categories */}
-        <aside className="restaurant-categories">
-          <h3>Categories</h3>
-          <ul>
-            {restaurant.categories.map((cat, index) => (
-              <li
-                key={index}
-                onClick={() => setSelectedCategory(cat)}
-                className={selectedCategory === cat ? "active" : ""}
-              >
-                {cat}
-              </li>
-            ))}
-          </ul>
-        </aside>
-
-        {/* Right Side: Menu Cards */}
-        <section className="restaurant-menu">
-          <h3>Menu — {selectedCategory}</h3>
-
-          {filteredMenu.length === 0 ? (
-            <p className="no-items">No items found for {selectedCategory}</p>
-          ) : (
-
-           <div className="menu-grid">
-            {filteredMenu.map((item) => (
-              <div key={item.id} className="menu-card">
-                <img src={item.img} alt={item.name} className="menu-img" />
-                <div className="menu-info">
-
-                  <h4>{item.name}</h4>
-
-                  <p className="menu-desc">{item.description}</p>
-                  
-
-                  <div className="menu-bottom">
-                    <span className="menu-price">{item.price}₺</span>
-                    <button className="add-btn">Add to Cart</button>
-                  </div>
-
-                </div>
-              </div>
-            ))}
+      <Header />
+      <div className="page-title-wrapper">
+        {/* Page Title */}
+        <div className="restaurant-top">
+          <div className="restaurant-image">
+            <img src={restaurant.image} alt={restaurant.name} />
           </div>
+          <div className="restaurant-details">
+            <h2>{restaurant.name}</h2>
+            <p>{restaurant.description}</p>
+            <p>{restaurant.distance} km • {restaurant.time} min </p>
+          </div>
+        </div>
+        {/* Page Content */}
+        <div className="restaurant-content">
+          {/* Left Side: Categories */}
+          <aside className="restaurant-categories">
+            <h3>Categories</h3>
+            <ul>
+              {restaurant.categories.map((cat, index) => (
+                <li
+                  key={index}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={selectedCategory === cat ? "active" : ""}
+                >
+                  {cat}
+                </li>
+              ))}
+            </ul>
+          </aside>
+
+          {/* Right Side: Menu Cards */}
+          <section className="restaurant-menu">
+            <h3>Menu — {selectedCategory}</h3>
+
+            {filteredMenu.length === 0 ? (
+              <p className="no-items">No items found for {selectedCategory}</p>
+            ) : (
+
+            <div className="menu-grid">
+              {filteredMenu.map((item) => (
+                <div key={item.id} className="menu-card">
+                  <img src={item.img} alt={item.name} className="menu-img" />
+                  <div className="menu-info">
+
+                    <h4>{item.name}</h4>
+
+                    <p className="menu-desc">{item.description}</p>
+                    
+
+                    <div className="menu-bottom">
+                      <span className="menu-price">{item.price}₺</span>
+                      <button className="add-btn">Add to Cart</button>
+                    </div>
+
+                  </div>
+                </div>
+              ))}
+            </div>
 
 
 
-          )}
-        </section>
+            )}
+          </section>
+        </div>
       </div>
+      <Footer />
+      
     </div>
   );
 }

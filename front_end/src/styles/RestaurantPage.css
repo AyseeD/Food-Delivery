@@ -1,6 +1,10 @@
 .restaurant-page {
-  padding: 40px 60px;
   background: #fafafa;
+}
+
+
+.page-title-wrapper{
+  padding: 20px;
 }
 
 /* Top */
@@ -70,7 +74,7 @@
 }
 
 .restaurant-categories li.active {
-  background-color: #ff7043;
+  background-color: #f58803;
   color: white;
   font-weight: 600;
 }
@@ -161,7 +165,7 @@
 }
 
 .add-btn {
-  background-color: #ff7043;
+  background-color: #f58803;
   border: none;
   color: white;
   border-radius: 20px;
@@ -172,7 +176,7 @@
 }
 
 .add-btn:hover {
-  background-color: #e75a2e;
+  background-color: #f58803;
 }
 
 /* Responsive Design */
