@@ -1,6 +1,6 @@
 import express from "express";
-import { getMenuByRestaurant, getItemById, createItem, getTags } from "../controllers/menuController";
-import {authRequired, requireRole} from "../middleware/auth"
+import { getMenuByRestaurant, getItemById, createItem, getTags } from "../controllers/menuController.js";
+import {authRequired, requireRole} from "../middleware/auth.js"
 
 const router = express.Router();
 
