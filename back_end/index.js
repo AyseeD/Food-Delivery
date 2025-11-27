@@ -19,7 +19,6 @@ app.use("/auth", authRoutes);
 app.use("/restaurants", restaurantRoutes);
 app.use("/menu", menuRoutes);
 app.use("/orders", orderRoutes);
-app.use("/delivery", deliveryRoutes);
 app.use("/payments", paymentRoutes);
 app.use("/promotions", promoRoutes);
 
