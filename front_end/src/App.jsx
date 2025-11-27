@@ -8,8 +8,6 @@ import RestaurantPage from "./pages/RestaurantPage";
 import AccountPage from "./pages/AccountPage";
 
 import AdminPage from "./pages/AdminPage";
-import AdminLogin from "./pages/AdminLogin";
-
 import "./App.css";
 
 
@@ -20,8 +18,6 @@ function App() {
 
         <Route path="/" element={<LandingPage />} />
         <Route path="/signup" element={<SignUp />} />
-
-        <Route path="/admin/login" element={<AdminLogin />} />
 
         <Route path="/home" element={<Home />} />
         <Route path="/restaurant/:id" element={<RestaurantPage />} />

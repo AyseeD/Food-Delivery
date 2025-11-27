@@ -21,6 +21,7 @@ CREATE TABLE restaurants (
     description TEXT,
     address TEXT NOT NULL,
     is_active BOOLEAN DEFAULT TRUE,
+    rating NUMERIC(2,1) CHECK (rating >= 0.0 AND rating <= 5.0),
     created_at TIMESTAMP DEFAULT NOW()
 );
 
@@ -61,6 +62,20 @@ CREATE TABLE item_options (
     name VARCHAR(100),
     additional_price NUMERIC(10,2) DEFAULT 0
 );
+
+-- Tags for foods
+CREATE TABLE tags (
+    tag_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) UNIQUE NOT NULL --pizza, burger, asian cuisine, dessert, doner, sushi, vegan
+);
+
+-- Multiple Tags for items
+CREATE TABLE item_tags (
+    item_tag_id SERIAL PRIMARY KEY,
+    item_id INT REFERENCES menu_items(item_id) ON DELETE CASCADE,
+    tag_id INT REFERENCES tags(tag_id) ON DELETE CASCADE
+);
+
 
 -- -------------------------
 -- ORDER MANAGEMENT
@@ -104,15 +119,6 @@ CREATE TABLE delivery_assignments (
     driver_id INT REFERENCES users(user_id),
     assigned_at TIMESTAMP DEFAULT NOW()
 );
-
--- real-time GPS location tracking logs
--- CREATE TABLE delivery_tracking (
---     tracking_id SERIAL PRIMARY KEY,
---     order_id INT REFERENCES orders(order_id),
---     latitude DECIMAL(10, 6),
---     longitude DECIMAL(10, 6),
---     recorded_at TIMESTAMP DEFAULT NOW()
--- );
 
 -- -------------------------
 -- PAYMENTS
