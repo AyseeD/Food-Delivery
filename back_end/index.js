@@ -1,18 +1,27 @@
 import express from "express";
 import cors from "cors";
+import dotenv from "dotenv";
+dotenv.config();
+
+import authRoutes from "./routes/auth.js";
 import restaurantRoutes from "./routes/restaurants.js";
 import menuRoutes from "./routes/menu.js";
 import orderRoutes from "./routes/orders.js";
+import deliveryRoutes from "./routes/delivery.js";
 import paymentRoutes from "./routes/payments.js";
+import promoRoutes from "./routes/promotions.js";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use("/auth", authRoutes);
 app.use("/restaurants", restaurantRoutes);
 app.use("/menu", menuRoutes);
 app.use("/orders", orderRoutes);
+app.use("/delivery", deliveryRoutes);
 app.use("/payments", paymentRoutes);
+app.use("/promotions", promoRoutes);
 
-const port = process.env.PORT;
-app.listen(port, () => console.log(`Backend listening on port ${port}`));
+const port = process.env.PORT || 3000;
+app.listen(port, () => console.log(`Backend listening on ${port}`));
