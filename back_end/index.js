@@ -14,5 +14,5 @@ app.use("/menu", menuRoutes);
 app.use("/orders", orderRoutes);
 app.use("/payments", paymentRoutes);
 
-const port = 4000;
+const port = process.env.PORT;
 app.listen(port, () => console.log(`Backend listening on port ${port}`));
