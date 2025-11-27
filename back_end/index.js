@@ -7,7 +7,6 @@ import authRoutes from "./routes/auth.js";
 import restaurantRoutes from "./routes/restaurants.js";
 import menuRoutes from "./routes/menu.js";
 import orderRoutes from "./routes/orders.js";
-import deliveryRoutes from "./routes/delivery.js";
 import paymentRoutes from "./routes/payments.js";
 import promoRoutes from "./routes/promotions.js";
 
