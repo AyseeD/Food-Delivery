@@ -1,14 +1,18 @@
-import express from 'express';
+import express from "express";
 import cors from "cors";
-
+import restaurantRoutes from "./routes/restaurants.js";
+import menuRoutes from "./routes/menu.js";
+import orderRoutes from "./routes/orders.js";
+import paymentRoutes from "./routes/payments.js";
 
 const app = express();
-const port = 3000;
+app.use(cors());
+app.use(express.json());
 
-app.get("/", (req,res)=>{
-    console.log("hello");
-})
+app.use("/restaurants", restaurantRoutes);
+app.use("/menu", menuRoutes);
+app.use("/orders", orderRoutes);
+app.use("/payments", paymentRoutes);
 
-app.listen(port, ()=>{
-    console.log(`Lisening on port ${port}`)
-})
+const port = 4000;
+app.listen(port, () => console.log(`Backend listening on port ${port}`));
