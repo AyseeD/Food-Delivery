@@ -1,20 +1,98 @@
 import {db} from "../db.js";
 
+//return the categories, items, options, tags for a restaurant
 export const getMenuByRestaurant = async (req,res) =>{
     const {restaurantId} = req.params;
-    const menu = await db.query(`
-        SELECT mi.*, mc.name AS category_name
+    const itemsRes = await db.query(`
+        SELECT mi.*, mc.name as category_name
         FROM menu_items mi
-        JOIN menu_categories mc ON mi.category_id = mc.category_id
+        LEFT JOIN menu_categories mc ON mi.category_id = mc.category_id
         WHERE mi.restaurant_id = $1
+        ORDER BY mc.name NULLS LAST, mi.name
     `, [restaurantId]);
 
-    res.json(menu.rows);
+    const items = itemsRes.rows;
+
+    //get options and tags for item id at the same time
+    const itemIds = items.map(i => i.item_id);
+    let optionsMap= {};
+    let tagsMap = {};
+
+    if (itemIds.length){
+        const optionsRes = await db.query(`SELECT * FROM item_options WHERE item_id = ANY($1::int[])`, [itemIds]);
+        optionsRes.rows.forEach(o => {
+            optionsMap[o.item_id] = optionsMap[o.item_id] || [];
+            optionsMap[o.item_id].push(o);
+        });
+
+        const tagsRes = await db.query(`
+            SELECT it.item_id, t.tag_id, t.name
+            FROM item_tags it JOIN tags t ON it.tag_id = t.tag_id
+            WHERE it.item_id =  ANY($1::int[])
+        `, [itemIds]);
+
+        tagsRes.rows.forEach(r => {
+            tagsMap[r.item_id] = tagsMap[r.item_id] || [];
+            tagsMap[r.item_id].push({tag_id: r.tag_id, name: r.name});
+        });
+    }
+
+    const enriched = items.map(i => ({
+        ...i,
+        options: optionsMap[i.item_id] || [],
+        tags: tagsMap[i.item_id] || []
+    }));
+
+    res.json(enriched);
 };
 
-export const getItem = async (req, res) =>{
+export const getItemById = async (req, res) =>{
     const {itemId} = req.params;
-    const item = await db.query(`SELECT * FROM menu_items WHERE item_id= $1`, [itemId]);
+    const itemRes = await db.query(`SELECT * FROM menu_items WHERE item_id= $1`, [itemId]);
+    const item = itemRes.rows[0];
+    if(!item) return res.status(404).json({error:"Not found"});
 
-    res.json(item.rows[0]);
+    const optionRes = await db.query(`SELECT * FROM item_options WHERE item_id = $1`, [itemId]);
+    const tagsRes =await db.query(`SELECT t.tag_id, t.name FROM item_tags it JOIN tags t ON it.tag_id = t.tag_id WHERE it.item_id = $1`, [itemId]);
+
+    res.json({...item, options: optionRes.rows, tags: tagsRes.rows});
 }
+
+export const createItem = async (req, res) => {
+  const { restaurant_id, category_id, name, description, price, image_url, is_available, options = [], tags = [] } = req.body;
+  try {
+    const itemRes = await db.query(
+      `INSERT INTO menu_items (restaurant_id, category_id, name, description, price, image_url, is_available) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
+      [restaurant_id, category_id, name, description, price, image_url, is_available ?? true]
+    );
+    const item = itemRes.rows[0];
+
+    //insert options
+    for (const opt of options) {
+      await db.query(`INSERT INTO item_options (item_id, name, additional_price) VALUES ($1,$2,$3)`, [item.item_id, opt.name, opt.additional_price ?? 0]);
+    }
+
+    //ensure tags exist then link them
+    for (const tagName of tags) {
+      let tagRes = await db.query(`SELECT tag_id FROM tags WHERE name = $1`, [tagName]);
+      let tagId;
+      if (tagRes.rows.length) {
+        tagId = tagRes.rows[0].tag_id;
+      } else {
+        const ins = await db.query(`INSERT INTO tags (name) VALUES ($1) RETURNING tag_id`, [tagName]);
+        tagId = ins.rows[0].tag_id;
+      }
+      await db.query(`INSERT INTO item_tags (item_id, tag_id) VALUES ($1,$2) ON CONFLICT DO NOTHING`, [item.item_id, tagId]);
+    }
+
+    res.json({ item_id: item.item_id });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Could not create item" });
+  }
+};
+
+export const getTags = async (req, res) => {
+  const r = await db.query("SELECT * FROM tags ORDER BY name");
+  res.json(r.rows);
+};
