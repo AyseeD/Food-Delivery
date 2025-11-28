@@ -88,7 +88,7 @@ export default function Home() {
                 distance={Math.floor(Math.random() * 10) + 1}
                 time={Math.floor(Math.random() * 60) + 10}
                 image={r.restaurant_img}
-                id={r.id}
+                id={r.restaurant_id}
               />
             ))}
           </div>

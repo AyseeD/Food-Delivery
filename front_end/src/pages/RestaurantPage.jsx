@@ -1,71 +1,90 @@
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../styles/RestaurantPage.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
 export default function RestaurantPage() {
   const { id } = useParams();
+
+  const [restaurant, setRestaurant] = useState(null);
+  const [menuItems, setMenuItems] = useState([]);
+  const [categories, setCategories] = useState(["All"]);
   const [selectedCategory, setSelectedCategory] = useState("All");
 
-  // Example data (for now)
-  const restaurants = [
-    {
-      id: 1,
-      name: "Burger King",
-      description: "Classic American-style burgers, fries and drinks.",
-      distance: 3.2,
-      time: 20,
-      image: "/images/burger.jpg",
-      categories: ["All", "Burgers", "Sides", "Drinks"],
-      menu: [
-        { id: 1, name: "Double Cheeseburger", price: 225, img: "/images/menu-double.jpg", category: "Burgers", description: "Grilled beef patty, fresh lettuce, tomato, onion, pickles, mayo & ketchup."},
-        { id: 2, name: "King Fries", price: 60, img: "/images/menu-fries.jpg", category: "Sides", description: "Crispy golden fries sprinkled with sea salt."},
-        { id: 3, name: "Coca Cola", price: 50, img: "/images/menu-cola.jpg", category: "Drinks", description: "Chilled Coca Cola — perfect with your meal."},
-      ],
-    }
-    
-  ];
+  const [loading, setLoading] = useState(true);
 
-  const restaurant = restaurants.find((r) => r.id === Number(id));
+  useEffect(() => {
+    async function fetchRestaurant() {
+      try {
+        const res = await fetch(`http://localhost:4000/restaurants/${id}`);
+        const data = await res.json();
+        setRestaurant(data);
+      } catch (error) {
+        console.error("Failed to fetch restaurant:", error);
+      }
+    }
+
+    fetchRestaurant();
+  }, [id]);
+
+  useEffect(() => {
+    async function fetchMenu() {
+      try {
+        const res = await fetch(`http://localhost:4000/menu/restaurant/${id}`);
+        const data = await res.json();
+        setMenuItems(data);
+
+        const uniqueCategories = [
+          "All",
+          ...new Set(data.map(item => item.category_name || "Other")),
+        ];
+        setCategories(uniqueCategories);
+
+        setLoading(false);
+      } catch (error) {
+        console.error("Failed to load menu:", error);
+        setLoading(false);
+      }
+    }
+
+    fetchMenu();
+  }, [id]);
+
+  if (loading) return <p>Loading menu...</p>;
   if (!restaurant) return <p>Restaurant not found.</p>;
 
-  // Filter by Category
   const filteredMenu =
     selectedCategory === "All"
-      ? restaurant.menu
-      : restaurant.menu.filter((item) => item.category === selectedCategory);
-
-
-
+      ? menuItems
+      : menuItems.filter(item => item.category_name === selectedCategory);
 
   return (
     <div className="restaurant-page">
-
       <Header />
+
       <div className="page-title-wrapper">
-        {/* Page Title */}
         <div className="restaurant-top">
           <div className="restaurant-image">
-            <img src={restaurant.image} alt={restaurant.name} />
+            <img src={restaurant.restaurant_img} alt={restaurant.name} />
           </div>
+
           <div className="restaurant-details">
             <h2>{restaurant.name}</h2>
             <p>{restaurant.description}</p>
-            <p>{restaurant.distance} km • {restaurant.time} min </p>
+            <p>{restaurant.address}</p>
           </div>
         </div>
-        {/* Page Content */}
+
         <div className="restaurant-content">
-          {/* Left Side: Categories */}
           <aside className="restaurant-categories">
             <h3>Categories</h3>
             <ul>
-              {restaurant.categories.map((cat, index) => (
+              {categories.map((cat, idx) => (
                 <li
-                  key={index}
-                  onClick={() => setSelectedCategory(cat)}
+                  key={idx}
                   className={selectedCategory === cat ? "active" : ""}
+                  onClick={() => setSelectedCategory(cat)}
                 >
                   {cat}
                 </li>
@@ -73,43 +92,35 @@ export default function RestaurantPage() {
             </ul>
           </aside>
 
-          {/* Right Side: Menu Cards */}
           <section className="restaurant-menu">
             <h3>Menu — {selectedCategory}</h3>
 
             {filteredMenu.length === 0 ? (
-              <p className="no-items">No items found for {selectedCategory}</p>
+              <p>No items found in this category.</p>
             ) : (
+              <div className="menu-grid">
+                {filteredMenu.map((item) => (
+                  <div key={item.item_id} className="menu-card">
+                    <img src={item.image_url} alt={item.name} className="menu-img" />
 
-            <div className="menu-grid">
-              {filteredMenu.map((item) => (
-                <div key={item.id} className="menu-card">
-                  <img src={item.img} alt={item.name} className="menu-img" />
-                  <div className="menu-info">
+                    <div className="menu-info">
+                      <h4>{item.name}</h4>
+                      <p className="menu-desc">{item.description}</p>
 
-                    <h4>{item.name}</h4>
-
-                    <p className="menu-desc">{item.description}</p>
-                    
-
-                    <div className="menu-bottom">
-                      <span className="menu-price">{item.price}₺</span>
-                      <button className="add-btn">Add to Cart</button>
+                      <div className="menu-bottom">
+                        <span className="menu-price">{item.price} ₺</span>
+                        <button className="add-btn">Add to Cart</button>
+                      </div>
                     </div>
-
                   </div>
-                </div>
-              ))}
-            </div>
-
-
-
+                ))}
+              </div>
             )}
           </section>
         </div>
       </div>
+
       <Footer />
-      
     </div>
   );
 }
