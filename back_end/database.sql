@@ -22,7 +22,8 @@ CREATE TABLE restaurants (
     address TEXT NOT NULL,
     is_active BOOLEAN DEFAULT TRUE,
     rating NUMERIC(2,1) CHECK (rating >= 0.0 AND rating <= 5.0),
-    created_at TIMESTAMP DEFAULT NOW()
+    created_at TIMESTAMP DEFAULT NOW(),
+    restaurant_img TEXT
 );
 
 -- Restaurant operating hours
@@ -32,6 +33,13 @@ CREATE TABLE restaurant_hours (
     day_of_week INT NOT NULL,  -- 0 = Sunday ... 6 = Saturday
     open_time TIME NOT NULL,
     close_time TIME NOT NULL
+);
+
+--Restaurant tags
+CREATE TABLE restaurant_tags (
+    restaurant_tag_id SERIAL PRIMARY KEY,
+    restaurant_id INT REFERENCES restaurants(restaurant_id) ON DELETE CASCADE,
+    tag_id INT REFERENCES tags(tag_id) ON DELETE CASCADE
 );
 
 -- -------------------------
@@ -66,7 +74,8 @@ CREATE TABLE item_options (
 -- Tags for foods
 CREATE TABLE tags (
     tag_id SERIAL PRIMARY KEY,
-    name VARCHAR(100) UNIQUE NOT NULL --pizza, burger, asian cuisine, dessert, doner, sushi, vegan
+    name VARCHAR(100) UNIQUE NOT NULL, --pizza, burger, asian cuisine, dessert, doner, sushi, vegan
+    img_url TEXT
 );
 
 -- Multiple Tags for items
