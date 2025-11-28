@@ -9,6 +9,8 @@ import menuRoutes from "./routes/menu.js";
 import orderRoutes from "./routes/orders.js";
 import paymentRoutes from "./routes/payments.js";
 import promoRoutes from "./routes/promotions.js";
+import homeRoutes from "./routes/home.js";
+import tagsRoutes from "./routes/tags.js"
 
 const app = express();
 app.use(cors());
@@ -20,6 +22,8 @@ app.use("/menu", menuRoutes);
 app.use("/orders", orderRoutes);
 app.use("/payments", paymentRoutes);
 app.use("/promotions", promoRoutes);
+app.use("/home", homeRoutes);
+app.use("/tags", tagsRoutes)
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Backend listening on ${port}`));

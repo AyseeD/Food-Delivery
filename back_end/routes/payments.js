@@ -4,7 +4,7 @@ import { authRequired } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.post("/", authRequired, createPaymentRecord);   // create local payment record and return data for frontend to process
-router.post("/confirm", express.json(), confirmPayment); // webhook or frontend confirm -> update DB
+router.post("/", authRequired, createPaymentRecord); 
+router.post("/confirm", express.json(), confirmPayment);
 
 export default router;

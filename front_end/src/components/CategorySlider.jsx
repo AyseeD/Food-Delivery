@@ -99,21 +99,20 @@ export default function CategorySlider({
       </button>
 
       <div className="category-slider" ref={sliderRef}>
-        {["All", ...categories].map((category, index) => (
+        {[{ name: "All", img_url: "/images/all.png" }, ...categories].map((category, index) => (
           <button
             key={index}
-            className={`category-card ${selected === category ? "active" : ""}`}
-            onClick={() => handleSelect(category)}
-            aria-pressed={selected === category}
+            className={`category-card ${selected === category.name ? "active" : ""}`}
+            onClick={() => handleSelect(category.name)}
           >
             <div className="category-image-wrapper">
               <img
-                src={categoryImages[category]}
-                alt={category}
+                src={category.img_url}
+                alt={category.name}
                 className="category-image"
               />
             </div>
-            <p>{category}</p>
+            <p>{category.name}</p>
           </button>
         ))}
       </div>

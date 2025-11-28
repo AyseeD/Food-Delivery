@@ -1,8 +1,21 @@
 import {db} from "../db.js";
 
 export const getAll = async (req, res) =>{
-    const result = await db.query("SELECT * FROM restaurants WHERE is_active = true ORDER BY name");
+    try {
+    const result = await db.query(`
+      SELECT r.*,
+        COALESCE(JSON_AGG(t.name) FILTER (WHERE t.name IS NOT NULL), '[]') AS tags
+      FROM restaurants r
+      LEFT JOIN restaurant_tags rt ON r.restaurant_id = rt.restaurant_id
+      LEFT JOIN tags t ON rt.tag_id = t.tag_id
+      GROUP BY r.restaurant_id
+    `);
+
     res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Something went wrong" });
+  }
 };
 
 export const getById = async (req, res) => {
