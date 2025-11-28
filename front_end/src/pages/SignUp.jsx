@@ -1,78 +1,110 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/signup.css"
+import "../styles/signup.css";
 
+function SignUp() {
+  const navigate = useNavigate();
 
-function SignUp(){
+  const [rightPanelActive, setRightPanelActive] = useState(false);
 
-    const [active, setActive] = useState(false);
-    const navigate = useNavigate();
+  const [form, setForm] = useState({
+    full_name: "",
+    email: "",
+    password: "",
+  });
 
-    return(
-        <div id="signup-page-wrapper">
-            <div className = {`container ${active ? "right-panel-active" : ""}`}
-            id="container">
-                <div className="form-container sign-up-container">
-                    <form onSubmit={(e) => {
-                        e.preventDefault();
-                        navigate("/home");
-                    }}
-                    >
-                        <h1 className="crt-acc-text">Create Account</h1>
-                        {/* <div className="social-container">
-                            <a href="#" className="social"><i class="fab fa-facebook-f"></i></a>
-                            <a href="#" className="social"><i class="fab fa-google-plus-g"></i></a>
-                            <a href="#" className="social"><i class="fab fa-linkedin-in"></i></a>
-                        </div>
-                        <span className="sign-up-span">or use your email for registration</span> */}
-                        <input type="text" placeholder="Name" />
-                        <input type="email" placeholder="Email" />
-                        <input type="password" placeholder="Password" />
-                        <button className="btn">Sign Up</button>
-                    </form>
-                </div>
-                <div className="form-container sign-in-container">
-                    <form 
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        navigate("/home");
-                    }}
-                    >
-                        <h1 className="crt-acc-text">Sign in</h1>
-                        {/* <div className="social-container">
-                            <a href="#" className="social"><i class="fab fa-facebook-f"></i></a>
-                            <a href="#" className="social"><i class="fab fa-google-plus-g"></i></a>
-                            <a href="#" className="social"><i class="fab fa-linkedin-in"></i></a>
-                        </div>
-                        <span className="sign-up-span">or use your account</span> */}
-                        <input type="email" placeholder="Email" />
-                        <input type="password" placeholder="Password" />
-                        <a href="#" className="sign-up-a">Forgot your password?</a>
-                        <button className="btn">Sign In</button>
-                    </form>
-                </div>
-                <div className="overlay-container">
-                    <div className="overlay">
-                        <div className="overlay-panel overlay-left">
-                            <h1 className="crt-acc-text">Welcome Back!</h1>
-                            <p className="sign-up-p">To keep connected with us please login with your personal info</p>
-                            <button className="ghost btn" onClick={() => setActive(false)} id="signIn">Sign In</button>
-                        </div>
-                        <div className="overlay-panel overlay-right">
-                            <h1 className="crt-acc-text">Hello, Friend!</h1>
-                            <p className="sign-up-p">Enter your personal details and start journey with us</p>
-                            <button className="ghost btn" onClick={() => setActive(true)} id="signUp">Sign Up</button>
-                        </div>
-                    </div>
-                </div>
+  function handleChange(e) {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  }
+
+  async function handleRegister(e) {
+    e.preventDefault();
+
+    const res = await fetch("http://localhost:4000/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      localStorage.setItem("token", data.token);
+      navigate("/home");
+    } else {
+      alert(data.error || "Failed to register");
+    }
+  }
+
+  async function handleLogin(e) {
+    e.preventDefault();
+
+    const res = await fetch("http://localhost:4000/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: form.email,
+        password: form.password,
+      }),
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      localStorage.setItem("token", data.token);
+      navigate("/home");
+    } else {
+      alert(data.error || "Login failed");
+    }
+  }
+
+  return (
+    <div id="signup-page-wrapper">
+      <div className={`container ${rightPanelActive ? "right-panel-active" : ""}`}>
+
+        {/* SIGN UP */}
+        <div className="form-container sign-up-container">
+          <form onSubmit={handleRegister}>
+            <h1>Create Account</h1>
+            <input name="full_name" type="text" placeholder="Name" onChange={handleChange} />
+            <input name="email" type="email" placeholder="Email" onChange={handleChange} />
+            <input name="password" type="password" placeholder="Password" onChange={handleChange} />
+            <button className="btn">Sign Up</button>
+          </form>
+        </div>
+
+        {/* SIGN IN */}
+        <div className="form-container sign-in-container">
+          <form onSubmit={handleLogin}>
+            <h1>Sign in</h1>
+            <input name="email" type="email" placeholder="Email" onChange={handleChange} />
+            <input name="password" type="password" placeholder="Password" onChange={handleChange} />
+            <button className="btn">Sign In</button>
+          </form>
+        </div>
+
+        {/* OVERLAY SECTION (this was missing!) */}
+        <div className="overlay-container">
+          <div className="overlay">
+            <div className="overlay-panel overlay-left">
+              <h1>Welcome Back!</h1>
+              <p>If you already have an account, login here</p>
+              <button className="btn ghost" onClick={() => setRightPanelActive(false)}>
+                Sign In
+              </button>
             </div>
 
+            <div className="overlay-panel overlay-right">
+              <h1>Hello Friend!</h1>
+              <p>Enter your details to create an account</p>
+              <button className="btn ghost" onClick={() => setRightPanelActive(true)}>
+                Sign Up
+              </button>
+            </div>
+          </div>
         </div>
-       
 
-       
-    )
+      </div>
+    </div>
+  );
 }
 
 export default SignUp;
