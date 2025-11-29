@@ -164,7 +164,7 @@
   margin-bottom: 10px;
 }
 
-.add-btn {
+.res-add-btn {
   background-color: #f58803;
   border: none;
   color: white;
@@ -175,7 +175,7 @@
   font-size: 0.9rem;
 }
 
-.add-btn:hover {
+.res-add-btn:hover {
   background-color: #f58803;
 }
 

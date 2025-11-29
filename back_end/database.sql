@@ -164,3 +164,25 @@ CREATE TABLE orders_promotions (
     order_id INT REFERENCES orders(order_id),
     promo_id INT REFERENCES promotions(promo_id)
 );
+
+-- ----------------------
+-- CART AND CART ITEMS
+-- ----------------------
+CREATE TABLE cart (
+    cart_id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(user_id)
+);
+
+CREATE TABLE cart_items (
+    cart_item_id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(user_id),
+	item_id INT REFERENCES menu_items(item_id),
+	quantity INT NOT NULL,
+    price_at_add NUMERIC(10,2) NOT NULL
+);
+
+CREATE TABLE cart_item_options (
+    cart_item_option_id SERIAL PRIMARY KEY,
+    cart_item_id INT REFERENCES cart_items(cart_item_id),
+	 option_id INT REFERENCES item_options(option_id)
+);
