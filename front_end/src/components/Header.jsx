@@ -11,7 +11,7 @@ export default function Header() {
     <>
       <header className="header">
         <div className="logo"> 
-          <img src={logoImg1} alt="logo" className="lp-logo-image" />
+          <a href="/home"><img src={logoImg1} alt="logo" className="lp-logo-image" /></a>
         </div>
 
         <input
