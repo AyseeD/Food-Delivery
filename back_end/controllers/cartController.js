@@ -94,3 +94,40 @@ export const getCart = async (req, res) => {
     res.status(500).json({ error: "Could not fetch cart" });
   }
 };
+
+export const deleteCartItem = async (req, res) => {
+  try {
+    const userId = req.user.user_id;
+    const { cart_item_id } = req.params;
+
+    // Ensure the item belongs to the user's cart
+    const check = await db.query(
+      `SELECT ci.cart_item_id
+       FROM cart_items ci
+       JOIN cart c ON ci.cart_id = c.cart_id
+       WHERE ci.cart_item_id = $1 AND c.user_id = $2`,
+      [cart_item_id, userId]
+    );
+
+    if (!check.rows.length) {
+      return res.status(404).json({ error: "Item not found in your cart" });
+    }
+
+    // DELETE options first (FK constraint)
+    await db.query(
+      `DELETE FROM cart_item_options WHERE cart_item_id = $1`,
+      [cart_item_id]
+    );
+
+    // DELETE the cart item
+    await db.query(
+      `DELETE FROM cart_items WHERE cart_item_id = $1`,
+      [cart_item_id]
+    );
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Could not delete cart item" });
+  }
+};
