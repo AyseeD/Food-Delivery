@@ -48,3 +48,49 @@ export const addToCart = async (req, res) => {
     res.status(500).json({ error: "Could not add to cart" });
   }
 };
+
+export const getCart = async (req, res) => {
+  try {
+    const userId = req.user.user_id;
+
+    // Find user's cart
+    const cart = await db.query(
+      `SELECT cart_id FROM cart WHERE user_id = $1`,
+      [userId]
+    );
+
+    if (!cart.rows.length) {
+      return res.json({ items: [] });
+    }
+
+    const cartId = cart.rows[0].cart_id;
+
+    // Load cart items + options
+    const items = await db.query(
+      `SELECT ci.cart_item_id, ci.quantity, ci.price_at_add,
+              mi.name, mi.image_url,
+             COALESCE(
+                    json_agg(
+                        DISTINCT jsonb_build_object(
+                        'option_id', o.option_id,
+                        'name', o.name,
+                        'additional_price', o.additional_price
+                        )
+                    ) FILTER (WHERE o.option_id IS NOT NULL),
+                    '[]'
+                ) AS options
+       FROM cart_items ci
+       JOIN menu_items mi ON ci.item_id = mi.item_id
+       LEFT JOIN cart_item_options cio ON ci.cart_item_id = cio.cart_item_id
+       LEFT JOIN item_options o ON cio.option_id = o.option_id
+       WHERE ci.cart_id = $1
+       GROUP BY ci.cart_item_id, mi.name, mi.image_url`,
+      [cartId]
+    );
+
+    res.json({ items: items.rows });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Could not fetch cart" });
+  }
+};

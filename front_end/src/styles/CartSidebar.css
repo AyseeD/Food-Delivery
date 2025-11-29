@@ -31,3 +31,56 @@
 .cart-items {
   margin-top: 20px;
 }
+
+.cart-entry {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+}
+
+/* Food Image */
+.cart-img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+/* Text content */
+.cart-entry div {
+  flex: 1;
+}
+
+.cart-entry h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.cart-entry p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #444;
+}
+
+/* Options */
+.cart-options {
+  margin: 6px 0;
+  padding-left: 16px;
+  font-size: 14px;
+}
+
+.cart-options li {
+  margin-bottom: 2px;
+}
+
+/* Total price */
+.cart-entry strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 15px;
+  color: #000;
+}

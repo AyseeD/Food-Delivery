@@ -33,18 +33,21 @@ export default function RestaurantPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          item_id: item.item_id,
-          options: selectedOptions || [],
-        }),
+        body: JSON.stringify({ item_id: item.item_id, options: selectedOptions }),
       });
 
       closeModal();
-      alert("Added to cart!");
+
+      // ⬇️ Auto-open the cart after adding
+      if (typeof window.openCartSidebar === "function") {
+        window.openCartSidebar();
+      }
+
     } catch (error) {
       console.error("Add to cart failed:", error);
     }
   }
+
 
   // --- Fetch Restaurant Info ---
   useEffect(() => {
