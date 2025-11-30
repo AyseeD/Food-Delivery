@@ -19,6 +19,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 10px;
 }
 
 .cart-close-btn {
@@ -96,4 +97,21 @@
 
 .delete-btn:hover {
   color: #a00;
+}
+
+.order-button{
+  margin-top: 15px;
+  width: 100%;
+  padding: 10px 0px;
+  border: 1px none;
+  border-radius: 20px;
+  background-color: #f58803;
+  font-weight: bold;
+  color: white;
+  font-size: 18px;
+}
+
+.order-button:hover{
+  cursor: pointer;
+  background: #ff5722; 
 }

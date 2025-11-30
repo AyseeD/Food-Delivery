@@ -33,12 +33,38 @@ export default function CartSidebar({ isOpen, onClose }) {
     loadCart();
   }
 
+  async function submitOrder() {
+    const token = localStorage.getItem("token");
+
+    const res = await fetch("http://localhost:4000/orders/from-cart", {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    const data = await res.json();
+
+    if (data.error) {
+      alert("Failed to place order");
+      return;
+    }
+    
+    alert("Order placed!");
+    onClose();
+    setCartItems([]); // clear UI
+    window.location.reload();
+  }
+
   return (
     <div className={`cart-sidebar ${isOpen ? "open" : ""}`}>
       <div className="cart-header">
         <h2>Your Cart</h2>
         <button onClick={onClose} className="cart-close-btn">✖</button>
       </div>
+
+      <hr />
 
       <div className="cart-items">
         {cartItems.length === 0 && <p>Your cart is empty.</p>}
@@ -82,6 +108,8 @@ export default function CartSidebar({ isOpen, onClose }) {
           );
         })}
       </div>
+
+      {cartItems.length !== 0 && <button className="order-button" onClick={submitOrder}>Order Now!</button>}
     </div>
   );
 }

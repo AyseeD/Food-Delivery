@@ -7,6 +7,7 @@ CREATE TABLE users (
     full_name VARCHAR(150) NOT NULL,
     email VARCHAR(150) UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
+    address TEXT,
     role VARCHAR(20) NOT NULL DEFAULT 'customer',   -- customer | delivery_driver | system_admin
     created_at TIMESTAMP DEFAULT NOW()
 );
@@ -115,18 +116,6 @@ CREATE TABLE order_item_options (
     order_item_option_id SERIAL PRIMARY KEY,
     order_item_id INT REFERENCES order_items(order_item_id),
     option_id INT REFERENCES item_options(option_id)
-);
-
--- -------------------------
--- DELIVERY & TRACKING
--- -------------------------
-
--- which driver is assigned to order
-CREATE TABLE delivery_assignments (
-    assignment_id SERIAL PRIMARY KEY,
-    order_id INT UNIQUE REFERENCES orders(order_id),
-    driver_id INT REFERENCES users(user_id),
-    assigned_at TIMESTAMP DEFAULT NOW()
 );
 
 -- -------------------------
