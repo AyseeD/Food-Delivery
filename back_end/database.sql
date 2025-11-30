@@ -178,3 +178,16 @@ CREATE TABLE cart_item_options (
     cart_item_id INT REFERENCES cart_items(cart_item_id),
     option_id INT REFERENCES item_options(option_id)
 );
+
+-- --------------------
+-- DELIVERY TRACKING
+-- --------------------
+CREATE TABLE deliveries (
+    delivery_id SERIAL PRIMARY KEY,
+    order_id INT REFERENCES orders(order_id),
+    driver_id INT REFERENCES users(user_id),
+    status VARCHAR(30) NOT NULL DEFAULT 'assigned',
+       -- assigned, picked_up, delivering, delivered, cancelled
+    assigned_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);

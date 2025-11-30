@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import "../styles/AccountPage.css";
+import OrderCard from "../components/OrderCard";
 
 export default function AccountPage() {
   const [activeTab, setActiveTab] = useState("orders");
@@ -116,36 +117,12 @@ export default function AccountPage() {
                 <p>No orders yet.</p>
               ) : (
                 orders.map((order) => (
-                  <div key={order.order_id} className="order-card">
-
-                    <div className="order-card-left">
-                      <p className="order-restaurant">
-                        Restaurant ID: {order.restaurant_id}
-                      </p>
-
-                      <div className="order-status-line">
-                        <span className={`status-badge ${order.status}`}>
-                          {order.status}
-                        </span>
-                      </div>
-
-                      <p className="order-items">
-                        Total items: {order.total_items || "?"}
-                      </p>
-                    </div>
-
-                    <div className="order-card-right">
-                      <p className="order-date">
-                        {new Date(order.placed_at).toLocaleString()}
-                      </p>
-                      <p className="order-price">{order.total_amount}₺</p>
-                    </div>
-
-                  </div>
+                  <OrderCard key={order.order_id} order={order} token={token} />
                 ))
               )}
             </section>
           )}
+
 
           {/* ACCOUNT DETAILS TAB */}
           {activeTab === "details" && (
