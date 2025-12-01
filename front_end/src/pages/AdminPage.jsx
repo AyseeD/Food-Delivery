@@ -17,7 +17,9 @@ function AdminPage() {
     <div className="admin-page">
       {/* TOPBAR */}
       <div className="admin-topbar">
-        <button className="admin-logout-btn">
+        <button className="admin-logout-btn" onClick={() => {
+              localStorage.removeItem("token");
+              window.location.href = "/";}} >
           Logout
         </button>
       </div>

@@ -43,6 +43,42 @@ export const login = async (req, res) =>{
     res.json({user: {user_id: user.user_id, full_name: user.full_name, email: user.email, role: user.role}, token});
 };
 
+export const adminLogin = async (req, res) => {
+    const { email, password } = req.body;
+
+    const result = await db.query(
+        "SELECT user_id, full_name, email, password_hash, role FROM users WHERE email = $1",
+        [email]
+    );
+    const user = result.rows[0];
+
+    if (!user) return res.status(401).json({ error: "Invalid credentials" });
+
+    const ok = await bcrypt.compare(password, user.password_hash);
+    if (!ok) return res.status(401).json({ error: "Invalid password" });
+
+    if (user.role !== "admin") {
+        return res.status(403).json({ error: "Access denied. Admins only." });
+    }
+
+    const token = jwt.sign(
+        { user_id: user.user_id, role: user.role, email: user.email },
+        JWT_SECRET,
+        { expiresIn: "7d" }
+    );
+
+    res.json({
+        user: {
+        user_id: user.user_id,
+        full_name: user.full_name,
+        email: user.email,
+        role: user.role,
+        },
+        token,
+    });
+};
+
+
 export const userInfo = async (req, res) => {
     const result = await db.query("SELECT user_id, full_name, email, role, created_at FROM users WHERE user_id = $1", [req.user.user_id]);
     res.json(result.rows[0]);

@@ -77,11 +77,12 @@ function SignUp() {
             <h1>Sign in</h1>
             <input name="email" type="email" placeholder="Email" onChange={handleChange} />
             <input name="password" type="password" placeholder="Password" onChange={handleChange} />
+            <a href="/admin/login">Sign In as Admin</a>
             <button className="btn">Sign In</button>
           </form>
         </div>
 
-        {/* OVERLAY SECTION (this was missing!) */}
+        {/* OVERLAY SECTION */}
         <div className="overlay-container">
           <div className="overlay">
             <div className="overlay-panel overlay-left">

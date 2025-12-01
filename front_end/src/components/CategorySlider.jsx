@@ -20,15 +20,6 @@ export default function CategorySlider({
     onSelectCategory(category);
   };
 
-  const categoryImages = {
-    All: "/images/all.png",
-    Burger: "/images/burger.png",
-    Pizza: "/images/pizza.png",
-    Sushi: "/images/sushi.png",
-    Italian: "/images/italian.png",
-    Dessert: "/images/dessert.png",
-  };
-
   const scrollLeft = () => {
     userInteractingRef.current = true;
     sliderRef.current?.scrollBy({ left: -stepPx, behavior: "smooth" });

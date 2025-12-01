@@ -8,7 +8,7 @@ CREATE TABLE users (
     email VARCHAR(150) UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
     address TEXT,
-    role VARCHAR(20) NOT NULL DEFAULT 'customer',   -- customer | delivery_driver | system_admin
+    role VARCHAR(20) NOT NULL DEFAULT 'customer',   -- customer | driver | admin
     created_at TIMESTAMP DEFAULT NOW()
 );
 
