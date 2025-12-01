@@ -63,6 +63,7 @@ function AdminUsers() {
             <tr>
               <th>Full Name</th>
               <th>Email</th>
+              <th>Role</th>
               <th style={{ width: "120px" }}>Actions</th>
             </tr>
           </thead>
@@ -72,6 +73,7 @@ function AdminUsers() {
               <tr key={user.id}>
                 <td>{user.full_name}</td>
                 <td>{user.email}</td>
+                <td>{user.role}</td>
                 <td>
                   <button className="delete-btn" onClick={() => deleteUser(user.id)}>
                     Delete
