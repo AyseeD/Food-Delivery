@@ -10,6 +10,27 @@ export const getUsersAmount = async (req, res) => {
     }
 }
 
+export const getAllUsers = async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+        user_id AS id,
+        full_name,
+        email,
+        role
+      FROM users
+      ORDER BY full_name ASC
+    `);
+
+    const users = result.rows;
+    res.json(users);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Could not get users" });
+  }
+};
+
 export const getRestaurantAmount = async (req, res) => {
     try{
         const restaurants = await db.query("SELECT * FROM restaurants");

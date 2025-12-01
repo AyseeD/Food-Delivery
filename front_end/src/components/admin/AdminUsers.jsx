@@ -11,14 +11,17 @@ function AdminUsers() {
 
   //  Backend'ten kullanıcıları çekme
   useEffect(() => {
-   
+    async function fetchUsers() {
+      try{
+        const res = await fetch("http://localhost:4000/auth/admin/users");
+        const data = await res.json();
+        setUsers(data);
+      }catch(err){
+        console.error("Failed to load users:", err);
+      }
+    }
 
-    // Şimdilik fake data:
-    setUsers([
-      { id: 1, full_name: "Sena İdiz", email: "sena@example.com" },
-      { id: 2, full_name: "Ali Veli", email: "ali@example.com" },
-      { id: 3, full_name: "John Doe", email: "john@mail.com" },
-    ]);
+    fetchUsers();
   }, []);
 
  
