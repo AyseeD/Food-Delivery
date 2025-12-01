@@ -54,7 +54,6 @@ export default function OrderCard({ order, token }) {
             <div className="order-card-right">
                 <p className="order-price">{order.total_amount} ₺</p>
 
-                {/* 🔥 Button now works */}
                 <button className="expand-btn" onClick={handleButtonClick}>
                     {open ? "▲" : "▼"}
                 </button>

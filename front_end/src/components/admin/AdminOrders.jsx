@@ -22,13 +22,28 @@ function AdminOrders() {
     fetchOrders();
   }, []);
 
-  const updateStatus = (orderId, newStatus) => {
-    setOrders(prev =>
-      prev.map(order =>
-        order.id === orderId ? { ...order, status: newStatus } : order
-      )
-    );
-  };
+  const updateStatus = async (orderId, newStatus) => {
+    try {
+      await fetch(`http://localhost:4000/orders/${orderId}/status`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("adminToken")}`
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+
+      // update local UI
+      setOrders(prev =>
+        prev.map(order =>
+          order.id === orderId ? { ...order, status: newStatus } : order
+        )
+      );
+
+    } catch (err) {
+      console.error("Failed to update status", err);
+    }
+};
 
   if (loading) return <p>Loading menu...</p>;
 
@@ -51,7 +66,7 @@ function AdminOrders() {
 
               <ul className="order-items">
                 {order.items.map((item, index) => (
-                  <li key={index}>• {item}</li>
+                  <li key={index}>{item}</li>
                 ))}
               </ul>
             </div>

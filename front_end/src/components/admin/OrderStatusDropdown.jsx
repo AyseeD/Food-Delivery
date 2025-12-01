@@ -4,9 +4,12 @@ import "../../styles/OrderStatusDropdown.css";
 function OrderStatusDropdown({ currentStatus, onChange }) {
   const statuses = [
     { value: "pending", label: "Pending" },
+    { value: "accepted", label: "Accepted" },
     { value: "preparing", label: "Preparing" },
+    { value: "delivering", label: "Delivering" },
     { value: "delivered", label: "Delivered" },
-    { value: "on-the-way", label: "On The Way" },
+    { value: "cancelled", label: "Cancelled" },
+    { value: "picked_up", label: "Picked Up" }
   ];
 
   return (

@@ -11,7 +11,7 @@ export default function AdminSignIn(){
         password: "",
     });
 
-    async function handleLogin(e) {
+  async function handleLogin(e) {
     e.preventDefault();
 
     const res = await fetch("http://localhost:4000/auth/admin/login", {
@@ -25,7 +25,7 @@ export default function AdminSignIn(){
 
     const data = await res.json();
     if (res.ok) {
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("adminToken", data.token);
       navigate("/admin");
     } else {
       alert(data.error || "Login failed");
