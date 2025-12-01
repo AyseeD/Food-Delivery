@@ -6,6 +6,48 @@ export const getUserOrders = async (req, res) => {
   res.json(result.rows);
 };
 
+export const getAllOrders = async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+        o.order_id AS id,
+        o.total_amount AS total,
+        o.status,
+        o.placed_at AS date,
+        u.full_name AS user,
+        r.name AS restaurant
+      FROM orders o
+      JOIN users u ON u.user_id = o.user_id
+      JOIN restaurants r ON r.restaurant_id = o.restaurant_id
+      ORDER BY o.placed_at DESC
+    `);
+
+    // load items for each order
+    const orders = result.rows;
+
+    for (const order of orders) {
+      const itemsRes = await db.query(
+        `
+        SELECT mi.name
+        FROM order_items oi
+        JOIN menu_items mi ON mi.item_id = oi.item_id
+        WHERE oi.order_id = $1
+        `,
+        [order.id]
+      );
+
+      order.items = itemsRes.rows.map(r => r.name);
+    }
+
+    res.json(orders);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Could not get orders" });
+  }
+};
+
+
 export const getOrderById = async (req, res) => {
   const { orderId } = req.params;
 

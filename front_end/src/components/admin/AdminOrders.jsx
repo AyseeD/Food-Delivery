@@ -4,40 +4,33 @@ import "../../styles/AdminOrders.css";
 
 function AdminOrders() {
   const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    async function fetchOrders() {
+      try{
+        const result = await fetch("http://localhost:4000/orders/");
+        const data = await result.json();
+        setOrders(data);
+      }catch(err){
+        console.error("Failed to load users amount:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
 
-    setOrders([
-      {
-        id: 1,
-        user: "Sena İdiz",
-        restaurant: "Burger King",
-        items: ["Whopper Menu - Large Fries & Cola"],
-        total: 240,
-        status: "preparing",
-        date: "26 Nov 2025 – 17:14",
-      },
-      {
-        id: 2,
-        user: "Ali Demir",
-        restaurant: "Dominos Pizza",
-        items: ["Medium Mix Pizza"],
-        total: 195,
-        status: "delivering",
-        date: "25 Nov 2025 – 20:51",
-      },
-    ]);
+    fetchOrders();
   }, []);
 
   const updateStatus = (orderId, newStatus) => {
-  
-
     setOrders(prev =>
       prev.map(order =>
         order.id === orderId ? { ...order, status: newStatus } : order
       )
     );
   };
+
+  if (loading) return <p>Loading menu...</p>;
 
   return (
     <div className="admin-orders">
