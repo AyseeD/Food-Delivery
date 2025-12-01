@@ -27,11 +27,28 @@ function AdminUsers() {
  
   //   Kullanıcı silme
 
-  const deleteUser = (id) => {
-  
+  const deleteUser = async (id) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this user?");
+    if (!confirmDelete) return;
 
-    setUsers((prev) => prev.filter((u) => u.id !== id));
+    try {
+      const res = await fetch(`http://localhost:4000/auth/admin/users/${id}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        // Update UI
+        setUsers((prev) => prev.filter((u) => u.id !== id));
+      } else {
+        alert(data.error || "Delete failed");
+      }
+    } catch (err) {
+      console.error("Failed to delete user:", err);
+    }
   };
+
 
   //   Yeni kullanıcı ekleme
 
