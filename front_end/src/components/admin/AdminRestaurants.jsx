@@ -10,31 +10,22 @@ function AdminRestaurants() {
 
   // FETCH RESTAURANTS (Backend)
   useEffect(() => {
-   
-
-    // TEMP DATA
-    setRestaurants([
-      {
-        id: 1,
-        name: "Burger King",
-        image: "/sample/burgerking.png",
-        menus: [
-          { id: 10, name: "Whopper Menu", price: 240, image: "/sample/whopper.png" }
-        ]
-      },
-      {
-        id: 2,
-        name: "Dominos Pizza",
-        image: "/sample/dominos.png",
-        menus: []
+   async function fetchRestaurants() {
+      try {
+        const result = await fetch("http://localhost:4000/restaurants");
+        const data = await result.json();
+        setRestaurants(data);
+      } catch (error) {
+        console.error("Failed to load restaurants:", error);
       }
-    ]);
+   }
+
+   fetchRestaurants();
   }, []);
 
   // DELETE RESTAURANT
   const deleteRestaurant = (id) => {
     
-    setRestaurants(prev => prev.filter(r => r.id !== id));
   };
 
   return (
@@ -51,7 +42,7 @@ function AdminRestaurants() {
       <div className="restaurant-list">
         {restaurants.map(rest => (
           <div className="restaurant-card" key={rest.id}>
-            <img src={rest.image} alt="" className="restaurant-img" />
+            <img src={rest.restaurant_img} alt="" className="restaurant-img" />
 
             <h3>{rest.name}</h3>
 
@@ -59,6 +50,14 @@ function AdminRestaurants() {
               <button className="menu-btn" onClick={() => setSelectedRestaurant(rest)}>
                 Manage Menu
               </button>
+
+              <button
+                className="edit-btn"
+                onClick={() => setSelectedRestaurant({ ...rest, mode: "edit" })}
+              >
+                Edit
+              </button>
+
 
               <button className="delete-btn" onClick={() => deleteRestaurant(rest.id)}>
                 Delete
@@ -76,7 +75,16 @@ function AdminRestaurants() {
         />
       )}
 
-      {selectedRestaurant && (
+
+      {selectedRestaurant?.mode === "edit" && (
+        <RestaurantForm
+          closeForm={() => setSelectedRestaurant(null)}
+          setRestaurants={setRestaurants}
+          restaurant={selectedRestaurant}
+        />
+      )}
+
+      {selectedRestaurant && !selectedRestaurant.mode && (
         <MenuManager
           restaurant={selectedRestaurant}
           close={() => setSelectedRestaurant(null)}

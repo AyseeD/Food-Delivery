@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "../../styles/MenuManager.css";
 
 function MenuManager({ restaurant, close, setRestaurants }) {
+  const menus = restaurant?.menus || [];
   const [newMenu, setNewMenu] = useState({
     name: "",
     price: "",
@@ -48,7 +49,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
 
         {/* EXISTING MENUS */}
         <div className="menu-list">
-          {restaurant.menus.map(m => (
+          {menus.map(m => (
             <div className="menu-item" key={m.id}>
               <img src={m.image} alt="" />
               <p>{m.name}</p>
