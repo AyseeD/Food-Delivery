@@ -17,7 +17,8 @@ export const getAllUsers = async (req, res) => {
         user_id AS id,
         full_name,
         email,
-        role
+        role,
+        is_active
       FROM users
       ORDER BY full_name ASC
     `);
@@ -55,6 +56,27 @@ export const deleteUser = async (req, res) => {
   const { id } = req.params;
 
   try {
+    // 1. Check if user has any orders
+    const orders = await db.query(
+      "SELECT 1 FROM orders WHERE user_id = $1 LIMIT 1",
+      [id]
+    );
+
+    if (orders.rowCount > 0) {
+      // Soft delete
+      await db.query(
+        "UPDATE users SET is_active = FALSE WHERE user_id = $1",
+        [id]
+      );
+
+      return res.json({
+        success: true,
+        action: "deactivated",
+        message: "User has orders. Deactivated instead of deleted.",
+      });
+    }
+
+    // Hard delete
     const result = await db.query(
       "DELETE FROM users WHERE user_id = $1 RETURNING user_id",
       [id]
@@ -64,8 +86,7 @@ export const deleteUser = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    res.json({ success: true, message: "User deleted" });
-
+    res.json({ success: true, action: "deleted" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Could not delete user" });

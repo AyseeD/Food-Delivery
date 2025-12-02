@@ -38,12 +38,23 @@ function AdminUsers() {
 
       const data = await res.json();
 
-      if (res.ok) {
-        // Update UI
-        setUsers((prev) => prev.filter((u) => u.id !== id));
-      } else {
+      if (!res.ok) {
         alert(data.error || "Delete failed");
+        return;
       }
+
+      if (data.action === "deleted") {
+        // Remove user from list
+        setUsers((prev) => prev.filter((u) => u.id !== id));
+      } 
+      
+      else if (data.action === "deactivated") {
+        // Refresh user list so UI shows their updated is_active
+        const refreshed = await fetch("http://localhost:4000/auth/admin/users");
+        const newData = await refreshed.json();
+        setUsers(newData);
+      }
+
     } catch (err) {
       console.error("Failed to delete user:", err);
     }
@@ -54,8 +65,6 @@ function AdminUsers() {
 
   const handleAddUser = (e) => {
     e.preventDefault();
-
-  
 
     setUsers((prev) => [
       ...prev,
@@ -81,6 +90,7 @@ function AdminUsers() {
               <th>Full Name</th>
               <th>Email</th>
               <th>Role</th>
+              <th>Activity</th>
               <th style={{ width: "120px" }}>Actions</th>
             </tr>
           </thead>
@@ -91,6 +101,7 @@ function AdminUsers() {
                 <td>{user.full_name}</td>
                 <td>{user.email}</td>
                 <td>{user.role}</td>
+                <td>{user.is_active ? "Active" : "Not Active"}</td>
                 <td>
                   <button className="delete-btn" onClick={() => deleteUser(user.id)}>
                     Delete

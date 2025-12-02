@@ -9,7 +9,8 @@ CREATE TABLE users (
     password_hash TEXT NOT NULL,
     address TEXT,
     role VARCHAR(20) NOT NULL DEFAULT 'customer',   -- customer | driver | admin
-    created_at TIMESTAMP DEFAULT NOW()
+    created_at TIMESTAMP DEFAULT NOW(),
+    is_active BOOLEAN DEFAULT TRUE
 );
 
 -- -------------------------
