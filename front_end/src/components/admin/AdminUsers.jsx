@@ -63,20 +63,40 @@ function AdminUsers() {
 
   //   Yeni kullanıcı ekleme
 
-  const handleAddUser = (e) => {
+  const handleAddUser = async (e) => {
     e.preventDefault();
 
-    setUsers((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        full_name: newUser.full_name,
-        email: newUser.email,
-      },
-    ]);
+    try {
+      const res = await fetch("http://localhost:4000/auth/admin/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newUser),
+      });
 
-    setNewUser({ full_name: "", email: "", password: "" });
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error || "Failed to create user");
+        return;
+      }
+
+      // Add new user to UI
+      setUsers((prev) => [...prev, data.user]);
+
+      // Clear form
+      setNewUser({
+        full_name: "",
+        email: "",
+        password: "",
+        address: "",
+        role: "customer",
+      });
+
+    } catch (err) {
+      console.error("Failed to add user:", err);
+    }
   };
+
 
   return (
     <div className="admin-users">
@@ -123,9 +143,7 @@ function AdminUsers() {
             type="text"
             placeholder="Full Name"
             value={newUser.full_name}
-            onChange={(e) =>
-              setNewUser({ ...newUser, full_name: e.target.value })
-            }
+            onChange={(e) => setNewUser({ ...newUser, full_name: e.target.value })}
             required
           />
 
@@ -133,9 +151,7 @@ function AdminUsers() {
             type="email"
             placeholder="Email"
             value={newUser.email}
-            onChange={(e) =>
-              setNewUser({ ...newUser, email: e.target.value })
-            }
+            onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
             required
           />
 
@@ -143,16 +159,32 @@ function AdminUsers() {
             type="password"
             placeholder="Password"
             value={newUser.password}
-            onChange={(e) =>
-              setNewUser({ ...newUser, password: e.target.value })
-            }
+            onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
             required
           />
+
+          <input
+            type="text"
+            placeholder="Address"
+            value={newUser.address}
+            onChange={(e) => setNewUser({ ...newUser, address: e.target.value })}
+          />
+
+          <select
+            value={newUser.role}
+            onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
+            required
+          >
+            <option value="customer">Customer</option>
+            <option value="driver">Driver</option>
+            <option value="admin">Admin</option>
+          </select>
 
           <button className="add-user-btn" type="submit">
             Add User
           </button>
         </form>
+
       </div>
     </div>
   );

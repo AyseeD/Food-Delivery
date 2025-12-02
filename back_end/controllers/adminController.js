@@ -1,4 +1,5 @@
 import {db} from "../db.js";
+import bcrypt from "bcrypt";
 
 export const getUsersAmount = async (req, res) => {
     try{
@@ -9,6 +10,35 @@ export const getUsersAmount = async (req, res) => {
         res.status(500).json({ error: "Could not get user amount" });
     }
 }
+
+export const createUser = async (req, res) => {
+  const { full_name, email, password, address, role } = req.body;
+
+  try {
+    const exists = await db.query("SELECT 1 FROM users WHERE email=$1", [email]);
+    if (exists.rowCount > 0) {
+      return res.status(400).json({ error: "Email already exists" });
+    }
+
+    const hash = await bcrypt.hash(password, 10);
+
+    const result = await db.query(
+      `INSERT INTO users (full_name, email, password_hash, address, role)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING user_id AS id, full_name, email, role, is_active`,
+      [full_name, email, hash, address || null, role]
+    );
+
+    res.json({
+      success: true,
+      user: result.rows[0],
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Could not create user" });
+  }
+};
 
 export const getAllUsers = async (req, res) => {
   try {
