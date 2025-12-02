@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import "../../styles/RestaurantForm.css";
 
 function RestaurantForm({ closeForm, setRestaurants, restaurant }) {
-
   const isEdit = Boolean(restaurant);
 
   const [form, setForm] = useState({
@@ -24,25 +23,31 @@ function RestaurantForm({ closeForm, setRestaurants, restaurant }) {
     try {
       const res = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("adminToken")}`
+        },
         body: JSON.stringify(form)
       });
+
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      }
 
       const data = await res.json();
 
       if (isEdit) {
-        // Update list locally
         setRestaurants(prev =>
           prev.map(r => r.restaurant_id === data.restaurant_id ? data : r)
         );
       } else {
-        // Add new restaurant locally
         setRestaurants(prev => [...prev, data]);
       }
 
       closeForm();
     } catch (err) {
       console.error("Failed:", err);
+      alert(`Failed to ${isEdit ? "update" : "add"} restaurant: ${err.message}`);
     }
   };
 
