@@ -1,13 +1,14 @@
 import {db} from "../db.js";
 
 //return the categories, items, options, tags for a restaurant
-export const getMenuByRestaurant = async (req,res) =>{
-    const {restaurantId} = req.params;
+export const getMenuByRestaurant = async (req, res) => {
+    const { restaurantId } = req.params;
     const itemsRes = await db.query(`
         SELECT mi.*, mc.name as category_name
         FROM menu_items mi
         LEFT JOIN menu_categories mc ON mi.category_id = mc.category_id
-        WHERE mi.restaurant_id = $1
+        WHERE mi.restaurant_id = $1 
+          AND mi.is_available = true  -- ADD THIS FILTER
         ORDER BY mc.name NULLS LAST, mi.name
     `, [restaurantId]);
 
@@ -15,10 +16,10 @@ export const getMenuByRestaurant = async (req,res) =>{
 
     //get options and tags for item id at the same time
     const itemIds = items.map(i => i.item_id);
-    let optionsMap= {};
+    let optionsMap = {};
     let tagsMap = {};
 
-    if (itemIds.length){
+    if (itemIds.length) {
         const optionsRes = await db.query(`SELECT * FROM item_options WHERE item_id = ANY($1::int[])`, [itemIds]);
         optionsRes.rows.forEach(o => {
             optionsMap[o.item_id] = optionsMap[o.item_id] || [];
@@ -28,12 +29,12 @@ export const getMenuByRestaurant = async (req,res) =>{
         const tagsRes = await db.query(`
             SELECT it.item_id, t.tag_id, t.name
             FROM item_tags it JOIN tags t ON it.tag_id = t.tag_id
-            WHERE it.item_id =  ANY($1::int[])
+            WHERE it.item_id = ANY($1::int[])
         `, [itemIds]);
 
         tagsRes.rows.forEach(r => {
             tagsMap[r.item_id] = tagsMap[r.item_id] || [];
-            tagsMap[r.item_id].push({tag_id: r.tag_id, name: r.name});
+            tagsMap[r.item_id].push({ tag_id: r.tag_id, name: r.name });
         });
     }
 

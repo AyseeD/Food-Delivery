@@ -27,7 +27,7 @@ function MenuManager({ restaurant, close, setRestaurants}) {
 
   const fetchMenuItems = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/menu/restaurant/${restaurant.restaurant_id}`);
+      const response = await fetch(`http://localhost:4000/auth/admin/restaurant/${restaurant.restaurant_id}`);
       const data = await response.json();
       setMenuItems(data);
       setLoading(false);
@@ -39,7 +39,6 @@ function MenuManager({ restaurant, close, setRestaurants}) {
 
   const fetchCategories = async () => {
     try {
-      // You'll need to create this endpoint or adjust based on your DB
       const response = await fetch(`http://localhost:4000/menu/categories/${restaurant.restaurant_id}`);
       const data = await response.json();
       setCategories(data);
