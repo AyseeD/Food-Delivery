@@ -183,3 +183,69 @@ export const updateItemAvailability = async (req, res) => {
     res.status(500).json({ error: "Could not update availability" });
   }
 };
+
+// Create category
+export const createCategory = async (req, res) => {
+  const { restaurant_id, name } = req.body;
+  
+  try {
+    const result = await db.query(
+      "INSERT INTO menu_categories (restaurant_id, name) VALUES ($1, $2) RETURNING *",
+      [restaurant_id, name]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Could not create category" });
+  }
+};
+
+// Update category
+export const updateCategory = async (req, res) => {
+  const { categoryId } = req.params;
+  const { name } = req.body;
+  
+  try {
+    const result = await db.query(
+      "UPDATE menu_categories SET name = $1 WHERE category_id = $2 RETURNING *",
+      [name, categoryId]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Category not found" });
+    }
+    
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Could not update category" });
+  }
+};
+
+// Delete category
+export const deleteCategory = async (req, res) => {
+  const { categoryId } = req.params;
+  
+  try {
+    // First, set items in this category to null
+    await db.query(
+      "UPDATE menu_items SET category_id = NULL WHERE category_id = $1",
+      [categoryId]
+    );
+    
+    // Then delete the category
+    const result = await db.query(
+      "DELETE FROM menu_categories WHERE category_id = $1 RETURNING *",
+      [categoryId]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Category not found" });
+    }
+    
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Could not delete category" });
+  }
+};

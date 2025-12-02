@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/MenuManager.css";
 
-function MenuManager({ restaurant, close, setRestaurants}) {
+function MenuManager({ restaurant, close, setRestaurants }) {
   const [menuItems, setMenuItems] = useState([]);
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingItem, setEditingItem] = useState(null);
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [editingCategory, setEditingCategory] = useState(null);
   
   const [newItem, setNewItem] = useState({
     name: "",
@@ -54,6 +56,92 @@ function MenuManager({ restaurant, close, setRestaurants}) {
       setTags(data);
     } catch (error) {
       console.error("Failed to fetch tags:", error);
+    }
+  };
+
+  // Add new category
+  const addCategory = async (e) => {
+    e.preventDefault();
+    if (!newCategoryName.trim()) {
+      alert("Please enter a category name");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:4000/menu/categories", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("adminToken")}`
+        },
+        body: JSON.stringify({
+          restaurant_id: restaurant.restaurant_id,
+          name: newCategoryName.trim()
+        })
+      });
+
+      if (!response.ok) throw new Error("Failed to add category");
+
+      // Refresh categories
+      fetchCategories();
+      setNewCategoryName("");
+    } catch (error) {
+      console.error("Error adding category:", error);
+      alert("Failed to add category");
+    }
+  };
+
+  // Update category
+  const updateCategory = async (e) => {
+    e.preventDefault();
+    if (!editingCategory.name.trim()) {
+      alert("Please enter a category name");
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:4000/menu/categories/${editingCategory.category_id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("adminToken")}`
+        },
+        body: JSON.stringify({
+          name: editingCategory.name.trim()
+        })
+      });
+
+      if (!response.ok) throw new Error("Failed to update category");
+
+      // Refresh categories
+      fetchCategories();
+      setEditingCategory(null);
+    } catch (error) {
+      console.error("Error updating category:", error);
+      alert("Failed to update category");
+    }
+  };
+
+  // Delete category
+  const deleteCategory = async (categoryId) => {
+    if (!window.confirm("Are you sure you want to delete this category? Items in this category will become uncategorized.")) return;
+
+    try {
+      const response = await fetch(`http://localhost:4000/menu/categories/${categoryId}`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("adminToken")}`
+        }
+      });
+
+      if (!response.ok) throw new Error("Failed to delete category");
+
+      // Refresh categories and menu items
+      fetchCategories();
+      fetchMenuItems();
+    } catch (error) {
+      console.error("Error deleting category:", error);
+      alert("Failed to delete category");
     }
   };
 
@@ -182,7 +270,6 @@ function MenuManager({ restaurant, close, setRestaurants}) {
   const handleTagToggle = (tagName, isEditing = false) => {
     if (isEditing) {
       setEditingItem(prev => {
-        // Check if tag already exists (compare by name)
         const tagExists = prev.tags?.some(t => 
           typeof t === 'object' ? t.name === tagName : t === tagName
         );
@@ -221,6 +308,59 @@ function MenuManager({ restaurant, close, setRestaurants}) {
         <div className="menu-manager-header">
           <h3>Manage Menu – {restaurant.name}</h3>
           <button className="close-btn" onClick={close}>×</button>
+        </div>
+
+        {/* CATEGORY MANAGEMENT */}
+        <div className="category-management">
+          <h4>Menu Categories ({categories.length})</h4>
+          <div className="categories-list">
+            {categories.map(category => (
+              <div key={category.category_id} className="category-item">
+                {editingCategory?.category_id === category.category_id ? (
+                  <form onSubmit={updateCategory} className="category-edit-form">
+                    <input
+                      type="text"
+                      value={editingCategory.name}
+                      onChange={(e) => setEditingCategory({...editingCategory, name: e.target.value})}
+                      autoFocus
+                    />
+                    <button type="submit" className="save-btn">Save</button>
+                    <button type="button" className="cancel-btn" onClick={() => setEditingCategory(null)}>
+                      Cancel
+                    </button>
+                  </form>
+                ) : (
+                  <>
+                    <span>{category.name}</span>
+                    <div className="category-actions">
+                      <button 
+                        className="edit-btn"
+                        onClick={() => setEditingCategory(category)}
+                      >
+                        Edit
+                      </button>
+                      <button 
+                        className="delete-btn"
+                        onClick={() => deleteCategory(category.category_id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+          <form onSubmit={addCategory} className="add-category-form">
+            <input
+              type="text"
+              placeholder="New category name"
+              value={newCategoryName}
+              onChange={(e) => setNewCategoryName(e.target.value)}
+              required
+            />
+            <button type="submit" className="add-btn">Add Category</button>
+          </form>
         </div>
 
         {/* EXISTING MENU ITEMS */}
@@ -286,7 +426,7 @@ function MenuManager({ restaurant, close, setRestaurants}) {
           )}
         </div>
 
-        {/* EDIT FORM */}
+        {/* EDIT ITEM FORM */}
         {editingItem && (
           <div className="edit-form-overlay">
             <div className="edit-form">

@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../../styles/RestaurantForm.css";
 
 function RestaurantForm({ closeForm, setRestaurants, restaurant }) {
   const isEdit = Boolean(restaurant);
+  const [restaurantTags, setRestaurantTags] = useState([]);
+  const [selectedRestaurantTags, setSelectedRestaurantTags] = useState([]);
 
   const [form, setForm] = useState({
     name: restaurant?.name || "",
@@ -12,6 +14,35 @@ function RestaurantForm({ closeForm, setRestaurants, restaurant }) {
     is_active: restaurant?.is_active ?? true
   });
 
+  // Fetch restaurant tags
+  useEffect(() => {
+    fetchRestaurantTags();
+    if (isEdit && restaurant.tags) {
+      // If editing, pre-select existing tags
+      setSelectedRestaurantTags(restaurant.tags);
+    }
+  }, [restaurant]);
+
+  const fetchRestaurantTags = async () => {
+    try {
+      const response = await fetch("http://localhost:4000/tags/restaurant-tags");
+      const data = await response.json();
+      setRestaurantTags(data);
+    } catch (error) {
+      console.error("Failed to fetch restaurant tags:", error);
+    }
+  };
+
+  const handleTagToggle = (tagId) => {
+    setSelectedRestaurantTags(prev => {
+      if (prev.includes(tagId)) {
+        return prev.filter(id => id !== tagId);
+      } else {
+        return [...prev, tagId];
+      }
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -20,6 +51,11 @@ function RestaurantForm({ closeForm, setRestaurants, restaurant }) {
       ? `http://localhost:4000/restaurants/${restaurant.restaurant_id}`
       : "http://localhost:4000/restaurants";
 
+    const payload = {
+      ...form,
+      tags: selectedRestaurantTags
+    };
+
     try {
       const res = await fetch(url, {
         method,
@@ -27,7 +63,7 @@ function RestaurantForm({ closeForm, setRestaurants, restaurant }) {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${localStorage.getItem("adminToken")}`
         },
-        body: JSON.stringify(form)
+        body: JSON.stringify(payload)
       });
 
       if (!res.ok) {
@@ -83,6 +119,8 @@ function RestaurantForm({ closeForm, setRestaurants, restaurant }) {
             type="number"
             placeholder="Rating"
             step="0.1"
+            min="0"
+            max="5"
             value={form.rating}
             onChange={(e) => setForm({ ...form, rating: e.target.value })}
           />
@@ -94,6 +132,23 @@ function RestaurantForm({ closeForm, setRestaurants, restaurant }) {
             <option value="true">Active</option>
             <option value="false">Inactive</option>
           </select>
+
+          {/* Restaurant Tags Section */}
+          <div className="tags-selection">
+            <p>Select Restaurant Tags:</p>
+            <div className="tags-list">
+              {restaurantTags.map(tag => (
+                <label key={tag.tag_id} className="tag-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={selectedRestaurantTags.includes(tag.tag_id)}
+                    onChange={() => handleTagToggle(tag.tag_id)}
+                  />
+                  {tag.name}
+                </label>
+              ))}
+            </div>
+          </div>
 
           <button className="submit-btn">
             {isEdit ? "Save Changes" : "Add Restaurant"}

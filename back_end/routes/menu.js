@@ -7,7 +7,10 @@ import {
   getCategoriesByRestaurant,
   updateItem,
   deleteItem,
-  updateItemAvailability
+  updateItemAvailability,
+  createCategory,
+  updateCategory,
+  deleteCategory
 } from "../controllers/menuController.js";
 import { authRequired } from "../middleware/auth.js";
 import { adminRequired } from "../middleware/adminAuth.js";
@@ -25,5 +28,8 @@ router.post("/item", authRequired, adminRequired, createItem);
 router.put("/item/:itemId", authRequired, adminRequired, updateItem);
 router.delete("/item/:itemId", authRequired, adminRequired, deleteItem);
 router.patch("/item/:itemId", authRequired, adminRequired, updateItemAvailability);
+router.post("/categories", authRequired, adminRequired, createCategory);
+router.put("/categories/:categoryId", authRequired, adminRequired, updateCategory);
+router.delete("/categories/:categoryId", authRequired, adminRequired, deleteCategory);
 
 export default router;
