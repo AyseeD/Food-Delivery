@@ -7,6 +7,8 @@ function AdminUsers() {
     full_name: "",
     email: "",
     password: "",
+    address: "",
+    role: "customer",
   });
 
   //  Backend'ten kullanıcıları çekme
@@ -67,10 +69,18 @@ function AdminUsers() {
     e.preventDefault();
 
     try {
+      const userData = {
+        full_name: newUser.full_name,
+        email: newUser.email,
+        password: newUser.password,
+        address: newUser.address || "", 
+        role: newUser.role || "customer", 
+      };
+
       const res = await fetch("http://localhost:4000/auth/admin/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newUser),
+        body: JSON.stringify(userData),
       });
 
       const data = await res.json();

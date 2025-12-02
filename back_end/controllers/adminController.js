@@ -21,12 +21,13 @@ export const createUser = async (req, res) => {
     }
 
     const hash = await bcrypt.hash(password, 10);
+    const userRole = role || "customer";
 
     const result = await db.query(
       `INSERT INTO users (full_name, email, password_hash, address, role)
        VALUES ($1, $2, $3, $4, $5)
        RETURNING user_id AS id, full_name, email, role, is_active`,
-      [full_name, email, hash, address || null, role]
+      [full_name, email, hash, address || null, userRole]
     );
 
     res.json({
