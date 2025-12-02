@@ -96,3 +96,89 @@ export const getTags = async (req, res) => {
   const r = await db.query("SELECT * FROM tags ORDER BY name");
   res.json(r.rows);
 };
+
+// Get categories by restaurant
+export const getCategoriesByRestaurant = async (req, res) => {
+  const { restaurantId } = req.params;
+  try {
+    const result = await db.query(
+      "SELECT * FROM menu_categories WHERE restaurant_id = $1 ORDER BY name",
+      [restaurantId]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Could not fetch categories" });
+  }
+};
+
+// Update menu item
+export const updateItem = async (req, res) => {
+  const { itemId } = req.params;
+  const { name, description, price, image_url, category_id, is_available, tags } = req.body;
+  
+  try {
+    // Update item
+    const result = await db.query(
+      `UPDATE menu_items 
+       SET name=$1, description=$2, price=$3, image_url=$4, category_id=$5, is_available=$6 
+       WHERE item_id=$7 RETURNING *`,
+      [name, description, price, image_url, category_id, is_available, itemId]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Item not found" });
+    }
+    
+    // Update tags
+    await db.query("DELETE FROM item_tags WHERE item_id = $1", [itemId]);
+    
+    for (const tagName of tags) {
+      let tagRes = await db.query("SELECT tag_id FROM tags WHERE name = $1", [tagName]);
+      let tagId;
+      if (tagRes.rows.length) {
+        tagId = tagRes.rows[0].tag_id;
+      } else {
+        const ins = await db.query("INSERT INTO tags (name) VALUES ($1) RETURNING tag_id", [tagName]);
+        tagId = ins.rows[0].tag_id;
+      }
+      await db.query(
+        "INSERT INTO item_tags (item_id, tag_id) VALUES ($1, $2) ON CONFLICT DO NOTHING",
+        [itemId, tagId]
+      );
+    }
+    
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Could not update item" });
+  }
+};
+
+// Delete menu item
+export const deleteItem = async (req, res) => {
+  const { itemId } = req.params;
+  try {
+    await db.query("DELETE FROM menu_items WHERE item_id = $1", [itemId]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Could not delete item" });
+  }
+};
+
+// Update item availability
+export const updateItemAvailability = async (req, res) => {
+  const { itemId } = req.params;
+  const { is_available } = req.body;
+  try {
+    const result = await db.query(
+      "UPDATE menu_items SET is_available = $1 WHERE item_id = $2 RETURNING *",
+      [is_available, itemId]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Could not update availability" });
+  }
+};
