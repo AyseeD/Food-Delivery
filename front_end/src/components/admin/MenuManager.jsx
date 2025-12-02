@@ -183,14 +183,22 @@ function MenuManager({ restaurant, close, setRestaurants}) {
   const handleTagToggle = (tagName, isEditing = false) => {
     if (isEditing) {
       setEditingItem(prev => {
-        const newTags = prev.tags.includes(tagName)
-          ? prev.tags.filter(t => t !== tagName)
+        // Check if tag already exists (compare by name)
+        const tagExists = prev.tags?.some(t => 
+          typeof t === 'object' ? t.name === tagName : t === tagName
+        );
+        
+        const newTags = tagExists
+          ? prev.tags.filter(t => 
+              typeof t === 'object' ? t.name !== tagName : t !== tagName
+            )
           : [...prev.tags, tagName];
         return { ...prev, tags: newTags };
       });
     } else {
       setNewItem(prev => {
-        const newTags = prev.tags.includes(tagName)
+        const tagExists = prev.tags.includes(tagName);
+        const newTags = tagExists
           ? prev.tags.filter(t => t !== tagName)
           : [...prev.tags, tagName];
         return { ...prev, tags: newTags };
@@ -251,7 +259,13 @@ function MenuManager({ restaurant, close, setRestaurants}) {
                 <div className="item-actions">
                   <button 
                     className="edit-btn"
-                    onClick={() => setEditingItem(item)}
+                    onClick={() => {
+                      const normalizedItem = {
+                        ...item,
+                        tags: item.tags.map(t => typeof t === 'object' ? t.name : t)
+                      };
+                      setEditingItem(normalizedItem);
+                    }}
                   >
                     Edit
                   </button>
@@ -323,7 +337,9 @@ function MenuManager({ restaurant, close, setRestaurants}) {
                       <label key={tag.tag_id} className="tag-checkbox">
                         <input
                           type="checkbox"
-                          checked={editingItem.tags?.some(t => t.name === tag.name)}
+                          checked={editingItem.tags?.some(t => 
+                            typeof t === 'object' ? t.name === tag.name : t === tag.name
+                          )}
                           onChange={() => handleTagToggle(tag.name, true)}
                         />
                         {tag.name}
