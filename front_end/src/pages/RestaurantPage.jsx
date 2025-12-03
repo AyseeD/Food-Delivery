@@ -126,6 +126,7 @@ export default function RestaurantPage() {
 
           <div className="restaurant-details">
             <h2>{restaurant.name}</h2>
+            <h3>⭐ {restaurant.rating}</h3>
             <p>{restaurant.description}</p>
             <p>{restaurant.address}</p>
           </div>

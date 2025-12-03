@@ -92,6 +92,7 @@ export default function Home() {
                 time={Math.floor(Math.random() * 60) + 10}
                 image={r.restaurant_img}
                 id={r.restaurant_id || r.id}
+                rating = {r.rating || 0}
               />
             ))}
           </div>
