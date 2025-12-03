@@ -26,10 +26,13 @@ export default function SearchResultsPage() {
     async function performSearch() {
       try {
         setLoading(true);
-        const res = await fetch(`http://localhost:4000/restaurants/search?query=${encodeURIComponent(query)}`);
+        const res = await fetch(
+          `http://localhost:4000/restaurants/search?query=${encodeURIComponent(query)}`
+        );
         
         if (!res.ok) {
-          throw new Error("Search failed");
+          const errorData = await res.json().catch(() => ({}));
+          throw new Error(errorData.error || "Search failed");
         }
         
         const data = await res.json();
@@ -37,7 +40,8 @@ export default function SearchResultsPage() {
         setError("");
       } catch (err) {
         console.error("Search error:", err);
-        setError("Failed to perform search. Please try again.");
+        setError(err.message || "Failed to perform search. Please try again.");
+        setSearchResults({ restaurants: [], menuItems: [] });
       } finally {
         setLoading(false);
       }

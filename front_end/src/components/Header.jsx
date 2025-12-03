@@ -1,11 +1,29 @@
 import "../styles/Header.css"
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import CartSidebar from "./CartSidebar";
 import logoImg1 from "../assets/logo-1.png";
 
 export default function Header() {
   const [cartOpen, setCartOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchTerm.trim().length >= 2) {
+      navigate(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
+      setSearchTerm(""); // Clear input after search
+    } else {
+      alert("Please enter at least 2 characters to search");
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch(e);
+    }
+  };
 
   return (
     <>
@@ -14,11 +32,19 @@ export default function Header() {
           <a href="/home"><img src={logoImg1} alt="logo" className="lp-logo-image" /></a>
         </div>
 
-        <input
-          type="text"
-          className="search-bar"
-          placeholder="Search for restaurants or dishes"
-        />
+        <form className="search-container" onSubmit={handleSearch}>
+          <input
+            type="text"
+            className="search-bar"
+            placeholder="Search for restaurants or dishes"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyPress={handleKeyPress}
+          />
+          <button type="submit" className="search-button">
+            <i className="fa-solid fa-magnifying-glass"></i>
+          </button>
+        </form>
 
         <div className="header-right">
           <button id="header-my-cart" onClick={() => setCartOpen(true)}> 

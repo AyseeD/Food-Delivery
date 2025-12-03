@@ -43,7 +43,10 @@ export const getById = async (req, res) => {
 };
 
 export const getHours = async (req, res) => {
-    const result = await db.query("SELECT day_of_week, open_time, close_time, FROM restaurant_hours WHERE restaurant_id = $1 ORDER BY day_of_week", [req.params.id]);
+    const result = await db.query(
+        "SELECT day_of_week, open_time, close_time FROM restaurant_hours WHERE restaurant_id = $1 ORDER BY day_of_week", 
+        [req.params.id]
+    );
     res.json(result.rows);
 };
 
@@ -214,5 +217,111 @@ export const remove = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Could not delete restaurant" });
+  }
+};
+
+export const search = async (req, res) => {
+  try {
+    const { query } = req.query;
+    
+    if (!query || query.trim().length < 2) {
+      return res.status(400).json({ 
+        error: "Search query must be at least 2 characters" 
+      });
+    }
+
+    const searchQuery = `%${query}%`;
+
+    // Simpler restaurants search
+    const restaurantsRes = await db.query(
+      `SELECT 
+        r.restaurant_id,
+        r.name,
+        r.description,
+        r.address,
+        r.rating,
+        r.restaurant_img,
+        r.is_active
+       FROM restaurants r
+       WHERE (
+         r.name ILIKE $1 
+         OR r.description ILIKE $1
+         OR EXISTS (
+           SELECT 1 FROM restaurant_tags rt
+           JOIN tags t ON rt.tag_id = t.tag_id
+           WHERE rt.restaurant_id = r.restaurant_id
+           AND t.name ILIKE $1
+         )
+       )
+       AND r.is_active = TRUE
+       ORDER BY r.name`,
+      [searchQuery]
+    );
+
+    // Get tags for each restaurant separately
+    const restaurants = restaurantsRes.rows;
+    for (const restaurant of restaurants) {
+      const tagsRes = await db.query(
+        `SELECT t.tag_id, t.name
+         FROM restaurant_tags rt
+         JOIN tags t ON rt.tag_id = t.tag_id
+         WHERE rt.restaurant_id = $1`,
+        [restaurant.restaurant_id]
+      );
+      restaurant.tags = tagsRes.rows;
+    }
+
+    // Simpler menu items search
+    const menuItemsRes = await db.query(
+      `SELECT 
+        mi.item_id,
+        mi.name,
+        mi.description,
+        mi.price,
+        mi.image_url,
+        mi.is_available,
+        r.restaurant_id,
+        r.name AS restaurant_name,
+        r.restaurant_img,
+        mc.name AS category_name
+       FROM menu_items mi
+       JOIN restaurants r ON mi.restaurant_id = r.restaurant_id
+       LEFT JOIN menu_categories mc ON mi.category_id = mc.category_id
+       WHERE (
+         mi.name ILIKE $1 
+         OR mi.description ILIKE $1
+         OR EXISTS (
+           SELECT 1 FROM item_tags it
+           JOIN tags t ON it.tag_id = t.tag_id
+           WHERE it.item_id = mi.item_id
+           AND t.name ILIKE $1
+         )
+       )
+       AND mi.is_available = TRUE
+       AND r.is_active = TRUE
+       ORDER BY mi.name`,
+      [searchQuery]
+    );
+
+    // Get tags for each menu item separately
+    const menuItems = menuItemsRes.rows;
+    for (const item of menuItems) {
+      const tagsRes = await db.query(
+        `SELECT t.tag_id, t.name
+         FROM item_tags it
+         JOIN tags t ON it.tag_id = t.tag_id
+         WHERE it.item_id = $1`,
+        [item.item_id]
+      );
+      item.tags = tagsRes.rows;
+    }
+
+    res.json({
+      restaurants,
+      menuItems
+    });
+  } catch (err) {
+    console.error("Search error:", err);
+    res.status(500).json({ error: "Failed to perform search" });
   }
 };
