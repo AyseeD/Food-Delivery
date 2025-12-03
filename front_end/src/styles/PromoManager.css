@@ -1,0 +1,333 @@
+/* PromoManager.css */
+.promo-manager-box {
+  width: 600px !important;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.promo-manager-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.promo-manager-header h3 {
+  margin: 0;
+  color: #333;
+}
+
+.promo-manager-header .close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.promo-manager-header .close-btn:hover {
+  background: #f5f5f5;
+  color: #333;
+}
+
+/* Promotions List */
+.promotions-list {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 25px;
+}
+
+.promotions-list h4 {
+  margin: 0 0 15px 0;
+  color: #333;
+  font-size: 18px;
+}
+
+.no-promotions {
+  text-align: center;
+  padding: 30px;
+  color: #666;
+  background: white;
+  border-radius: 8px;
+  font-style: italic;
+}
+
+.promotions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.promotion-card {
+  background: white;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border: 1px solid #e0e0e0;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.promotion-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.promotion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.promotion-header h5 {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+  font-weight: 600;
+}
+
+.discount-badge {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.promo-description {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.4;
+  margin-bottom: 10px;
+  min-height: 40px;
+}
+
+.promo-dates {
+  color: #888;
+  font-size: 12px;
+  margin-bottom: 15px;
+  padding-top: 10px;
+  border-top: 1px dashed #eee;
+}
+
+.deactivate-btn {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  width: 100%;
+  transition: all 0.2s;
+}
+
+.deactivate-btn:hover {
+  background: #f1b0b7;
+  border-color: #ed969e;
+}
+
+/* Create Promotion Form */
+.create-promo-form {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  border: 1px solid #e0e0e0;
+}
+
+.create-promo-form h4 {
+  margin: 0 0 20px 0;
+  color: #333;
+  font-size: 18px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.create-promo-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.create-promo-form .form-row {
+  display: flex;
+  gap: 15px;
+}
+
+.create-promo-form .form-row > * {
+  flex: 1;
+}
+
+.create-promo-form input,
+.create-promo-form textarea {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border 0.2s;
+}
+
+.create-promo-form input:focus,
+.create-promo-form textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
+
+.create-promo-form input[type="number"] {
+  text-align: center;
+}
+
+.create-promo-form textarea {
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+}
+
+.date-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.date-field label {
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.date-field input {
+  padding: 8px 12px;
+}
+
+.create-promo-form .form-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.create-promo-form .create-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  flex: 1;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.create-promo-form .create-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.create-promo-form .cancel-btn {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  flex: 1;
+  transition: background 0.2s;
+}
+
+.create-promo-form .cancel-btn:hover {
+  background: #5a6268;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .promo-manager-box {
+    width: 90% !important;
+    max-width: 500px;
+  }
+  
+  .promotions-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .create-promo-form .form-row {
+    flex-direction: column;
+  }
+  
+  .date-field {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .promo-manager-box {
+    padding: 15px !important;
+  }
+  
+  .promotions-list,
+  .create-promo-form {
+    padding: 15px;
+  }
+  
+  .create-promo-form .form-buttons {
+    flex-direction: column;
+  }
+}
+
+/* Animation for new promo cards */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.promotion-card {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Status indicator for promotions */
+.promotion-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-left: 10px;
+}
+
+.promotion-status.active {
+  background: #d4edda;
+  color: #155724;
+}
+
+.promotion-status.expired {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.promotion-status.upcoming {
+  background: #fff3cd;
+  color: #856404;
+}

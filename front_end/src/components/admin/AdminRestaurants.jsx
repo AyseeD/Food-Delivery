@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import RestaurantForm from "./RestaurantForm";
 import MenuManager from "./MenuManager";
+import PromoManager from "./PromoManager";
 import "../../styles/AdminRestaurants.css";
 
 function AdminRestaurants() {
@@ -106,6 +107,13 @@ function AdminRestaurants() {
               >
                 Delete
               </button>
+
+               <button 
+                className="promo-btn"
+                onClick={() => setSelectedRestaurant({ ...rest, mode: "promo" })}
+              >
+                Manage Promos
+              </button>
             </div>
           </div>
         ))}
@@ -134,6 +142,14 @@ function AdminRestaurants() {
           setRestaurants={setRestaurants}
         />
       )}
+
+      {selectedRestaurant?.mode === "promo" && (
+        <PromoManager
+          restaurant={selectedRestaurant}
+          close={() => setSelectedRestaurant(null)}
+        />
+      )}
+
     </div>
   );
 }

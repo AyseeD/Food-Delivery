@@ -115,3 +115,109 @@
   cursor: pointer;
   background: #ff5722; 
 }
+.promotion-section {
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin: 15px 0;
+}
+
+.promotion-section h3 {
+  margin: 0 0 10px 0;
+  color: #333;
+}
+
+.promo-input-group {
+  display: flex;
+  gap: 10px;
+}
+
+.promo-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.promo-input:disabled,
+.apply-promo-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.promo-note {
+  display: block;
+  margin-top: 5px;
+  color: #666;
+  font-size: 12px;
+  font-style: italic;
+}
+
+.apply-promo-btn {
+  padding: 8px 16px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.apply-promo-btn:hover {
+  background: #218838;
+}
+
+.applied-promo {
+  background: #d4edda;
+  border: 1px solid #c3e6cb;
+  border-radius: 4px;
+  padding: 10px;
+  color: #155724;
+}
+
+.applied-promo p {
+  margin: 0 0 5px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.remove-promo-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.remove-promo-btn:hover {
+  background: #c82333;
+}
+
+.order-summary {
+  margin: 20px 0;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.summary-row:last-child {
+  border-bottom: none;
+}
+
+.summary-row.discount {
+  color: #28a745;
+  font-weight: bold;
+}
+
+.summary-row.total {
+  font-size: 18px;
+  padding-top: 15px;
+  border-top: 2px solid #ddd;
+}

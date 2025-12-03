@@ -57,7 +57,6 @@ export default function Home() {
     selectedCategory === "All"
       ? restaurants
       : restaurants.filter(r => {
-          // Now r.tags is an array of objects, so we need to check the names
           return r.tags.some(tag => tag.name === selectedCategory);
         });
 

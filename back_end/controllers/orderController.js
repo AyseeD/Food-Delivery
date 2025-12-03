@@ -72,13 +72,22 @@ export const getOrderById = async (req, res) => {
     [orderId]
   );
 
+  // Get promotion info
+  const promoRes = await db.query(
+    `SELECT p.*
+     FROM orders_promotions op
+     JOIN promotions p ON op.promo_id = p.promo_id
+     WHERE op.order_id = $1`,
+    [orderId]
+  );
+
   res.json({
     order: orderRes.rows[0],
     items: itemsRes.rows,
-    delivery: deliveryRes.rows[0]
+    delivery: deliveryRes.rows[0],
+    promotion: promoRes.rows[0] || null
   });
 };
-
 
 export const updateOrderStatus = async (req, res) => {
   const { orderId } = req.params;
@@ -98,6 +107,7 @@ export const updateOrderStatus = async (req, res) => {
 
 export const createOrderFromCart = async (req, res) => {
   const userId = req.user.user_id;
+  const { promo_code } = req.body;
 
   const client = await db.connect();
 
@@ -132,14 +142,12 @@ export const createOrderFromCart = async (req, res) => {
     }
 
     const items = itemsRes.rows;
-
-    // We assume all items belong to the same restaurant
     const restaurantId = items[0].restaurant_id;
 
-    // Calculate total amount
-    let total = 0;
+    // Calculate subtotal
+    let subtotal = 0;
     for (const it of items) {
-      total += Number(it.price_at_add);
+      subtotal += Number(it.price_at_add);
 
       // Add option prices
       if (it.options && it.options.length) {
@@ -147,9 +155,35 @@ export const createOrderFromCart = async (req, res) => {
           `SELECT SUM(additional_price) AS sum FROM item_options WHERE option_id = ANY($1::int[])`,
           [it.options]
         );
-        total += Number(optPrices.rows[0].sum || 0);
+        subtotal += Number(optPrices.rows[0].sum || 0);
       }
     }
+
+    // Apply promotion if provided
+    let discountAmount = 0;
+    let appliedPromoId = null;
+    
+    if (promo_code) {
+      const promoRes = await client.query(
+        `SELECT * FROM promotions 
+         WHERE code = $1 
+           AND restaurant_id = $2 
+           AND is_active = TRUE
+           AND valid_from <= CURRENT_DATE
+           AND valid_until >= CURRENT_DATE`,
+        [promo_code.toUpperCase(), restaurantId]
+      );
+
+      if (promoRes.rows.length > 0) {
+        const promotion = promoRes.rows[0];
+        appliedPromoId = promotion.promo_id;
+        discountAmount = (subtotal * promotion.discount_percent) / 100;
+      } else {
+        return res.status(400).json({ error: "Invalid or expired promo code" });
+      }
+    }
+
+    const totalAmount = subtotal - discountAmount;
 
     // Get user address
     const addrRes = await client.query(
@@ -165,18 +199,27 @@ export const createOrderFromCart = async (req, res) => {
     // 1. Create order
     const orderRes = await client.query(
       `INSERT INTO orders (user_id, restaurant_id, total_amount, delivery_address)
-       VALUES ($1,$2,$3,$4)
+       VALUES ($1, $2, $3, $4)
        RETURNING order_id`,
-      [userId, restaurantId, total, address]
+      [userId, restaurantId, totalAmount, address]
     );
 
     const orderId = orderRes.rows[0].order_id;
 
-    // 2. Insert order_items
+    // 2. Apply promotion to order if exists
+    if (appliedPromoId) {
+      await client.query(
+        `INSERT INTO orders_promotions (order_id, promo_id)
+         VALUES ($1, $2)`,
+        [orderId, appliedPromoId]
+      );
+    }
+
+    // 3. Insert order_items
     for (const it of items) {
       const oiRes = await client.query(
         `INSERT INTO order_items (order_id, item_id, quantity, price_at_purchase)
-         VALUES ($1,$2,$3,$4)
+         VALUES ($1, $2, $3, $4)
          RETURNING order_item_id`,
         [orderId, it.item_id, it.quantity, it.price_at_add]
       );
@@ -187,13 +230,13 @@ export const createOrderFromCart = async (req, res) => {
       for (const optId of it.options) {
         await client.query(
           `INSERT INTO order_item_options (order_item_id, option_id)
-           VALUES ($1,$2)`,
+           VALUES ($1, $2)`,
           [orderItemId, optId]
         );
       }
     }
 
-    // 3. Clear cart
+    // 4. Clear cart
     await client.query(
       `DELETE FROM cart_item_options WHERE cart_item_id IN 
          (SELECT cart_item_id FROM cart_items WHERE cart_id = $1)`,
@@ -205,14 +248,13 @@ export const createOrderFromCart = async (req, res) => {
       [cartId]
     );
 
-    // 3. ASSIGN DRIVER
+    // 5. Assign driver
     const driverRes = await client.query(
       `SELECT user_id, full_name FROM users
-      WHERE role = 'driver'
-      ORDER BY RANDOM()
-      LIMIT 1`
+       WHERE role = 'driver'
+       ORDER BY RANDOM()
+       LIMIT 1`
     );
-
 
     if (driverRes.rows.length === 0) {
       throw new Error("No available drivers");
@@ -222,14 +264,19 @@ export const createOrderFromCart = async (req, res) => {
 
     await client.query(
       `INSERT INTO deliveries (order_id, driver_id)
-      VALUES ($1, $2)`,
+       VALUES ($1, $2)`,
       [orderId, driverId]
     );
 
-
     await client.query("COMMIT");
 
-    res.json({ success: true, order_id: orderId });
+    res.json({ 
+      success: true, 
+      order_id: orderId,
+      total_amount: totalAmount,
+      discount_applied: discountAmount,
+      subtotal: subtotal
+    });
 
   } catch (err) {
     await client.query("ROLLBACK");

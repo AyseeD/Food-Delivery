@@ -65,26 +65,38 @@ export const getCart = async (req, res) => {
 
     const cartId = cart.rows[0].cart_id;
 
-    // Load cart items + options
+    // Load cart items + options - ADDED item_id and restaurant_id
     const items = await db.query(
-      `SELECT ci.cart_item_id, ci.quantity, ci.price_at_add,
-              mi.name, mi.image_url,
-             COALESCE(
-                    json_agg(
-                        DISTINCT jsonb_build_object(
-                        'option_id', o.option_id,
-                        'name', o.name,
-                        'additional_price', o.additional_price
-                        )
-                    ) FILTER (WHERE o.option_id IS NOT NULL),
-                    '[]'
-                ) AS options
+      `SELECT 
+        ci.cart_item_id, 
+        ci.quantity, 
+        ci.price_at_add,
+        ci.item_id,                    -- ADD THIS
+        mi.name, 
+        mi.image_url,
+        mi.restaurant_id,              -- ADD THIS
+        COALESCE(
+          json_agg(
+            DISTINCT jsonb_build_object(
+              'option_id', o.option_id,
+              'name', o.name,
+              'additional_price', o.additional_price
+            )
+          ) FILTER (WHERE o.option_id IS NOT NULL),
+          '[]'
+        ) AS options
        FROM cart_items ci
        JOIN menu_items mi ON ci.item_id = mi.item_id
        LEFT JOIN cart_item_options cio ON ci.cart_item_id = cio.cart_item_id
        LEFT JOIN item_options o ON cio.option_id = o.option_id
        WHERE ci.cart_id = $1
-       GROUP BY ci.cart_item_id, mi.name, mi.image_url`,
+       GROUP BY 
+         ci.cart_item_id, 
+         ci.item_id,                   -- ADD TO GROUP BY
+         mi.name, 
+         mi.image_url,
+         mi.restaurant_id              -- ADD TO GROUP BY
+       ORDER BY ci.cart_item_id DESC`,
       [cartId]
     );
 

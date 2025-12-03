@@ -130,3 +130,45 @@
   margin-top: 5px;
   font-style: italic;
 }
+
+/* Add to your main AdminRestaurants.css or create AdminPromos.css */
+.promo-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin: 5px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.promo-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* If you want to show promo status in restaurant cards */
+.restaurant-promo-indicator {
+  display: inline-block;
+  background: #28a745;
+  color: white;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: 5px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+}
