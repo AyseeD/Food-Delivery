@@ -107,3 +107,26 @@
 .delete-btn:hover {
   background: #e13232;
 }
+
+.restaurant-info {
+  flex: 1;
+  padding: 0 10px;
+}
+
+.inactive-badge {
+  display: inline-block;
+  background-color: #f44336;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+.restaurant-tags {
+  color: #666;
+  font-size: 14px;
+  margin-top: 5px;
+  font-style: italic;
+}

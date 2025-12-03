@@ -1,8 +1,12 @@
 import {db} from "../db.js";
 
-export const getAll = async (req, res) =>{
-    try {
-    const result = await db.query(`
+export const getAll = async (req, res) => {
+  try {
+    // For customers, only show active restaurants
+    const isAdmin = req.user?.role === 'admin';
+    const showAll = isAdmin || req.query.showAll === 'true';
+    
+    let query = `
       SELECT 
         r.*,
         COALESCE(
@@ -14,8 +18,15 @@ export const getAll = async (req, res) =>{
       FROM restaurants r
       LEFT JOIN restaurant_tags rt ON r.restaurant_id = rt.restaurant_id
       LEFT JOIN tags t ON rt.tag_id = t.tag_id
-      GROUP BY r.restaurant_id
-    `);
+    `;
+    
+    if (!showAll) {
+      query += ` WHERE r.is_active = TRUE`;
+    }
+    
+    query += ` GROUP BY r.restaurant_id`;
+    
+    const result = await db.query(query);
 
     res.json(result.rows);
   } catch (err) {
@@ -126,7 +137,82 @@ const getRestaurantWithTags = async (restaurantId) => {
   return result.rows[0];
 };
 
-export const remove = async (req, res) =>{
-    await db.query("DELETE FROM restaurants WHERE restaurant_id = $1", [req.params.id]);
-    res.json({deleted: true});
+export const remove = async (req, res) => {
+  const { id } = req.params;
+  
+  try {
+    // Check if restaurant has any orders
+    const ordersCheck = await db.query(
+      "SELECT 1 FROM orders WHERE restaurant_id = $1 LIMIT 1",
+      [id]
+    );
+
+    if (ordersCheck.rowCount > 0) {
+      // Restaurant has orders, deactivate instead of deleting
+      await db.query(
+        "UPDATE restaurants SET is_active = FALSE WHERE restaurant_id = $1",
+        [id]
+      );
+
+      return res.json({
+        success: true,
+        action: "deactivated",
+        message: "Restaurant has orders. Deactivated instead of deleted.",
+      });
+    }
+
+    // No orders, safe to delete
+    // First delete related records due to foreign key constraints
+    
+    // Delete restaurant tags
+    await db.query("DELETE FROM restaurant_tags WHERE restaurant_id = $1", [id]);
+    
+    // Delete restaurant hours
+    await db.query("DELETE FROM restaurant_hours WHERE restaurant_id = $1", [id]);
+    
+    // Delete promotions
+    await db.query("DELETE FROM promotions WHERE restaurant_id = $1", [id]);
+    
+    // For menu items, we need to handle their related records first
+    // Get all menu item IDs for this restaurant
+    const menuItemsRes = await db.query(
+      "SELECT item_id FROM menu_items WHERE restaurant_id = $1",
+      [id]
+    );
+    
+    const itemIds = menuItemsRes.rows.map(row => row.item_id);
+    
+    if (itemIds.length > 0) {
+      // Delete item tags
+      await db.query("DELETE FROM item_tags WHERE item_id = ANY($1::int[])", [itemIds]);
+      
+      // Delete item options
+      await db.query("DELETE FROM item_options WHERE item_id = ANY($1::int[])", [itemIds]);
+      
+      // Delete menu items
+      await db.query("DELETE FROM menu_items WHERE restaurant_id = $1", [id]);
+    }
+    
+    // Delete menu categories
+    await db.query("DELETE FROM menu_categories WHERE restaurant_id = $1", [id]);
+    
+    // Finally delete the restaurant
+    const result = await db.query(
+      "DELETE FROM restaurants WHERE restaurant_id = $1 RETURNING restaurant_id",
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Restaurant not found" });
+    }
+
+    res.json({ 
+      success: true, 
+      action: "deleted" 
+    });
+    
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Could not delete restaurant" });
+  }
 };

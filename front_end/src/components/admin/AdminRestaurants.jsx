@@ -10,7 +10,7 @@ function AdminRestaurants() {
 
   // FETCH RESTAURANTS (Backend)
   useEffect(() => {
-   async function fetchRestaurants() {
+    async function fetchRestaurants() {
       try {
         const result = await fetch("http://localhost:4000/restaurants");
         const data = await result.json();
@@ -18,19 +18,53 @@ function AdminRestaurants() {
       } catch (error) {
         console.error("Failed to load restaurants:", error);
       }
-   }
+    }
 
-   fetchRestaurants();
+    fetchRestaurants();
   }, []);
 
   // DELETE RESTAURANT
-  const deleteRestaurant = (id) => {
-    
+  const deleteRestaurant = async (id) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this restaurant?");
+    if (!confirmDelete) return;
+
+    try {
+      const res = await fetch(`http://localhost:4000/restaurants/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("adminToken")}`
+        }
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error || "Delete failed");
+        return;
+      }
+
+      if (data.action === "deleted") {
+        // Remove restaurant from list
+        setRestaurants((prev) => prev.filter((r) => r.restaurant_id !== id));
+        alert("Restaurant permanently deleted.");
+      } else if (data.action === "deactivated") {
+        // Update restaurant in list to show as inactive
+        setRestaurants((prev) =>
+          prev.map((r) =>
+            r.restaurant_id === id ? { ...r, is_active: false } : r
+          )
+        );
+        alert("Restaurant has existing orders. It has been deactivated instead of deleted.");
+      }
+
+    } catch (err) {
+      console.error("Failed to delete restaurant:", err);
+      alert("Failed to delete restaurant");
+    }
   };
 
   return (
     <div className="admin-restaurants">
-
       <div className="top-bar">
         <h2 className="page-title">Restaurants</h2>
         <button className="add-btn" onClick={() => setShowAddForm(true)}>
@@ -41,10 +75,18 @@ function AdminRestaurants() {
       {/* RESTAURANT LIST */}
       <div className="restaurant-list">
         {restaurants.map(rest => (
-          <div className="restaurant-card" key={rest.id}>
+          <div className="restaurant-card" key={rest.restaurant_id}>
             <img src={rest.restaurant_img} alt="" className="restaurant-img" />
-
-            <h3>{rest.name}</h3>
+            
+            <div className="restaurant-info">
+              <h3>{rest.name}</h3>
+              {!rest.is_active && (
+                <span className="inactive-badge">Inactive</span>
+              )}
+              <p className="restaurant-tags">
+                {rest.tags?.map(tag => tag.name).join(", ")}
+              </p>
+            </div>
 
             <div className="buttons">
               <button className="menu-btn" onClick={() => setSelectedRestaurant(rest)}>
@@ -58,8 +100,10 @@ function AdminRestaurants() {
                 Edit
               </button>
 
-
-              <button className="delete-btn" onClick={() => deleteRestaurant(rest.id)}>
+              <button 
+                className="delete-btn" 
+                onClick={() => deleteRestaurant(rest.restaurant_id)}
+              >
                 Delete
               </button>
             </div>
@@ -74,7 +118,6 @@ function AdminRestaurants() {
           setRestaurants={setRestaurants}
         />
       )}
-
 
       {selectedRestaurant?.mode === "edit" && (
         <RestaurantForm
