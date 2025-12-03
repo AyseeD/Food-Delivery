@@ -11,9 +11,7 @@ export default function Home() {
   const [restaurants, setRestaurants] = useState([]);
   const [categories, setCategories] = useState(["All"]);
   const [loading, setLoading] = useState(true);
-  const [homeSearchTerm, setHomeSearchTerm] = useState(""); // Add state for home search
-  const navigate = useNavigate(); // Add navigate
-
+  
   // Fetch restaurants
   useEffect(() => {
     async function fetchRestaurants() {
@@ -55,17 +53,6 @@ export default function Home() {
     fetchTags();
   }, []);
 
-  // Handle home page search
-  const handleHomeSearch = (e) => {
-    e.preventDefault();
-    if (homeSearchTerm.trim().length >= 2) {
-      navigate(`/search?q=${encodeURIComponent(homeSearchTerm.trim())}`);
-      setHomeSearchTerm("");
-    } else {
-      alert("Please enter at least 2 characters to search");
-    }
-  };
-
   // Filter restaurants by tag
   const filteredRestaurants = 
     selectedCategory === "All"
@@ -79,24 +66,6 @@ export default function Home() {
       <Header />
 
       <div className="home-page">
-        <div className="home-hero">
-          <h1>Order food to your door</h1>
-          <p>Discover the best restaurants in your area</p>
-          
-          {/* Home page search bar */}
-          <form className="home-search-form" onSubmit={handleHomeSearch}>
-            <input
-              type="text"
-              placeholder="What are you craving today?"
-              value={homeSearchTerm}
-              onChange={(e) => setHomeSearchTerm(e.target.value)}
-              className="home-search-input"
-            />
-            <button type="submit" className="home-search-button">
-              <i className="fa-solid fa-magnifying-glass"></i> Search
-            </button>
-          </form>
-        </div>
 
         <h2>Food Categories</h2>
         <CategorySlider
