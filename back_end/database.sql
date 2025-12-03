@@ -28,15 +28,6 @@ CREATE TABLE restaurants (
     restaurant_img TEXT
 );
 
--- Restaurant operating hours
-CREATE TABLE restaurant_hours (
-    hours_id SERIAL PRIMARY KEY,
-    restaurant_id INT REFERENCES restaurants(restaurant_id),
-    day_of_week INT NOT NULL,  -- 0 = Sunday ... 6 = Saturday
-    open_time TIME NOT NULL,
-    close_time TIME NOT NULL
-);
-
 --Restaurant tags
 CREATE TABLE restaurant_tags (
     restaurant_tag_id SERIAL PRIMARY KEY,

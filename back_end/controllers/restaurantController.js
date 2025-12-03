@@ -42,14 +42,6 @@ export const getById = async (req, res) => {
     res.json(result.rows[0] || null);
 };
 
-export const getHours = async (req, res) => {
-    const result = await db.query(
-        "SELECT day_of_week, open_time, close_time FROM restaurant_hours WHERE restaurant_id = $1 ORDER BY day_of_week", 
-        [req.params.id]
-    );
-    res.json(result.rows);
-};
-
 export const create = async (req, res) => {
   const { name, description, address, is_active, rating, restaurant_img, tags = [] } = req.body;
   
