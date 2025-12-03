@@ -11,6 +11,8 @@ export default function AccountPage() {
   const [orders, setOrders] = useState([]);
   const [loadingUser, setLoadingUser] = useState(true);
   const [loadingOrders, setLoadingOrders] = useState(true);
+  const [editMode, setEditMode] = useState(false);
+  const [updatedUser, setUpdatedUser] = useState({});
 
   const token = localStorage.getItem("token");
 
@@ -26,6 +28,11 @@ export default function AccountPage() {
 
         const data = await res.json();
         setUser(data);
+        setUpdatedUser({
+          full_name: data.full_name,
+          email: data.email,
+          address: data.address || ""
+        });
       } catch (err) {
         console.error("Failed to load user info", err);
       }
@@ -62,6 +69,31 @@ export default function AccountPage() {
 
     loadOrders();
   }, [user, token]);
+
+  const handleUpdateUser = async () => {
+    try {
+      const res = await fetch("http://localhost:4000/auth/update", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updatedUser),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setUser(data);
+        setEditMode(false);
+        alert("Profile updated successfully!");
+      } else {
+        alert("Failed to update profile: " + data.error);
+      }
+    } catch (err) {
+      console.error("Failed to update user:", err);
+      alert("Failed to update profile");
+    }
+  };
 
   return (
     <div className="account-container">
@@ -123,7 +155,6 @@ export default function AccountPage() {
             </section>
           )}
 
-
           {/* ACCOUNT DETAILS TAB */}
           {activeTab === "details" && (
             <section className="account-details">
@@ -132,27 +163,102 @@ export default function AccountPage() {
               {loadingUser ? (
                 <p>Loading...</p>
               ) : (
-                <form className="details-form">
-                  <div className="row">
-                    <div className="field">
-                      <label>Name</label>
-                      <input
-                        type="text"
-                        defaultValue={user?.full_name}
-                      />
+                <div className="details-form-container">
+                  {editMode ? (
+                    <form className="details-form">
+                      <div className="row">
+                        <div className="field">
+                          <label>Full Name *</label>
+                          <input
+                            type="text"
+                            value={updatedUser.full_name}
+                            onChange={(e) => setUpdatedUser({
+                              ...updatedUser,
+                              full_name: e.target.value
+                            })}
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div className="field full">
+                        <label>Email *</label>
+                        <input
+                          type="email"
+                          value={updatedUser.email}
+                          onChange={(e) => setUpdatedUser({
+                            ...updatedUser,
+                            email: e.target.value
+                          })}
+                          required
+                        />
+                      </div>
+
+                      <div className="field full">
+                        <label>Delivery Address</label>
+                        <textarea
+                          value={updatedUser.address || ""}
+                          onChange={(e) => setUpdatedUser({
+                            ...updatedUser,
+                            address: e.target.value
+                          })}
+                          placeholder="Enter your delivery address"
+                          rows="3"
+                        />
+                        <small>Street, City, ZIP Code</small>
+                      </div>
+
+                      <div className="form-buttons">
+                        <button 
+                          type="button" 
+                          className="update-btn"
+                          onClick={handleUpdateUser}
+                        >
+                          Save Changes
+                        </button>
+                        <button 
+                          type="button" 
+                          className="cancel-btn"
+                          onClick={() => {
+                            setEditMode(false);
+                            setUpdatedUser({
+                              full_name: user.full_name,
+                              email: user.email,
+                              address: user.address || ""
+                            });
+                          }}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </form>
+                  ) : (
+                    <div className="user-info-display">
+                      <div className="info-row">
+                        <strong>Name:</strong>
+                        <span>{user.full_name}</span>
+                      </div>
+                      <div className="info-row">
+                        <strong>Email:</strong>
+                        <span>{user.email}</span>
+                      </div>
+                      <div className="info-row">
+                        <strong>Address:</strong>
+                        <span>{user.address || "Not provided"}</span>
+                      </div>
+                      <div className="info-row">
+                        <strong>Account Created:</strong>
+                        <span>{new Date(user.created_at).toLocaleDateString()}</span>
+                      </div>
+                      <button 
+                        className="edit-btn"
+                        onClick={() => setEditMode(true)}
+                      >
+                        Edit Profile
+                      </button>
                     </div>
-                  </div>
-
-                  <div className="field full">
-                    <label>Email</label>
-                    <input
-                      type="email"
-                      defaultValue={user?.email}
-                    />
-                  </div>
-
-                  <button className="update-btn">Update</button>
-                </form>
+                  )}
+                </div>
               )}
             </section>
           )}

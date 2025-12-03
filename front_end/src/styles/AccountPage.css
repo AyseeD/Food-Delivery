@@ -398,3 +398,85 @@
   border-radius: 5px;
   margin: 10px 0;
 }
+
+.user-info-display {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.info-row {
+  display: flex;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.info-row strong {
+  width: 150px;
+  color: #555;
+}
+
+.info-row span {
+  flex: 1;
+  color: #333;
+}
+
+.edit-btn {
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+  transition: background 0.3s;
+}
+
+.edit-btn:hover {
+  background: #ff5252;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.cancel-btn {
+  background: #ccc;
+  color: #333;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.cancel-btn:hover {
+  background: #bbb;
+}
+
+.field-note {
+  display: block;
+  color: #666;
+  font-size: 12px;
+  margin-bottom: 15px;
+  margin-top: 5px;
+}
+
+textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  resize: vertical;
+}

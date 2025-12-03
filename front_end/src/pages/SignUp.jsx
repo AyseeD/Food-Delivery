@@ -11,6 +11,7 @@ function SignUp() {
     full_name: "",
     email: "",
     password: "",
+    address: "", 
   });
 
   function handleChange(e) {
@@ -19,6 +20,12 @@ function SignUp() {
 
   async function handleRegister(e) {
     e.preventDefault();
+
+    // Basic validation
+    if (!form.full_name || !form.email || !form.password) {
+      alert("Please fill in all required fields");
+      return;
+    }
 
     const res = await fetch("http://localhost:4000/auth/register", {
       method: "POST",
@@ -64,9 +71,34 @@ function SignUp() {
         <div className="form-container sign-up-container">
           <form onSubmit={handleRegister}>
             <h1>Create Account</h1>
-            <input name="full_name" type="text" placeholder="Name" onChange={handleChange} />
-            <input name="email" type="email" placeholder="Email" onChange={handleChange} />
-            <input name="password" type="password" placeholder="Password" onChange={handleChange} />
+            <input 
+              name="full_name" 
+              type="text" 
+              placeholder="Full Name *" 
+              onChange={handleChange} 
+              required 
+            />
+            <input 
+              name="email" 
+              type="email" 
+              placeholder="Email *" 
+              onChange={handleChange} 
+              required 
+            />
+            <input 
+              name="password" 
+              type="password" 
+              placeholder="Password *" 
+              onChange={handleChange} 
+              required 
+            />
+            <input 
+              name="address" 
+              type="text" 
+              placeholder="Delivery Address (Street, City, ZIP)" 
+              onChange={handleChange} 
+            />
+            <small className="field-note">* Required fields</small>
             <button className="btn">Sign Up</button>
           </form>
         </div>
@@ -75,8 +107,20 @@ function SignUp() {
         <div className="form-container sign-in-container">
           <form onSubmit={handleLogin}>
             <h1>Sign in</h1>
-            <input name="email" type="email" placeholder="Email" onChange={handleChange} />
-            <input name="password" type="password" placeholder="Password" onChange={handleChange} />
+            <input 
+              name="email" 
+              type="email" 
+              placeholder="Email" 
+              onChange={handleChange} 
+              required 
+            />
+            <input 
+              name="password" 
+              type="password" 
+              placeholder="Password" 
+              onChange={handleChange} 
+              required 
+            />
             <a href="/admin/login">Sign In as Admin</a>
             <button className="btn">Sign In</button>
           </form>
