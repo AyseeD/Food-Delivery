@@ -3,8 +3,14 @@ import {db} from "../db.js";
 export const getAll = async (req, res) =>{
     try {
     const result = await db.query(`
-      SELECT r.*,
-        COALESCE(JSON_AGG(t.name) FILTER (WHERE t.name IS NOT NULL), '[]') AS tags
+      SELECT 
+        r.*,
+        COALESCE(
+          JSON_AGG(
+            JSON_BUILD_OBJECT('tag_id', t.tag_id, 'name', t.name)
+          ) FILTER (WHERE t.tag_id IS NOT NULL), 
+          '[]'
+        ) AS tags
       FROM restaurants r
       LEFT JOIN restaurant_tags rt ON r.restaurant_id = rt.restaurant_id
       LEFT JOIN tags t ON rt.tag_id = t.tag_id
@@ -31,13 +37,13 @@ export const getHours = async (req, res) => {
 };
 
 export const create = async (req, res) => {
-  const { name, description, address, is_active, rating, tags = [] } = req.body;
+  const { name, description, address, is_active, rating, restaurant_img, tags = [] } = req.body;
   
   try {
     const result = await db.query(
-      `INSERT INTO restaurants (name, description, address, is_active, rating)
-       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-      [name, description, address, is_active ?? true, rating ?? null]
+      `INSERT INTO restaurants (name, description, address, is_active, rating, restaurant_img)
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+      [name, description, address, is_active ?? true, rating ?? null, restaurant_img || null]
     );
     
     const restaurant = result.rows[0];
@@ -63,14 +69,15 @@ export const create = async (req, res) => {
 };
 
 export const update = async (req, res) => {
-  const { name, description, address, is_active, rating, tags = [] } = req.body;
+  const { name, description, address, is_active, rating, restaurant_img, tags = [] } = req.body;
   
   try {
     // Update restaurant
     const result = await db.query(
-      `UPDATE restaurants SET name=$1, description=$2, address=$3, is_active=$4, rating=$5
-       WHERE restaurant_id=$6 RETURNING *`,
-      [name, description, address, is_active, rating, req.params.id]
+      `UPDATE restaurants 
+       SET name=$1, description=$2, address=$3, is_active=$4, rating=$5, restaurant_img=$6
+       WHERE restaurant_id=$7 RETURNING *`,
+      [name, description, address, is_active, rating, restaurant_img || null, req.params.id]
     );
     
     const restaurant = result.rows[0];
@@ -100,8 +107,14 @@ export const update = async (req, res) => {
 // Helper function to get restaurant with tags
 const getRestaurantWithTags = async (restaurantId) => {
   const result = await db.query(
-    `SELECT r.*,
-      COALESCE(JSON_AGG(t.tag_id) FILTER (WHERE t.tag_id IS NOT NULL), '[]') AS tags
+    `SELECT 
+      r.*,
+      COALESCE(
+        JSON_AGG(
+          JSON_BUILD_OBJECT('tag_id', t.tag_id, 'name', t.name)
+        ) FILTER (WHERE t.tag_id IS NOT NULL), 
+        '[]'
+      ) AS tags
      FROM restaurants r
      LEFT JOIN restaurant_tags rt ON r.restaurant_id = rt.restaurant_id
      LEFT JOIN tags t ON rt.tag_id = t.tag_id

@@ -11,15 +11,19 @@ function RestaurantForm({ closeForm, setRestaurants, restaurant }) {
     description: restaurant?.description || "",
     address: restaurant?.address || "",
     rating: restaurant?.rating || "",
-    is_active: restaurant?.is_active ?? true
+    is_active: restaurant?.is_active ?? true,
+    restaurant_img: restaurant?.restaurant_img || ""  // Add this line
   });
 
   // Fetch restaurant tags
   useEffect(() => {
     fetchRestaurantTags();
     if (isEdit && restaurant.tags) {
-      // If editing, pre-select existing tags
-      setSelectedRestaurantTags(restaurant.tags);
+      // Extract tag IDs from the tag objects
+      const tagIds = restaurant.tags.map(tag => 
+        typeof tag === 'object' ? tag.tag_id : tag
+      );
+      setSelectedRestaurantTags(tagIds);
     }
   }, [restaurant]);
 
@@ -123,6 +127,13 @@ function RestaurantForm({ closeForm, setRestaurants, restaurant }) {
             max="5"
             value={form.rating}
             onChange={(e) => setForm({ ...form, rating: e.target.value })}
+          />
+
+          <input
+            type="text"
+            placeholder="Restaurant Image URL"
+            value={form.restaurant_img}
+            onChange={(e) => setForm({...form, restaurant_img: e.target.value})}
           />
 
           <select

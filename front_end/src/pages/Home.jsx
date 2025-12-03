@@ -52,12 +52,14 @@ export default function Home() {
     fetchTags();
   }, []);
 
-
   // Filter restaurants by tag
-  const filteredRestaurants =
+  const filteredRestaurants = 
     selectedCategory === "All"
       ? restaurants
-      : restaurants.filter(r => r.tags.includes(selectedCategory))
+      : restaurants.filter(r => {
+          // Now r.tags is an array of objects, so we need to check the names
+          return r.tags.some(tag => tag.name === selectedCategory);
+        });
 
   return (
     <div id="home-page-wrapper">
@@ -82,13 +84,13 @@ export default function Home() {
           <div className="restaurant-list">
             {filteredRestaurants.map((r) => (
               <RestaurantCard 
-                key={r.id}
+                key={r.restaurant_id || r.id}
                 name={r.name}
-                category={r.tags?.[0] || "Unknown"} 
+                category={r.tags?.[0]?.name || "Unknown"}  // Extract name from first tag object
                 distance={Math.floor(Math.random() * 10) + 1}
                 time={Math.floor(Math.random() * 60) + 10}
                 image={r.restaurant_img}
-                id={r.restaurant_id}
+                id={r.restaurant_id || r.id}
               />
             ))}
           </div>
