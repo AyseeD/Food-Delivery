@@ -23,18 +23,31 @@ export default function RestaurantPage() {
     setSelectedItemId(null);
   }
 
-  async function handleAddToCart(item, selectedOptions) {
+  async function handleAddToCart(item, selectedOptions, quantity = 1) { // Default quantity to 1
     try {
       const token = localStorage.getItem("token");
 
-      await fetch("http://localhost:4000/cart/add", {
+      console.log("Adding to cart:", { 
+        item_id: item.item_id, 
+        quantity, 
+        selectedOptions 
+      });
+
+      const response = await fetch("http://localhost:4000/cart/add", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ item_id: item.item_id, options: selectedOptions }),
+        body: JSON.stringify({ 
+          item_id: item.item_id, 
+          options: selectedOptions,
+          quantity: quantity // This is the key!
+        }),
       });
+
+      const data = await response.json();
+      console.log("Add to cart response:", data);
 
       closeModal();
 
@@ -45,9 +58,9 @@ export default function RestaurantPage() {
 
     } catch (error) {
       console.error("Add to cart failed:", error);
+      alert("Failed to add item to cart");
     }
   }
-
 
   // --- Fetch Restaurant Info ---
   useEffect(() => {
@@ -178,10 +191,9 @@ export default function RestaurantPage() {
         <ItemModal
           itemId={selectedItemId}
           onClose={closeModal}
-          onAdd={handleAddToCart}
+          onAdd={handleAddToCart} // This passes quantity from ItemModal
         />
       )}
-
 
       <Footer />
     </div>

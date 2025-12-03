@@ -1,0 +1,152 @@
+.search-results-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.results-section {
+  margin-bottom: 40px;
+}
+
+.results-section h3 {
+  margin-bottom: 20px;
+  color: #333;
+  border-bottom: 2px solid #ff6b6b;
+  padding-bottom: 10px;
+}
+
+.menu-items-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.menu-item-card {
+  background: white;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-item-image {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.menu-item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.menu-item-info {
+  flex: 1;
+}
+
+.menu-item-info h4 {
+  margin: 0 0 10px 0;
+  color: #333;
+}
+
+.menu-item-description {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.menu-item-price {
+  font-weight: bold;
+  color: #ff6b6b;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.menu-item-restaurant {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.menu-item-restaurant a {
+  color: #0066cc;
+  text-decoration: none;
+}
+
+.menu-item-restaurant a:hover {
+  text-decoration: underline;
+}
+
+.menu-item-category {
+  color: #888;
+  font-size: 13px;
+  font-style: italic;
+}
+
+.view-restaurant-btn {
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 15px;
+  width: 100%;
+  transition: background 0.3s;
+}
+
+.view-restaurant-btn:hover {
+  background: #ff5252;
+}
+
+.error-message {
+  color: #f44336;
+  padding: 10px;
+  background: #ffebee;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.search-container {
+  position: relative;
+  flex: 1;
+  max-width: 600px;
+  margin: 0 20px;
+}
+
+.search-bar {
+  width: 100%;
+  padding: 10px 45px 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 25px;
+  font-size: 16px;
+  outline: none;
+  transition: border 0.3s;
+}
+
+.search-bar:focus {
+  border-color: #ff6b6b;
+}
+
+.search-button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 5px;
+}
+
+.search-button:hover {
+  color: #ff6b6b;
+}

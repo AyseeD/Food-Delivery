@@ -2,8 +2,33 @@ import { db } from "../db.js";
 
 export const getUserOrders = async (req, res) => {
   const { userId } = req.params;
-  const result = await db.query("SELECT * FROM orders WHERE user_id = $1 ORDER BY placed_at DESC", [userId]);
-  res.json(result.rows);
+  
+  try {
+    const result = await db.query(
+      "SELECT * FROM orders WHERE user_id = $1 ORDER BY placed_at DESC",
+      [userId]
+    );
+    
+    // Get items for each order
+    const orders = result.rows;
+    
+    for (const order of orders) {
+      const itemsRes = await db.query(
+        `SELECT oi.*, mi.name, mi.image_url
+         FROM order_items oi
+         JOIN menu_items mi ON oi.item_id = mi.item_id
+         WHERE oi.order_id = $1`,
+        [order.order_id]
+      );
+      
+      order.items = itemsRes.rows;
+    }
+    
+    res.json(orders);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Could not get user orders" });
+  }
 };
 
 export const getAllOrders = async (req, res) => {
@@ -22,13 +47,13 @@ export const getAllOrders = async (req, res) => {
       ORDER BY o.placed_at DESC
     `);
 
-    // load items for each order
+    // load items for each order WITH QUANTITIES
     const orders = result.rows;
 
     for (const order of orders) {
       const itemsRes = await db.query(
         `
-        SELECT mi.name
+        SELECT mi.name, oi.quantity, oi.price_at_purchase
         FROM order_items oi
         JOIN menu_items mi ON mi.item_id = oi.item_id
         WHERE oi.order_id = $1
@@ -36,7 +61,13 @@ export const getAllOrders = async (req, res) => {
         [order.id]
       );
 
-      order.items = itemsRes.rows.map(r => r.name);
+      // Format items with quantity
+      order.items = itemsRes.rows.map(r => ({
+        name: r.name,
+        quantity: r.quantity,
+        price: r.price_at_purchase,
+        itemTotal: (r.price_at_purchase * r.quantity).toFixed(2)
+      }));
     }
 
     res.json(orders);
@@ -57,10 +88,27 @@ export const getOrderById = async (req, res) => {
   );
 
   const itemsRes = await db.query(
-    `SELECT oi.*, mi.name
+    `SELECT 
+      oi.*, 
+      mi.name,
+      mi.image_url,
+      COALESCE(
+        json_agg(
+          DISTINCT jsonb_build_object(
+            'option_id', io.option_id,
+            'name', io.name,
+            'additional_price', io.additional_price
+          )
+        ) FILTER (WHERE io.option_id IS NOT NULL),
+        '[]'
+      ) AS options
      FROM order_items oi
      JOIN menu_items mi ON oi.item_id = mi.item_id
-     WHERE oi.order_id = $1`,
+     LEFT JOIN order_item_options oio ON oi.order_item_id = oio.order_item_id
+     LEFT JOIN item_options io ON oio.option_id = io.option_id
+     WHERE oi.order_id = $1
+     GROUP BY oi.order_item_id, mi.name, mi.image_url
+     ORDER BY oi.order_item_id`,
     [orderId]
   );
 
@@ -133,7 +181,7 @@ export const createOrderFromCart = async (req, res) => {
        JOIN menu_items mi ON ci.item_id = mi.item_id
        LEFT JOIN cart_item_options cio ON ci.cart_item_id = cio.cart_item_id
        WHERE ci.cart_id = $1
-       GROUP BY ci.cart_item_id, mi.restaurant_id`,
+       GROUP BY ci.cart_item_id, ci.quantity, mi.restaurant_id`,
       [cartId]
     );
 
@@ -144,18 +192,20 @@ export const createOrderFromCart = async (req, res) => {
     const items = itemsRes.rows;
     const restaurantId = items[0].restaurant_id;
 
-    // Calculate subtotal
+    // Calculate subtotal PROPERLY - MULTIPLY BY QUANTITY
     let subtotal = 0;
     for (const it of items) {
-      subtotal += Number(it.price_at_add);
+      // Multiply base price by quantity
+      subtotal += Number(it.price_at_add) * it.quantity;
 
-      // Add option prices
+      // Add option prices - also multiply by quantity
       if (it.options && it.options.length) {
         const optPrices = await client.query(
           `SELECT SUM(additional_price) AS sum FROM item_options WHERE option_id = ANY($1::int[])`,
           [it.options]
         );
-        subtotal += Number(optPrices.rows[0].sum || 0);
+        const optionsTotal = Number(optPrices.rows[0].sum || 0);
+        subtotal += optionsTotal * it.quantity;
       }
     }
 
@@ -215,7 +265,7 @@ export const createOrderFromCart = async (req, res) => {
       );
     }
 
-    // 3. Insert order_items
+    // 3. Insert order_items WITH QUANTITY
     for (const it of items) {
       const oiRes = await client.query(
         `INSERT INTO order_items (order_id, item_id, quantity, price_at_purchase)

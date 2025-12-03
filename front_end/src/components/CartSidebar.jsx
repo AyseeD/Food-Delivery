@@ -112,6 +112,33 @@ export default function CartSidebar({ isOpen, onClose }) {
     }
   }
 
+  async function updateQuantity(cartItemId, newQuantity) {
+    if (newQuantity < 1) {
+      // If quantity becomes 0, remove item
+      deleteItem(cartItemId);
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    try {
+      await fetch(`http://localhost:4000/cart/${cartItemId}/quantity`, {
+        method: "PATCH",
+        headers: { 
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify({ quantity: newQuantity })
+      });
+
+      // Refresh cart
+      loadCart();
+    } catch (err) {
+      console.error("Failed to update quantity:", err);
+      alert("Failed to update quantity");
+    }
+  }
+
   // Remove promotion
   function removePromotion() {
     setAppliedPromotion(null);
@@ -121,8 +148,11 @@ export default function CartSidebar({ isOpen, onClose }) {
   // Calculate subtotal
   const calculateSubtotal = () => {
     return cartItems.reduce((total, item) => {
-      const itemTotal = Number(item.price_at_add || 0) +
-        (item.options?.reduce((sum, opt) => sum + Number(opt.additional_price || 0), 0) || 0);
+      const basePrice = Number(item.price_at_add || 0);
+      const optionsTotal = item.options?.reduce((sum, opt) => 
+        sum + Number(opt.additional_price || 0), 0) || 0;
+      const pricePerItem = basePrice + optionsTotal;
+      const itemTotal = pricePerItem * item.quantity;
       return total + itemTotal;
     }, 0);
   };
@@ -243,8 +273,8 @@ export default function CartSidebar({ isOpen, onClose }) {
           <p>Your cart is empty.</p>
         ) : (
           cartItems.map(item => {
-            const itemTotal = Number(item.price_at_add || 0) +
-              (item.options?.reduce((sum, opt) => sum + Number(opt.additional_price || 0), 0) || 0);
+            const itemTotal = (Number(item.price_at_add || 0) +
+              (item.options?.reduce((sum, opt) => sum + Number(opt.additional_price || 0), 0) || 0)) * item.quantity;
 
             return (
               <div key={item.cart_item_id} className="cart-entry">
@@ -253,6 +283,23 @@ export default function CartSidebar({ isOpen, onClose }) {
                 <div className="cart-info">
                   <h4>{item.name}</h4>
                   <p>Base: {item.price_at_add || 0} ₺</p>
+
+                  {/* Add Quantity Controls */}
+                  <div className="cart-quantity">
+                    <button 
+                      className="quantity-btn-small"
+                      onClick={() => updateQuantity(item.cart_item_id, item.quantity - 1)}
+                    >
+                      −
+                    </button>
+                    <span className="quantity-display-small">{item.quantity}</span>
+                    <button 
+                      className="quantity-btn-small"
+                      onClick={() => updateQuantity(item.cart_item_id, item.quantity + 1)}
+                    >
+                      +
+                    </button>
+                  </div>
 
                   {item.options?.length > 0 && (
                     <ul className="cart-options">

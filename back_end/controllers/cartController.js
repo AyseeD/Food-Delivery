@@ -3,7 +3,7 @@ import { db } from "../db.js";
 export const addToCart = async (req, res) => {
   try {
     const userId = req.user.user_id;
-    const { item_id, options = [] } = req.body;
+    const { item_id, options = [], quantity = 1 } = req.body; // Add quantity default
 
     // Get or create cart
     let cartRes = await db.query(
@@ -22,13 +22,39 @@ export const addToCart = async (req, res) => {
       cartId = cartRes.rows[0].cart_id;
     }
 
-    // Insert item
+    // Check if item already exists in cart
+    const existingItem = await db.query(
+      `SELECT ci.cart_item_id, ci.quantity 
+       FROM cart_items ci
+       JOIN cart c ON ci.cart_id = c.cart_id
+       WHERE c.user_id = $1 AND ci.item_id = $2`,
+      [userId, item_id]
+    );
+
+    // If item exists, update quantity
+    if (existingItem.rows.length > 0) {
+      const newQuantity = existingItem.rows[0].quantity + quantity;
+      const cartItemId = existingItem.rows[0].cart_item_id;
+      
+      await db.query(
+        `UPDATE cart_items SET quantity = $1 WHERE cart_item_id = $2`,
+        [newQuantity, cartItemId]
+      );
+      
+      return res.json({ 
+        success: true, 
+        cart_item_id: cartItemId,
+        updated_quantity: newQuantity 
+      });
+    }
+
+    // Insert new item with quantity
     const itemRes = await db.query(
       `INSERT INTO cart_items (cart_id, item_id, quantity, price_at_add)
-       SELECT $1, item_id, 1, price
-       FROM menu_items WHERE item_id = $2
+       SELECT $1, item_id, $2, price
+       FROM menu_items WHERE item_id = $3
        RETURNING cart_item_id`,
-      [cartId, item_id]
+      [cartId, quantity, item_id] // Use quantity parameter
     );
 
     const cartItemId = itemRes.rows[0].cart_item_id;
@@ -141,5 +167,44 @@ export const deleteCartItem = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Could not delete cart item" });
+  }
+};
+
+export const updateCartItemQuantity = async (req, res) => {
+  try {
+    const userId = req.user.user_id;
+    const { cartItemId } = req.params;
+    const { quantity } = req.body;
+
+    if (quantity < 1) {
+      return res.status(400).json({ error: "Quantity must be at least 1" });
+    }
+
+    // Ensure the item belongs to the user's cart
+    const check = await db.query(
+      `SELECT ci.cart_item_id
+       FROM cart_items ci
+       JOIN cart c ON ci.cart_id = c.cart_id
+       WHERE ci.cart_item_id = $1 AND c.user_id = $2`,
+      [cartItemId, userId]
+    );
+
+    if (!check.rows.length) {
+      return res.status(404).json({ error: "Item not found in your cart" });
+    }
+
+    // Update quantity
+    const result = await db.query(
+      `UPDATE cart_items 
+       SET quantity = $1
+       WHERE cart_item_id = $2
+       RETURNING *`,
+      [quantity, cartItemId]
+    );
+
+    res.json({ success: true, cartItem: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Could not update quantity" });
   }
 };

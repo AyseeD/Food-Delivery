@@ -221,3 +221,81 @@
   padding-top: 15px;
   border-top: 2px solid #ddd;
 }
+
+.cart-quantity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.quantity-btn-small {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid #ddd;
+  background: white;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quantity-btn-small:hover {
+  background: #f0f0f0;
+}
+
+.quantity-display-small {
+  min-width: 20px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* For ItemModal */
+.quantity-selector {
+  margin: 15px 0;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.quantity-btn {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: 2px solid #ff6b6b;
+  background: white;
+  color: #ff6b6b;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quantity-btn:hover {
+  background: #ff6b6b;
+  color: white;
+}
+
+.quantity-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.quantity-btn:disabled:hover {
+  background: white;
+  color: #ff6b6b;
+}
+
+.quantity-display {
+  font-size: 20px;
+  font-weight: bold;
+  min-width: 40px;
+  text-align: center;
+}

@@ -4,6 +4,7 @@ import "../styles/ItemModal.css";
 export default function ItemModal({ itemId, onClose, onAdd }) {
   const [item, setItem] = useState(null);
   const [selectedOptions, setSelectedOptions] = useState([]);
+  const [quantity, setQuantity] = useState(1); // Add quantity state
 
   useEffect(() => {
     async function loadItem() {
@@ -22,6 +23,16 @@ export default function ItemModal({ itemId, onClose, onAdd }) {
     );
   }
 
+  function increaseQuantity() {
+    setQuantity(prev => prev + 1);
+  }
+
+  function decreaseQuantity() {
+    if (quantity > 1) {
+      setQuantity(prev => prev - 1);
+    }
+  }
+
   if (!item) return null;
 
   return (
@@ -34,6 +45,27 @@ export default function ItemModal({ itemId, onClose, onAdd }) {
         <h2>{item.name}</h2>
         <p>{item.description}</p>
         <h3>Base Price: {item.price} ₺</h3>
+
+        {/* Add Quantity Selector */}
+        <div className="quantity-selector">
+          <h3>Quantity</h3>
+          <div className="quantity-controls">
+            <button 
+              className="quantity-btn" 
+              onClick={decreaseQuantity}
+              disabled={quantity <= 1}
+            >
+              −
+            </button>
+            <span className="quantity-display">{quantity}</span>
+            <button 
+              className="quantity-btn" 
+              onClick={increaseQuantity}
+            >
+              +
+            </button>
+          </div>
+        </div>
 
         <h3>Extras</h3>
         <div className="options-list">
@@ -51,9 +83,9 @@ export default function ItemModal({ itemId, onClose, onAdd }) {
 
         <button
           className="modal-add-btn"
-          onClick={() => onAdd(item, selectedOptions)}
+          onClick={() => onAdd(item, selectedOptions, quantity)} // Pass quantity
         >
-          Add to Cart
+          Add to Cart ({quantity})
         </button>
       </div>
     </div>

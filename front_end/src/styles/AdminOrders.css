@@ -118,3 +118,29 @@
   color: #ff7a00;
 }
 
+.order-items-section {
+  margin: 10px 0;
+}
+
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.item-name {
+  flex: 2;
+}
+
+.item-quantity {
+  flex: 1;
+  text-align: center;
+  color: #666;
+}
+
+.item-price {
+  flex: 1;
+  text-align: right;
+  font-weight: bold;
+}

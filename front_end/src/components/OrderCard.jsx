@@ -5,6 +5,7 @@ export default function OrderCard({ order, token }) {
     const [items, setItems] = useState([]);
     const [open, setOpen] = useState(false);
     const [delivery, setDelivery] = useState(null);
+    const [promotion, setPromotion] = useState(null);
 
     useEffect(() => {
         async function loadRestaurant() {
@@ -25,6 +26,7 @@ export default function OrderCard({ order, token }) {
         const data = await res.json();
         setItems(data.items || []);
         setDelivery(data.delivery || null);
+        setPromotion(data.promotion || null);
     }
 
     function toggleOpen() {
@@ -36,6 +38,14 @@ export default function OrderCard({ order, token }) {
         e.stopPropagation();
         toggleOpen();
     }
+
+    // Calculate item total with quantity and options
+    const calculateItemTotal = (item) => {
+        const basePrice = Number(item.price_at_purchase || 0);
+        const optionsTotal = item.options?.reduce((sum, opt) => 
+            sum + Number(opt.additional_price || 0), 0) || 0;
+        return (basePrice + optionsTotal) * item.quantity;
+    };
 
     return (
         <div className="order-card" onClick={toggleOpen}>
@@ -61,21 +71,44 @@ export default function OrderCard({ order, token }) {
 
             {open && (
                 <div className="order-details">
-                    {items.map((it) => (
-                        <div key={it.order_item_id} className="order-item-row">
-                            <p>
-                                <strong>{it.name}</strong> × {it.quantity}
-                            </p>
-
-                            {it.options?.length > 0 && (
-                                <ul className="order-item-options">
-                                    {it.options.map((op) => (
-                                        <li key={op.option_id}>+ {op.option_name}</li>
-                                    ))}
-                                </ul>
-                            )}
+                    <div className="order-items-list">
+                        {items.map((it) => {
+                            const itemTotal = calculateItemTotal(it);
+                            
+                            return (
+                                <div key={it.order_item_id} className="order-item-row">
+                                    <div className="order-item-header">
+                                        <strong>{it.name}</strong>
+                                        <span className="item-quantity">× {it.quantity}</span>
+                                        <span className="item-total">{itemTotal.toFixed(2)} ₺</span>
+                                    </div>
+                                    
+                                    <div className="order-item-details">
+                                        <span className="item-base-price">
+                                            Base: {it.price_at_purchase} ₺ each
+                                        </span>
+                                        
+                                        {it.options?.length > 0 && (
+                                            <ul className="order-item-options">
+                                                {it.options.map((opt) => (
+                                                    <li key={opt.option_id}>
+                                                        + {opt.name} (+{opt.additional_price} ₺)
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        )}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                    
+                    {promotion && (
+                        <div className="promotion-info">
+                            <p><strong>Promotion Applied:</strong> {promotion.code}</p>
+                            <p><strong>Discount:</strong> {promotion.discount_percent}%</p>
                         </div>
-                    ))}
+                    )}
 
                     {delivery && (
                         <div className="delivery-info">
@@ -90,7 +123,6 @@ export default function OrderCard({ order, token }) {
                     )}
                 </div>
             )}
-
         </div>
     );
 }
