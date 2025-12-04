@@ -5,7 +5,11 @@ export const getUserOrders = async (req, res) => {
   
   try {
     const result = await db.query(
-      "SELECT * FROM orders WHERE user_id = $1 ORDER BY placed_at DESC",
+      `SELECT o.*, r.name as restaurant_name, r.restaurant_img
+       FROM orders o
+       JOIN restaurants r ON o.restaurant_id = r.restaurant_id
+       WHERE o.user_id = $1 
+       ORDER BY o.placed_at DESC`,
       [userId]
     );
     
@@ -172,16 +176,19 @@ export const createOrderFromCart = async (req, res) => {
 
     const cartId = cartRes.rows[0].cart_id;
 
-    // Get items in cart
+    // Get items in cart grouped by restaurant
     const itemsRes = await client.query(
       `SELECT ci.cart_item_id, ci.item_id, ci.quantity, ci.price_at_add,
               mi.restaurant_id,
+              r.name as restaurant_name,
               COALESCE(json_agg(cio.option_id) FILTER (WHERE cio.option_id IS NOT NULL), '[]') AS options
        FROM cart_items ci
        JOIN menu_items mi ON ci.item_id = mi.item_id
+       JOIN restaurants r ON mi.restaurant_id = r.restaurant_id
        LEFT JOIN cart_item_options cio ON ci.cart_item_id = cio.cart_item_id
        WHERE ci.cart_id = $1
-       GROUP BY ci.cart_item_id, ci.quantity, mi.restaurant_id`,
+       GROUP BY ci.cart_item_id, ci.quantity, mi.restaurant_id, r.name
+       ORDER BY mi.restaurant_id`,
       [cartId]
     );
 
@@ -189,51 +196,18 @@ export const createOrderFromCart = async (req, res) => {
       return res.status(400).json({ error: "Cart is empty" });
     }
 
-    const items = itemsRes.rows;
-    const restaurantId = items[0].restaurant_id;
-
-    // Calculate subtotal PROPERLY - MULTIPLY BY QUANTITY
-    let subtotal = 0;
-    for (const it of items) {
-      // Multiply base price by quantity
-      subtotal += Number(it.price_at_add) * it.quantity;
-
-      // Add option prices - also multiply by quantity
-      if (it.options && it.options.length) {
-        const optPrices = await client.query(
-          `SELECT SUM(additional_price) AS sum FROM item_options WHERE option_id = ANY($1::int[])`,
-          [it.options]
-        );
-        const optionsTotal = Number(optPrices.rows[0].sum || 0);
-        subtotal += optionsTotal * it.quantity;
+    // Group items by restaurant
+    const itemsByRestaurant = {};
+    itemsRes.rows.forEach(item => {
+      if (!itemsByRestaurant[item.restaurant_id]) {
+        itemsByRestaurant[item.restaurant_id] = {
+          restaurant_id: item.restaurant_id,
+          restaurant_name: item.restaurant_name,
+          items: []
+        };
       }
-    }
-
-    // Apply promotion if provided
-    let discountAmount = 0;
-    let appliedPromoId = null;
-    
-    if (promo_code) {
-      const promoRes = await client.query(
-        `SELECT * FROM promotions 
-         WHERE code = $1 
-           AND restaurant_id = $2 
-           AND is_active = TRUE
-           AND valid_from <= CURRENT_DATE
-           AND valid_until >= CURRENT_DATE`,
-        [promo_code.toUpperCase(), restaurantId]
-      );
-
-      if (promoRes.rows.length > 0) {
-        const promotion = promoRes.rows[0];
-        appliedPromoId = promotion.promo_id;
-        discountAmount = (subtotal * promotion.discount_percent) / 100;
-      } else {
-        return res.status(400).json({ error: "Invalid or expired promo code" });
-      }
-    }
-
-    const totalAmount = subtotal - discountAmount;
+      itemsByRestaurant[item.restaurant_id].items.push(item);
+    });
 
     // Get user address
     const addrRes = await client.query(
@@ -246,47 +220,126 @@ export const createOrderFromCart = async (req, res) => {
     // Begin transaction
     await client.query("BEGIN");
 
-    // 1. Create order
-    const orderRes = await client.query(
-      `INSERT INTO orders (user_id, restaurant_id, total_amount, delivery_address)
-       VALUES ($1, $2, $3, $4)
-       RETURNING order_id`,
-      [userId, restaurantId, totalAmount, address]
-    );
+    const createdOrders = [];
 
-    const orderId = orderRes.rows[0].order_id;
+    // Create separate order for each restaurant
+    for (const restaurantId in itemsByRestaurant) {
+      const restaurantData = itemsByRestaurant[restaurantId];
+      const restaurantItems = restaurantData.items;
 
-    // 2. Apply promotion to order if exists
-    if (appliedPromoId) {
-      await client.query(
-        `INSERT INTO orders_promotions (order_id, promo_id)
-         VALUES ($1, $2)`,
-        [orderId, appliedPromoId]
-      );
-    }
+      // Calculate subtotal for this restaurant
+      let subtotal = 0;
+      for (const it of restaurantItems) {
+        // Multiply base price by quantity
+        subtotal += Number(it.price_at_add) * it.quantity;
 
-    // 3. Insert order_items WITH QUANTITY
-    for (const it of items) {
-      const oiRes = await client.query(
-        `INSERT INTO order_items (order_id, item_id, quantity, price_at_purchase)
+        // Add option prices - also multiply by quantity
+        if (it.options && it.options.length) {
+          const optPrices = await client.query(
+            `SELECT SUM(additional_price) AS sum FROM item_options WHERE option_id = ANY($1::int[])`,
+            [it.options]
+          );
+          const optionsTotal = Number(optPrices.rows[0].sum || 0);
+          subtotal += optionsTotal * it.quantity;
+        }
+      }
+
+      // Apply promotion if provided (only for this restaurant)
+      let discountAmount = 0;
+      let appliedPromoId = null;
+      
+      if (promo_code) {
+        const promoRes = await client.query(
+          `SELECT * FROM promotions 
+           WHERE code = $1 
+             AND restaurant_id = $2 
+             AND is_active = TRUE
+             AND valid_from <= CURRENT_DATE
+             AND valid_until >= CURRENT_DATE`,
+          [promo_code.toUpperCase(), restaurantId]
+        );
+
+        if (promoRes.rows.length > 0) {
+          const promotion = promoRes.rows[0];
+          appliedPromoId = promotion.promo_id;
+          discountAmount = (subtotal * promotion.discount_percent) / 100;
+        }
+        // Note: If promo code doesn't apply to this restaurant, we continue without it
+      }
+
+      const totalAmount = subtotal - discountAmount;
+
+      // 1. Create order for this restaurant
+      const orderRes = await client.query(
+        `INSERT INTO orders (user_id, restaurant_id, total_amount, delivery_address)
          VALUES ($1, $2, $3, $4)
-         RETURNING order_item_id`,
-        [orderId, it.item_id, it.quantity, it.price_at_add]
+         RETURNING order_id`,
+        [userId, restaurantId, totalAmount, address]
       );
 
-      const orderItemId = oiRes.rows[0].order_item_id;
+      const orderId = orderRes.rows[0].order_id;
 
-      // Insert options
-      for (const optId of it.options) {
+      // 2. Apply promotion to order if exists
+      if (appliedPromoId) {
         await client.query(
-          `INSERT INTO order_item_options (order_item_id, option_id)
+          `INSERT INTO orders_promotions (order_id, promo_id)
            VALUES ($1, $2)`,
-          [orderItemId, optId]
+          [orderId, appliedPromoId]
         );
       }
+
+      // 3. Insert order_items for this restaurant
+      for (const it of restaurantItems) {
+        const oiRes = await client.query(
+          `INSERT INTO order_items (order_id, item_id, quantity, price_at_purchase)
+           VALUES ($1, $2, $3, $4)
+           RETURNING order_item_id`,
+          [orderId, it.item_id, it.quantity, it.price_at_add]
+        );
+
+        const orderItemId = oiRes.rows[0].order_item_id;
+
+        // Insert options
+        for (const optId of it.options) {
+          await client.query(
+            `INSERT INTO order_item_options (order_item_id, option_id)
+             VALUES ($1, $2)`,
+            [orderItemId, optId]
+          );
+        }
+      }
+
+      // 4. Assign driver for this order
+      const driverRes = await client.query(
+        `SELECT user_id, full_name FROM users
+         WHERE role = 'driver'
+         ORDER BY RANDOM()
+         LIMIT 1`
+      );
+
+      if (driverRes.rows.length === 0) {
+        throw new Error("No available drivers");
+      }
+
+      const driverId = driverRes.rows[0].user_id;
+
+      await client.query(
+        `INSERT INTO deliveries (order_id, driver_id)
+         VALUES ($1, $2)`,
+        [orderId, driverId]
+      );
+
+      createdOrders.push({
+        order_id: orderId,
+        restaurant_id: restaurantId,
+        restaurant_name: restaurantData.restaurant_name,
+        total_amount: totalAmount,
+        discount_applied: discountAmount,
+        subtotal: subtotal
+      });
     }
 
-    // 4. Clear cart
+    // 5. Clear cart
     await client.query(
       `DELETE FROM cart_item_options WHERE cart_item_id IN 
          (SELECT cart_item_id FROM cart_items WHERE cart_id = $1)`,
@@ -298,34 +351,12 @@ export const createOrderFromCart = async (req, res) => {
       [cartId]
     );
 
-    // 5. Assign driver
-    const driverRes = await client.query(
-      `SELECT user_id, full_name FROM users
-       WHERE role = 'driver'
-       ORDER BY RANDOM()
-       LIMIT 1`
-    );
-
-    if (driverRes.rows.length === 0) {
-      throw new Error("No available drivers");
-    }
-
-    const driverId = driverRes.rows[0].user_id;
-
-    await client.query(
-      `INSERT INTO deliveries (order_id, driver_id)
-       VALUES ($1, $2)`,
-      [orderId, driverId]
-    );
-
     await client.query("COMMIT");
 
     res.json({ 
       success: true, 
-      order_id: orderId,
-      total_amount: totalAmount,
-      discount_applied: discountAmount,
-      subtotal: subtotal
+      orders: createdOrders,
+      message: `Created ${createdOrders.length} order(s) for different restaurants`
     });
 
   } catch (err) {

@@ -1,20 +1,10 @@
 import { useEffect, useState } from "react";
 
 export default function OrderCard({ order, token }) {
-    const [restaurant, setRestaurant] = useState(null);
     const [items, setItems] = useState([]);
     const [open, setOpen] = useState(false);
     const [delivery, setDelivery] = useState(null);
     const [promotion, setPromotion] = useState(null);
-
-    useEffect(() => {
-        async function loadRestaurant() {
-            const res = await fetch(`http://localhost:4000/restaurants/${order.restaurant_id}`);
-            const data = await res.json();
-            setRestaurant(data);
-        }
-        loadRestaurant();
-    }, [order.restaurant_id]);
 
     async function loadOrderItems() {
         if (items.length > 0) return;
@@ -51,7 +41,7 @@ export default function OrderCard({ order, token }) {
         <div className="order-card" onClick={toggleOpen}>
             <div className="order-card-left">
                 <p className="order-restaurant">
-                    {restaurant ? restaurant.name : "Loading restaurant..."}
+                    {order.restaurant_name}
                 </p>
 
                 <span className={`status-badge ${order.status}`}>

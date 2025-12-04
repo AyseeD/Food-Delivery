@@ -177,13 +177,6 @@ export default function CartSidebar({ isOpen, onClose }) {
       return;
     }
 
-    // Check if all items are from the same restaurant
-    const restaurantIds = [...new Set(cartItems.map(item => item.restaurant_id))];
-    if (restaurantIds.length > 1) {
-      alert("Your cart contains items from different restaurants. Please place separate orders for different restaurants.");
-      return;
-    }
-
     const token = localStorage.getItem("token");
 
     const orderData = {
@@ -207,7 +200,12 @@ export default function CartSidebar({ isOpen, onClose }) {
         return;
       }
       
-      alert("Order placed successfully!");
+      if (data.orders && data.orders.length > 1) {
+        alert(`Order placed successfully! Created ${data.orders.length} separate orders for different restaurants.`);
+      } else {
+        alert("Order placed successfully!");
+      }
+      
       onClose();
       setCartItems([]);
       setAppliedPromotion(null);
