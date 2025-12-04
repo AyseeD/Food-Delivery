@@ -473,3 +473,82 @@ textarea {
 .add-category-form .add-btn:hover {
   background: #1976D2;
 }
+
+/* Options Management Styles */
+.options-btn {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-left: 5px;
+}
+
+.options-btn:hover {
+  background-color: #5a6268;
+}
+
+.add-option-form {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.add-option-form h5 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #495057;
+}
+
+.options-list {
+  margin: 20px 0;
+}
+
+.options-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.option-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+}
+
+.option-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.option-name {
+  font-weight: 500;
+  color: #212529;
+}
+
+.option-price {
+  color: #28a745;
+  font-weight: 600;
+}
+
+.option-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.no-options {
+  color: #6c757d;
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 4px;
+}

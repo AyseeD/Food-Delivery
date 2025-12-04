@@ -10,7 +10,11 @@ import {
   updateItemAvailability,
   createCategory,
   updateCategory,
-  deleteCategory
+  deleteCategory,
+  getItemOptions,
+  createItemOption,
+  updateItemOption,
+  deleteItemOption
 } from "../controllers/menuController.js";
 import { authRequired } from "../middleware/auth.js";
 import { adminRequired } from "../middleware/adminAuth.js";
@@ -24,6 +28,10 @@ router.get("/tags", getTags);
 router.get("/categories/:restaurantId", getCategoriesByRestaurant);
 
 // Admin routes
+router.get("/item/:itemId/options", getItemOptions);
+router.post("/item/:itemId/options", authRequired, adminRequired, createItemOption);
+router.put("/options/:optionId", authRequired, adminRequired, updateItemOption);
+router.delete("/options/:optionId", authRequired, adminRequired, deleteItemOption);
 router.post("/item", authRequired, adminRequired, createItem);
 router.put("/item/:itemId", authRequired, adminRequired, updateItem);
 router.delete("/item/:itemId", authRequired, adminRequired, deleteItem);

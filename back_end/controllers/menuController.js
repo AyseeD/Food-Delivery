@@ -249,3 +249,81 @@ export const deleteCategory = async (req, res) => {
     res.status(500).json({ error: "Could not delete category" });
   }
 };
+
+// Get options for an item
+export const getItemOptions = async (req, res) => {
+  const { itemId } = req.params;
+  try {
+    const result = await db.query(
+      "SELECT * FROM item_options WHERE item_id = $1 ORDER BY option_id",
+      [itemId]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Could not fetch options" });
+  }
+};
+
+// Create option for an item
+export const createItemOption = async (req, res) => {
+  const { itemId } = req.params;
+  const { name, additional_price } = req.body;
+  
+  try {
+    const result = await db.query(
+      `INSERT INTO item_options (item_id, name, additional_price) 
+       VALUES ($1, $2, $3) RETURNING *`,
+      [itemId, name, additional_price || 0]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Could not create option" });
+  }
+};
+
+// Update option
+export const updateItemOption = async (req, res) => {
+  const { optionId } = req.params;
+  const { name, additional_price } = req.body;
+  
+  try {
+    const result = await db.query(
+      `UPDATE item_options 
+       SET name = $1, additional_price = $2 
+       WHERE option_id = $3 RETURNING *`,
+      [name, additional_price, optionId]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Option not found" });
+    }
+    
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Could not update option" });
+  }
+};
+
+// Delete option
+export const deleteItemOption = async (req, res) => {
+  const { optionId } = req.params;
+  
+  try {
+    const result = await db.query(
+      "DELETE FROM item_options WHERE option_id = $1 RETURNING *",
+      [optionId]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Option not found" });
+    }
+    
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Could not delete option" });
+  }
+};

@@ -9,7 +9,12 @@ function MenuManager({ restaurant, close, setRestaurants }) {
   const [editingItem, setEditingItem] = useState(null);
   const [newCategoryName, setNewCategoryName] = useState("");
   const [editingCategory, setEditingCategory] = useState(null);
-  
+  const [editingOptions, setEditingOptions] = useState(null);
+  const [optionsForm, setOptionsForm] = useState({
+    name: "",
+    additional_price: "0"
+  });
+
   const [newItem, setNewItem] = useState({
     name: "",
     description: "",
@@ -148,7 +153,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
   // Add new menu item
   const addMenuItem = async (e) => {
     e.preventDefault();
-    
+
     try {
       const response = await fetch("http://localhost:4000/menu/item", {
         method: "POST",
@@ -164,12 +169,12 @@ function MenuManager({ restaurant, close, setRestaurants }) {
       });
 
       if (!response.ok) throw new Error("Failed to add item");
-      
+
       const data = await response.json();
-      
+
       // Refresh menu items
       fetchMenuItems();
-      
+
       // Reset form
       setNewItem({
         name: "",
@@ -180,7 +185,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
         is_available: true,
         tags: []
       });
-      
+
     } catch (error) {
       console.error("Error adding menu item:", error);
       alert("Failed to add menu item");
@@ -190,7 +195,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
   // Update existing menu item
   const updateMenuItem = async (e) => {
     e.preventDefault();
-    
+
     try {
       const response = await fetch(`http://localhost:4000/menu/item/${editingItem.item_id}`, {
         method: "PUT",
@@ -205,13 +210,13 @@ function MenuManager({ restaurant, close, setRestaurants }) {
       });
 
       if (!response.ok) throw new Error("Failed to update item");
-      
+
       // Refresh menu items
       fetchMenuItems();
-      
+
       // Reset editing state
       setEditingItem(null);
-      
+
     } catch (error) {
       console.error("Error updating menu item:", error);
       alert("Failed to update menu item");
@@ -221,7 +226,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
   // Delete menu item
   const deleteMenuItem = async (itemId) => {
     if (!window.confirm("Are you sure you want to delete this item?")) return;
-    
+
     try {
       const response = await fetch(`http://localhost:4000/menu/item/${itemId}`, {
         method: "DELETE",
@@ -231,10 +236,10 @@ function MenuManager({ restaurant, close, setRestaurants }) {
       });
 
       if (!response.ok) throw new Error("Failed to delete item");
-      
+
       // Refresh menu items
       fetchMenuItems();
-      
+
     } catch (error) {
       console.error("Error deleting menu item:", error);
       alert("Failed to delete menu item");
@@ -256,10 +261,10 @@ function MenuManager({ restaurant, close, setRestaurants }) {
       });
 
       if (!response.ok) throw new Error("Failed to update availability");
-      
+
       // Refresh menu items
       fetchMenuItems();
-      
+
     } catch (error) {
       console.error("Error toggling availability:", error);
       alert("Failed to update availability");
@@ -270,14 +275,14 @@ function MenuManager({ restaurant, close, setRestaurants }) {
   const handleTagToggle = (tagName, isEditing = false) => {
     if (isEditing) {
       setEditingItem(prev => {
-        const tagExists = prev.tags?.some(t => 
+        const tagExists = prev.tags?.some(t =>
           typeof t === 'object' ? t.name === tagName : t === tagName
         );
-        
+
         const newTags = tagExists
-          ? prev.tags.filter(t => 
-              typeof t === 'object' ? t.name !== tagName : t !== tagName
-            )
+          ? prev.tags.filter(t =>
+            typeof t === 'object' ? t.name !== tagName : t !== tagName
+          )
           : [...prev.tags, tagName];
         return { ...prev, tags: newTags };
       });
@@ -289,6 +294,138 @@ function MenuManager({ restaurant, close, setRestaurants }) {
           : [...prev.tags, tagName];
         return { ...prev, tags: newTags };
       });
+    }
+  };
+
+  const fetchItemOptions = async (itemId) => {
+    try {
+      const response = await fetch(`http://localhost:4000/menu/item/${itemId}/options`);
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Failed to fetch options:", error);
+      return [];
+    }
+  };
+
+  const startEditingOptions = async (item) => {
+    const options = await fetchItemOptions(item.item_id);
+    setEditingOptions({
+      ...item,
+      currentOptions: options
+    });
+    setOptionsForm({ name: "", additional_price: "0" });
+  };
+
+  // Add new option
+  const addOption = async (e) => {
+    e.preventDefault();
+    if (!optionsForm.name.trim()) {
+      alert("Please enter an option name");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `http://localhost:4000/menu/item/${editingOptions.item_id}/options`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("adminToken")}`
+          },
+          body: JSON.stringify({
+            name: optionsForm.name.trim(),
+            additional_price: parseFloat(optionsForm.additional_price) || 0
+          })
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to add option");
+
+      const newOption = await response.json();
+
+      // Update local state
+      setEditingOptions(prev => ({
+        ...prev,
+        currentOptions: [...prev.currentOptions, newOption]
+      }));
+
+      // Clear form
+      setOptionsForm({ name: "", additional_price: "0" });
+
+    } catch (error) {
+      console.error("Error adding option:", error);
+      alert("Failed to add option");
+    }
+  };
+
+  const deleteOption = async (optionId) => {
+    if (!window.confirm("Are you sure you want to delete this option?")) return;
+
+    try {
+      const response = await fetch(
+        `http://localhost:4000/menu/options/${optionId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("adminToken")}`
+          }
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to delete option");
+
+      // Update local state
+      setEditingOptions(prev => ({
+        ...prev,
+        currentOptions: prev.currentOptions.filter(opt => opt.option_id !== optionId)
+      }));
+
+    } catch (error) {
+      console.error("Error deleting option:", error);
+      alert("Failed to delete option");
+    }
+  };
+
+  const updateOption = async (option) => {
+    const newName = prompt("Enter new name for option:", option.name);
+    if (!newName || newName === option.name) return;
+
+    const newPrice = prompt("Enter new additional price:", option.additional_price);
+    if (newPrice === null) return;
+
+    try {
+      const response = await fetch(
+        `http://localhost:4000/menu/options/${option.option_id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("adminToken")}`
+          },
+          body: JSON.stringify({
+            name: newName.trim(),
+            additional_price: parseFloat(newPrice) || 0
+          })
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to update option");
+
+      const updatedOption = await response.json();
+
+      // Update local state
+      setEditingOptions(prev => ({
+        ...prev,
+        currentOptions: prev.currentOptions.map(opt =>
+          opt.option_id === option.option_id ? updatedOption : opt
+        )
+      }));
+
+    } catch (error) {
+      console.error("Error updating option:", error);
+      alert("Failed to update option");
     }
   };
 
@@ -321,7 +458,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
                     <input
                       type="text"
                       value={editingCategory.name}
-                      onChange={(e) => setEditingCategory({...editingCategory, name: e.target.value})}
+                      onChange={(e) => setEditingCategory({ ...editingCategory, name: e.target.value })}
                       autoFocus
                     />
                     <button type="submit" className="save-btn">Save</button>
@@ -333,13 +470,13 @@ function MenuManager({ restaurant, close, setRestaurants }) {
                   <>
                     <span>{category.name}</span>
                     <div className="category-actions">
-                      <button 
+                      <button
                         className="edit-btn"
                         onClick={() => setEditingCategory(category)}
                       >
                         Edit
                       </button>
-                      <button 
+                      <button
                         className="delete-btn"
                         onClick={() => deleteCategory(category.category_id)}
                       >
@@ -396,7 +533,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
                   )}
                 </div>
                 <div className="item-actions">
-                  <button 
+                  <button
                     className="edit-btn"
                     onClick={() => {
                       const normalizedItem = {
@@ -408,13 +545,19 @@ function MenuManager({ restaurant, close, setRestaurants }) {
                   >
                     Edit
                   </button>
-                  <button 
+                  <button
+                    className="options-btn"
+                    onClick={() => startEditingOptions(item)}
+                  >
+                    Manage Options
+                  </button>
+                  <button
                     className={`toggle-btn ${item.is_available ? 'disable-btn' : 'enable-btn'}`}
                     onClick={() => toggleAvailability(item)}
                   >
                     {item.is_available ? 'Disable' : 'Enable'}
                   </button>
-                  <button 
+                  <button
                     className="delete-btn"
                     onClick={() => deleteMenuItem(item.item_id)}
                   >
@@ -436,31 +579,31 @@ function MenuManager({ restaurant, close, setRestaurants }) {
                   type="text"
                   placeholder="Item Name"
                   value={editingItem.name}
-                  onChange={(e) => setEditingItem({...editingItem, name: e.target.value})}
+                  onChange={(e) => setEditingItem({ ...editingItem, name: e.target.value })}
                   required
                 />
                 <textarea
                   placeholder="Description"
                   value={editingItem.description || ''}
-                  onChange={(e) => setEditingItem({...editingItem, description: e.target.value})}
+                  onChange={(e) => setEditingItem({ ...editingItem, description: e.target.value })}
                 />
                 <input
                   type="number"
                   placeholder="Price"
                   step="0.01"
                   value={editingItem.price}
-                  onChange={(e) => setEditingItem({...editingItem, price: e.target.value})}
+                  onChange={(e) => setEditingItem({ ...editingItem, price: e.target.value })}
                   required
                 />
                 <input
                   type="text"
                   placeholder="Image URL"
                   value={editingItem.image_url || ''}
-                  onChange={(e) => setEditingItem({...editingItem, image_url: e.target.value})}
+                  onChange={(e) => setEditingItem({ ...editingItem, image_url: e.target.value })}
                 />
                 <select
                   value={editingItem.category_id || ''}
-                  onChange={(e) => setEditingItem({...editingItem, category_id: e.target.value})}
+                  onChange={(e) => setEditingItem({ ...editingItem, category_id: e.target.value })}
                 >
                   <option value="">Select Category</option>
                   {categories.map(cat => (
@@ -476,7 +619,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
                       <label key={tag.tag_id} className="tag-checkbox">
                         <input
                           type="checkbox"
-                          checked={editingItem.tags?.some(t => 
+                          checked={editingItem.tags?.some(t =>
                             typeof t === 'object' ? t.name === tag.name : t === tag.name
                           )}
                           onChange={() => handleTagToggle(tag.name, true)}
@@ -506,7 +649,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
                 type="text"
                 placeholder="Item Name"
                 value={newItem.name}
-                onChange={(e) => setNewItem({...newItem, name: e.target.value})}
+                onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
                 required
               />
               <input
@@ -514,25 +657,25 @@ function MenuManager({ restaurant, close, setRestaurants }) {
                 placeholder="Price"
                 step="0.01"
                 value={newItem.price}
-                onChange={(e) => setNewItem({...newItem, price: e.target.value})}
+                onChange={(e) => setNewItem({ ...newItem, price: e.target.value })}
                 required
               />
             </div>
             <textarea
               placeholder="Description"
               value={newItem.description}
-              onChange={(e) => setNewItem({...newItem, description: e.target.value})}
+              onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
             />
             <div className="form-row">
               <input
                 type="text"
                 placeholder="Image URL"
                 value={newItem.image_url}
-                onChange={(e) => setNewItem({...newItem, image_url: e.target.value})}
+                onChange={(e) => setNewItem({ ...newItem, image_url: e.target.value })}
               />
               <select
                 value={newItem.category_id}
-                onChange={(e) => setNewItem({...newItem, category_id: e.target.value})}
+                onChange={(e) => setNewItem({ ...newItem, category_id: e.target.value })}
               >
                 <option value="">Select Category</option>
                 {categories.map(cat => (
@@ -566,6 +709,84 @@ function MenuManager({ restaurant, close, setRestaurants }) {
           </form>
         </div>
       </div>
+      {/* Add Options Manager Modal */}
+      {editingOptions && (
+        <div className="edit-form-overlay">
+          <div className="edit-form">
+            <div className="form-header">
+              <h4>Manage Options for {editingOptions.name}</h4>
+              <button className="close-btn" onClick={() => setEditingOptions(null)}>×</button>
+            </div>
+
+            {/* Add New Option Form */}
+            <div className="add-option-form">
+              <h5>Add New Option</h5>
+              <form onSubmit={addOption}>
+                <div className="form-row">
+                  <input
+                    type="text"
+                    placeholder="Option Name (e.g., Extra Cheese)"
+                    value={optionsForm.name}
+                    onChange={(e) => setOptionsForm({ ...optionsForm, name: e.target.value })}
+                    required
+                  />
+                  <input
+                    type="number"
+                    placeholder="Additional Price"
+                    step="0.01"
+                    value={optionsForm.additional_price}
+                    onChange={(e) => setOptionsForm({ ...optionsForm, additional_price: e.target.value })}
+                    min="0"
+                  />
+                </div>
+                <button type="submit" className="add-btn">Add Option</button>
+              </form>
+            </div>
+
+            {/* Existing Options List */}
+            <div className="options-list">
+              <h5>Current Options ({editingOptions.currentOptions.length})</h5>
+              {editingOptions.currentOptions.length === 0 ? (
+                <p className="no-options">No options added yet.</p>
+              ) : (
+                <div className="options-grid">
+                  {editingOptions.currentOptions.map(option => (
+                    <div key={option.option_id} className="option-item">
+                      <div className="option-info">
+                        <span className="option-name">{option.name}</span>
+                        <span className="option-price">+{option.additional_price}₺</span>
+                      </div>
+                      <div className="option-actions">
+                        <button
+                          className="edit-btn"
+                          onClick={() => updateOption(option)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="delete-btn"
+                          onClick={() => deleteOption(option.option_id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="form-buttons">
+              <button
+                className="close-btn"
+                onClick={() => setEditingOptions(null)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
