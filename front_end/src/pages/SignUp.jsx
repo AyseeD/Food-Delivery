@@ -59,7 +59,11 @@ function SignUp() {
       localStorage.setItem("token", data.token);
       navigate("/home");
     } else {
-      alert(data.error || "Login failed");
+      if (data.error && data.error.includes("deactivated")) {
+        alert("Account Deactivated: " + data.error);
+      } else {
+        alert(data.error || "Login failed");
+      }
     }
   }
 

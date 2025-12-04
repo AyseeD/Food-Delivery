@@ -37,12 +37,19 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
     const { email, password } = req.body;
     const result = await db.query(
-        "SELECT user_id, full_name, email, password_hash, role, address FROM users WHERE email = $1", 
+        "SELECT user_id, full_name, email, password_hash, role, address, is_active FROM users WHERE email = $1", 
         [email]
     );
     const user = result.rows[0];
 
     if (!user) return res.status(401).json({ error: "Invalid credentials" });
+
+    // Check if user is active
+    if (!user.is_active) {
+        return res.status(403).json({ 
+            error: "Account is deactivated. Please contact support for assistance." 
+        });
+    }
 
     const ok = await bcrypt.compare(password, user.password_hash);
     if (!ok) return res.status(401).json({ error: "Invalid password" });
@@ -68,12 +75,18 @@ export const adminLogin = async (req, res) => {
     const { email, password } = req.body;
 
     const result = await db.query(
-        "SELECT user_id, full_name, email, password_hash, role, address FROM users WHERE email = $1",
+        "SELECT user_id, full_name, email, password_hash, role, address, is_active FROM users WHERE email = $1",
         [email]
     );
     const user = result.rows[0];
 
     if (!user) return res.status(401).json({ error: "Invalid credentials" });
+
+    if (!user.is_active) {
+        return res.status(403).json({ 
+            error: "Account is deactivated. Please contact support for assistance." 
+        });
+    }
 
     const ok = await bcrypt.compare(password, user.password_hash);
     if (!ok) return res.status(401).json({ error: "Invalid password" });
@@ -102,10 +115,23 @@ export const adminLogin = async (req, res) => {
 
 export const userInfo = async (req, res) => {
     const result = await db.query(
-        "SELECT user_id, full_name, email, role, address, created_at FROM users WHERE user_id = $1", 
+        "SELECT user_id, full_name, email, role, address, created_at, is_active FROM users WHERE user_id = $1", 
         [req.user.user_id]
     );
-    res.json(result.rows[0]);
+    
+    const user = result.rows[0];
+    
+    if (!user) {
+        return res.status(404).json({ error: "User not found" });
+    }
+    
+    if (!user.is_active) {
+        return res.status(403).json({ 
+            error: "Account has been deactivated" 
+        });
+    }
+    
+    res.json(user);
 };
 
 export const updateUser = async (req, res) => {
