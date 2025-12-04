@@ -3,6 +3,7 @@ import "../../styles/AdminUsers.css";
 
 function AdminUsers() {
   const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [newUser, setNewUser] = useState({
     full_name: "",
     email: "",
@@ -11,6 +12,9 @@ function AdminUsers() {
     role: "customer",
   });
 
+  const [roleFilter, setRoleFilter] = useState("all");
+  const [activityFilter, setActivityFilter] = useState("all");
+
   //  Backend'ten kullanıcıları çekme
   useEffect(() => {
     async function fetchUsers() {
@@ -18,6 +22,7 @@ function AdminUsers() {
         const res = await fetch("http://localhost:4000/auth/admin/users");
         const data = await res.json();
         setUsers(data);
+        setFilteredUsers(data);
       }catch(err){
         console.error("Failed to load users:", err);
       }
@@ -26,6 +31,23 @@ function AdminUsers() {
     fetchUsers();
   }, []);
 
+  // Apply filters whenever filter state or users change
+  useEffect(() => {
+    let result = users;
+
+    // Apply role filter
+    if (roleFilter !== "all") {
+      result = result.filter(user => user.role === roleFilter);
+    }
+
+    // Apply activity filter
+    if (activityFilter !== "all") {
+      const isActiveFilter = activityFilter === "active";
+      result = result.filter(user => user.is_active === isActiveFilter);
+    }
+
+    setFilteredUsers(result);
+  }, [roleFilter, activityFilter, users]);
  
   //   Kullanıcı silme
 
@@ -107,10 +129,67 @@ function AdminUsers() {
     }
   };
 
+  // Function to reset filters
+  const resetFilters = () => {
+    setRoleFilter("all");
+    setActivityFilter("all");
+  };
 
   return (
     <div className="admin-users">
       <h2 className="admin-section-title">Users</h2>
+
+      {/* FILTERS SECTION */}
+      <div className="filters-section">
+        <div className="filter-group">
+          <h3>Filters</h3>
+          
+          <div className="filter-row">
+            <div className="filter-item">
+              <label>Role:</label>
+              <select 
+                value={roleFilter} 
+                onChange={(e) => setRoleFilter(e.target.value)}
+                className="filter-select"
+              >
+                <option value="all">All Roles</option>
+                <option value="customer">Customer</option>
+                <option value="driver">Driver</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+
+            <div className="filter-item">
+              <label>Activity:</label>
+              <select 
+                value={activityFilter} 
+                onChange={(e) => setActivityFilter(e.target.value)}
+                className="filter-select"
+              >
+                <option value="all">All Status</option>
+                <option value="active">Active Only</option>
+                <option value="inactive">Inactive Only</option>
+              </select>
+            </div>
+
+            <button 
+              onClick={resetFilters}
+              className="reset-filters-btn"
+            >
+              Reset Filters
+            </button>
+          </div>
+
+          {/* Filter Summary */}
+          <div className="filter-summary">
+            <span className="user-count">
+              Showing {filteredUsers.length} of {users.length} users
+              {roleFilter !== "all" && ` • Role: ${roleFilter}`}
+              {activityFilter !== "all" && ` • Status: ${activityFilter}`}
+            </span>
+          </div>
+        </div>
+      </div>
 
       {/* USERS TABLE */}
       <div className="users-table">
@@ -126,12 +205,20 @@ function AdminUsers() {
           </thead>
 
           <tbody>
-            {users.map((user) => (
-              <tr key={user.id}>
+            {filteredUsers.map((user) => (
+              <tr key={user.id} className={user.is_active ? "user-active" : "user-inactive"}>
                 <td>{user.full_name}</td>
                 <td>{user.email}</td>
-                <td>{user.role}</td>
-                <td>{user.is_active ? "Active" : "Not Active"}</td>
+                <td>
+                  <span className={`role-badge role-${user.role}`}>
+                    {user.role}
+                  </span>
+                </td>
+                <td>
+                  <span className={`activity-badge ${user.is_active ? "active" : "inactive"}`}>
+                    {user.is_active ? "Active" : "Inactive"}
+                  </span>
+                </td>
                 <td>
                   <button className="delete-btn" onClick={() => deleteUser(user.id)}>
                     Delete
@@ -141,6 +228,16 @@ function AdminUsers() {
             ))}
           </tbody>
         </table>
+
+        {/* Empty state */}
+        {filteredUsers.length === 0 && (
+          <div className="no-users-message">
+            <p>No users found with the current filters.</p>
+            <button onClick={resetFilters} className="clear-filters-btn">
+              Clear Filters
+            </button>
+          </div>
+        )}
       </div>
 
       {/* ADD USER */}
@@ -148,7 +245,6 @@ function AdminUsers() {
         <h3>Add New User</h3>
 
         <form onSubmit={handleAddUser}>
-
           <input
             type="text"
             placeholder="Full Name"
@@ -194,7 +290,6 @@ function AdminUsers() {
             Add User
           </button>
         </form>
-
       </div>
     </div>
   );
