@@ -134,3 +134,58 @@ export const updateUser = async (req, res) => {
         res.status(500).json({ error: "Failed to update user" });
     }
 };
+
+export const updatePassword = async (req, res) => {
+    const { current_password, new_password, confirm_password } = req.body;
+    const userId = req.user.user_id;
+
+    // Validation
+    if (!current_password || !new_password || !confirm_password) {
+        return res.status(400).json({ error: "All password fields are required" });
+    }
+
+    if (new_password !== confirm_password) {
+        return res.status(400).json({ error: "New passwords do not match" });
+    }
+
+    if (new_password.length < 6) {
+        return res.status(400).json({ error: "New password must be at least 6 characters long" });
+    }
+
+    try {
+        // First, verify current password
+        const userRes = await db.query(
+            "SELECT password_hash FROM users WHERE user_id = $1",
+            [userId]
+        );
+
+        if (userRes.rows.length === 0) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        const user = userRes.rows[0];
+        
+        // Check if current password is correct
+        const isCurrentPasswordValid = await bcrypt.compare(current_password, user.password_hash);
+        if (!isCurrentPasswordValid) {
+            return res.status(401).json({ error: "Current password is incorrect" });
+        }
+
+        // Hash the new password
+        const newPasswordHash = await bcrypt.hash(new_password, SALT_ROUNDS);
+
+        // Update password in database
+        await db.query(
+            "UPDATE users SET password_hash = $1 WHERE user_id = $2",
+            [newPasswordHash, userId]
+        );
+
+        res.json({ 
+            success: true, 
+            message: "Password updated successfully" 
+        });
+    } catch (err) {
+        console.error("Password update error:", err);
+        res.status(500).json({ error: "Failed to update password" });
+    }
+};

@@ -12,7 +12,15 @@ export default function AccountPage() {
   const [loadingUser, setLoadingUser] = useState(true);
   const [loadingOrders, setLoadingOrders] = useState(true);
   const [editMode, setEditMode] = useState(false);
+  const [showPasswordChange, setShowPasswordChange] = useState(false); // Add this state
   const [updatedUser, setUpdatedUser] = useState({});
+  const [passwordForm, setPasswordForm] = useState({ // Add password form state
+    current_password: "",
+    new_password: "",
+    confirm_password: ""
+  });
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordSuccess, setPasswordSuccess] = useState("");
 
   const token = localStorage.getItem("token");
 
@@ -95,6 +103,54 @@ export default function AccountPage() {
     }
   };
 
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+    setPasswordError("");
+    setPasswordSuccess("");
+
+    // Validation
+    if (passwordForm.new_password !== passwordForm.confirm_password) {
+      setPasswordError("New passwords do not match");
+      return;
+    }
+
+    if (passwordForm.new_password.length < 6) {
+      setPasswordError("New password must be at least 6 characters");
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:4000/auth/update-password", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(passwordForm),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setPasswordSuccess("Password updated successfully!");
+        setPasswordForm({
+          current_password: "",
+          new_password: "",
+          confirm_password: ""
+        });
+        // Clear success message after 3 seconds
+        setTimeout(() => {
+          setPasswordSuccess("");
+          setShowPasswordChange(false);
+        }, 3000);
+      } else {
+        setPasswordError(data.error || "Failed to update password");
+      }
+    } catch (err) {
+      console.error("Failed to update password:", err);
+      setPasswordError("Failed to update password. Please try again.");
+    }
+  };
+
   return (
     <div className="account-container">
       <Header />
@@ -164,7 +220,85 @@ export default function AccountPage() {
                 <p>Loading...</p>
               ) : (
                 <div className="details-form-container">
-                  {editMode ? (
+                  {/* Password Change Section */}
+                  {showPasswordChange ? (
+                    <div className="password-change-section">
+                      <h3>Change Password</h3>
+                      <form onSubmit={handlePasswordChange} className="password-form">
+                        {passwordError && (
+                          <div className="error-message">{passwordError}</div>
+                        )}
+                        {passwordSuccess && (
+                          <div className="success-message">{passwordSuccess}</div>
+                        )}
+                        
+                        <div className="field">
+                          <label>Current Password *</label>
+                          <input
+                            type="password"
+                            value={passwordForm.current_password}
+                            onChange={(e) => setPasswordForm({
+                              ...passwordForm,
+                              current_password: e.target.value
+                            })}
+                            required
+                            placeholder="Enter your current password"
+                          />
+                        </div>
+
+                        <div className="field">
+                          <label>New Password *</label>
+                          <input
+                            type="password"
+                            value={passwordForm.new_password}
+                            onChange={(e) => setPasswordForm({
+                              ...passwordForm,
+                              new_password: e.target.value
+                            })}
+                            required
+                            placeholder="At least 6 characters"
+                            minLength="6"
+                          />
+                        </div>
+
+                        <div className="field">
+                          <label>Confirm New Password *</label>
+                          <input
+                            type="password"
+                            value={passwordForm.confirm_password}
+                            onChange={(e) => setPasswordForm({
+                              ...passwordForm,
+                              confirm_password: e.target.value
+                            })}
+                            required
+                            placeholder="Confirm your new password"
+                          />
+                        </div>
+
+                        <div className="form-buttons">
+                          <button type="submit" className="update-btn">
+                            Update Password
+                          </button>
+                          <button 
+                            type="button" 
+                            className="cancel-btn"
+                            onClick={() => {
+                              setShowPasswordChange(false);
+                              setPasswordError("");
+                              setPasswordSuccess("");
+                              setPasswordForm({
+                                current_password: "",
+                                new_password: "",
+                                confirm_password: ""
+                              });
+                            }}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  ) : editMode ? (
                     <form className="details-form">
                       <div className="row">
                         <div className="field">
@@ -250,12 +384,21 @@ export default function AccountPage() {
                         <strong>Account Created:</strong>
                         <span>{new Date(user.created_at).toLocaleDateString()}</span>
                       </div>
-                      <button 
-                        className="edit-btn"
-                        onClick={() => setEditMode(true)}
-                      >
-                        Edit Profile
-                      </button>
+                      
+                      <div className="action-buttons">
+                        <button 
+                          className="edit-btn"
+                          onClick={() => setEditMode(true)}
+                        >
+                          Edit Profile
+                        </button>
+                        <button 
+                          className="password-change-btn"
+                          onClick={() => setShowPasswordChange(true)}
+                        >
+                          Change Password
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
