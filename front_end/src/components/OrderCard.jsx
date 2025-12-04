@@ -48,7 +48,7 @@ export default function OrderCard({ order, token }) {
                     {order.status}
                 </span>
 
-                <p>{new Date(order.placed_at).toLocaleString()}</p>
+                <p>Updated: {new Date(order.updated_at).toLocaleString()}</p>
             </div>
 
             <div className="order-card-right">

@@ -164,6 +164,21 @@ export const createOrderFromCart = async (req, res) => {
   const client = await db.connect();
 
   try {
+    // Get user address FIRST
+    const addrRes = await client.query(
+      `SELECT address FROM users WHERE user_id = $1`,
+      [userId]
+    );
+
+    const address = addrRes.rows[0].address;
+    
+    // Check if user has an address
+    if (!address || address.trim() === "") {
+      return res.status(400).json({ 
+        error: "Please add a delivery address to your account before placing an order" 
+      });
+    }
+
     // Get cart ID
     const cartRes = await client.query(
       `SELECT cart_id FROM cart WHERE user_id = $1`,
@@ -207,15 +222,7 @@ export const createOrderFromCart = async (req, res) => {
         };
       }
       itemsByRestaurant[item.restaurant_id].items.push(item);
-    });
-
-    // Get user address
-    const addrRes = await client.query(
-      `SELECT address FROM users WHERE user_id = $1`,
-      [userId]
-    );
-
-    const address = addrRes.rows[0].address || "Unknown address";
+    })
 
     // Begin transaction
     await client.query("BEGIN");
@@ -274,7 +281,7 @@ export const createOrderFromCart = async (req, res) => {
         `INSERT INTO orders (user_id, restaurant_id, total_amount, delivery_address)
          VALUES ($1, $2, $3, $4)
          RETURNING order_id`,
-        [userId, restaurantId, totalAmount, address]
+        [userId, restaurantId, totalAmount, address] // Use the validated address
       );
 
       const orderId = orderRes.rows[0].order_id;

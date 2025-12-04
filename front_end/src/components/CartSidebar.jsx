@@ -7,49 +7,60 @@ export default function CartSidebar({ isOpen, onClose }) {
   const [appliedPromotion, setAppliedPromotion] = useState(null);
   const [restaurantId, setRestaurantId] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [userAddress, setUserAddress] = useState(null);
+  const [showAddressPrompt, setShowAddressPrompt] = useState(false);
 
-  // Load cart from backend
-  async function loadCart() {
+  // Load cart and user info from backend
+  async function loadCartAndUser() {
     const token = localStorage.getItem("token");
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:4000/cart", {
+      // Load cart
+      const cartRes = await fetch("http://localhost:4000/cart", {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      const data = await res.json();
-      setCartItems(data.items || []);
+      const cartData = await cartRes.json();
+      setCartItems(cartData.items || []);
       
-      // Get restaurant ID from first item (assuming all items from same restaurant)
-      if (data.items && data.items.length > 0) {
-        // Now restaurant_id is directly available from cart items
-        const firstRestaurantId = data.items[0]?.restaurant_id;
+      // Get restaurant ID from first item
+      if (cartData.items && cartData.items.length > 0) {
+        const firstRestaurantId = cartData.items[0]?.restaurant_id;
         if (firstRestaurantId) {
           setRestaurantId(firstRestaurantId);
           
-          // Optional: Check if all items are from the same restaurant
-          const allSameRestaurant = data.items.every(
+          const allSameRestaurant = cartData.items.every(
             item => item.restaurant_id === firstRestaurantId
           );
           
           if (!allSameRestaurant) {
             console.warn("Cart contains items from different restaurants");
-            // You might want to handle this case - e.g., show a warning
           }
         }
       } else {
         setRestaurantId(null);
       }
+
+      // Load user info to get address
+      const userRes = await fetch("http://localhost:4000/auth/user", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (userRes.ok) {
+        const userData = await userRes.json();
+        setUserAddress(userData.address);
+      }
+
     } catch (err) {
-      console.error("Failed to load cart:", err);
+      console.error("Failed to load cart or user info:", err);
     } finally {
       setLoading(false);
     }
   }
 
   useEffect(() => {
-    if (isOpen) loadCart();
+    if (isOpen) loadCartAndUser();
   }, [isOpen]);
 
   // DELETE cart item
@@ -63,7 +74,7 @@ export default function CartSidebar({ isOpen, onClose }) {
       });
 
       // Refresh cart
-      loadCart();
+      loadCartAndUser();
     } catch (err) {
       console.error("Failed to delete item:", err);
       alert("Failed to delete item from cart");
@@ -132,7 +143,7 @@ export default function CartSidebar({ isOpen, onClose }) {
       });
 
       // Refresh cart
-      loadCart();
+      loadCartAndUser();
     } catch (err) {
       console.error("Failed to update quantity:", err);
       alert("Failed to update quantity");
@@ -177,6 +188,13 @@ export default function CartSidebar({ isOpen, onClose }) {
       return;
     }
 
+    // Check if user has an address
+    if (!userAddress || userAddress.trim() === "") {
+      // Show address prompt instead of alert
+      setShowAddressPrompt(true);
+      return;
+    }
+
     const token = localStorage.getItem("token");
 
     const orderData = {
@@ -211,11 +229,17 @@ export default function CartSidebar({ isOpen, onClose }) {
       setAppliedPromotion(null);
       setPromoCode("");
       setRestaurantId(null);
+      setUserAddress(null);
       window.location.reload();
     } catch (err) {
       console.error("Failed to place order:", err);
       alert("Failed to place order. Please try again.");
     }
+  }
+
+   function goToAccountPage() {
+    onClose(); // Close cart sidebar
+    window.location.href = "/account"; // Navigate to account page
   }
 
   return (
@@ -226,6 +250,41 @@ export default function CartSidebar({ isOpen, onClose }) {
       </div>
 
       <hr />
+
+      {/* Address Warning Banner */}
+      {(!userAddress || userAddress.trim() === "") && cartItems.length > 0 && (
+        <div className="address-warning">
+          <i className="fa-solid fa-map-marker-alt"></i>
+          <span>Please add a delivery address to place an order</span>
+          <button onClick={goToAccountPage} className="add-address-btn">
+            Add Address
+          </button>
+        </div>
+      )}
+
+      {/* Address Prompt Modal */}
+      {showAddressPrompt && (
+        <div className="modal-overlay">
+          <div className="address-prompt-modal">
+            <h3>Delivery Address Required</h3>
+            <p>You need to add a delivery address to place an order.</p>
+            <div className="modal-buttons">
+              <button 
+                onClick={goToAccountPage}
+                className="modal-primary-btn"
+              >
+                Go to Account to Add Address
+              </button>
+              <button 
+                onClick={() => setShowAddressPrompt(false)}
+                className="modal-secondary-btn"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Promotion Section */}
       <div className="promotion-section">
@@ -348,8 +407,13 @@ export default function CartSidebar({ isOpen, onClose }) {
       )}
 
       {cartItems.length !== 0 && (
-        <button className="order-button" onClick={submitOrder}>
-          Order Now!
+        <button 
+          className="order-button" 
+          onClick={submitOrder}
+          disabled={!userAddress || userAddress.trim() === ""}
+          title={!userAddress ? "Please add a delivery address first" : ""}
+        >
+          {!userAddress ? "Add Address to Order" : "Order Now!"}
         </button>
       )}
     </div>
