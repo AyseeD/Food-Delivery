@@ -1,0 +1,23 @@
+
+/* .app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+
+header {
+  flex-shrink: 0;
+}
+
+
+main {
+  flex-grow: 1;
+  padding: 30px 60px;
+  background-color: #fafafa;
+}
+
+
+footer {
+  flex-shrink: 0;
+} */

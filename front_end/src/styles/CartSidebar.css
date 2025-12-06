@@ -1,0 +1,464 @@
+.cart-sidebar {
+  position: fixed;
+  top: 0;
+  right: -350px;  /*ilk gizli olacak*/
+  width: 350px;
+  height: 100vh;
+  background: white;
+  box-shadow: -2px 0 10px rgba(0,0,0,0.2);
+  padding: 20px;
+  transition: right 0.3s ease;
+  z-index: 1000;
+}
+
+.cart-sidebar.open {
+  right: 0; /*açılınca sağda olacak*/
+}
+
+.cart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.cart-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.cart-items {
+  margin-top: 20px;
+}
+
+.cart-entry {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+}
+
+/* Food Image */
+.cart-img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+/* Text content */
+.cart-entry div {
+  flex: 1;
+}
+
+.cart-entry h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.cart-entry p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #444;
+}
+
+/* Options */
+.cart-options {
+  margin: 6px 0;
+  padding-left: 16px;
+  font-size: 14px;
+}
+
+.cart-options li {
+  margin-bottom: 2px;
+}
+
+/* Total price */
+.cart-entry strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 15px;
+  color: #000;
+}
+
+.delete-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 5px;
+  color: #d00;
+}
+
+.delete-btn:hover {
+  color: #a00;
+}
+
+.order-button{
+  margin-top: 15px;
+  width: 100%;
+  padding: 10px 0px;
+  border: 1px none;
+  border-radius: 20px;
+  background-color: #f58803;
+  font-weight: bold;
+  color: white;
+  font-size: 18px;
+}
+
+.order-button:hover{
+  cursor: pointer;
+  background: #ff5722; 
+}
+.promotion-section {
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin: 15px 0;
+}
+
+.promotion-section h3 {
+  margin: 0 0 10px 0;
+  color: #333;
+}
+
+.promo-input-group {
+  display: flex;
+  gap: 10px;
+}
+
+.promo-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.promo-input:disabled,
+.apply-promo-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.promo-note {
+  display: block;
+  margin-top: 5px;
+  color: #666;
+  font-size: 12px;
+  font-style: italic;
+}
+
+.apply-promo-btn {
+  padding: 8px 16px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.apply-promo-btn:hover {
+  background: #218838;
+}
+
+.applied-promo {
+  background: #d4edda;
+  border: 1px solid #c3e6cb;
+  border-radius: 4px;
+  padding: 10px;
+  color: #155724;
+}
+
+.applied-promo p {
+  margin: 0 0 5px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.remove-promo-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.remove-promo-btn:hover {
+  background: #c82333;
+}
+
+.order-summary {
+  margin: 20px 0;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.summary-row:last-child {
+  border-bottom: none;
+}
+
+.summary-row.discount {
+  color: #28a745;
+  font-weight: bold;
+}
+
+.summary-row.total {
+  font-size: 18px;
+  padding-top: 15px;
+  border-top: 2px solid #ddd;
+}
+
+.cart-quantity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.quantity-btn-small {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid #ddd;
+  background: white;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quantity-btn-small:hover {
+  background: #f0f0f0;
+}
+
+.quantity-display-small {
+  min-width: 20px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* For ItemModal */
+.quantity-selector {
+  margin: 15px 0;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.quantity-btn {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: 2px solid #ff6b6b;
+  background: white;
+  color: #ff6b6b;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quantity-btn:hover {
+  background: #ff6b6b;
+  color: white;
+}
+
+.quantity-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.quantity-btn:disabled:hover {
+  background: white;
+  color: #ff6b6b;
+}
+
+.quantity-display {
+  font-size: 20px;
+  font-weight: bold;
+  min-width: 40px;
+  text-align: center;
+}
+
+/* Address Warning Banner */
+.address-warning {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 8px;
+  padding: 12px 15px;
+  margin: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #856404;
+  animation: pulse 2s infinite;
+}
+
+.address-warning i {
+  color: #ff6b6b;
+  font-size: 18px;
+}
+
+.address-warning span {
+  flex: 1;
+  font-size: 14px;
+}
+
+.add-address-btn {
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.3s;
+}
+
+.add-address-btn:hover {
+  background: #ff5252;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 5px rgba(255, 107, 107, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 107, 107, 0);
+  }
+}
+
+/* Address Prompt Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.address-prompt-modal {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+.address-prompt-modal h3 {
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.address-prompt-modal p {
+  color: #666;
+  margin-bottom: 25px;
+  line-height: 1.5;
+}
+
+.modal-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-primary-btn {
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.modal-primary-btn:hover {
+  background: #ff5252;
+}
+
+.modal-secondary-btn {
+  background: #e0e0e0;
+  color: #333;
+  border: none;
+  padding: 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s;
+}
+
+.modal-secondary-btn:hover {
+  background: #d0d0d0;
+}
+
+/* Disabled order button styling */
+.order-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.order-button:disabled:hover {
+  background: #ccc;
+}
+
+/* Current address display */
+.current-address-display {
+  background: #f0f8ff;
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin: 15px;
+  border-left: 4px solid #4a90e2;
+}
+
+.current-address-display h4 {
+  margin: 0 0 5px 0;
+  color: #333;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.current-address-display h4 i {
+  color: #4a90e2;
+}
+
+.current-address-display p {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.4;
+}

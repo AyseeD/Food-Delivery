@@ -1,0 +1,387 @@
+/* ------------------ HEADER ------------------ */
+.lp-header {
+  width: 100%;
+  padding: 22px 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 50;
+}
+
+.lp-header-inner {
+  width: min(1200px, 92vw);
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ------------------ LOGO ------------------ */
+.lp-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lp-logo-image {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+}
+
+
+/* ------------------ NAV LINKS ------------------ */
+.lp-header-right {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.lp-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+}
+
+.lp-nav-links a {
+  text-decoration: none;
+  font-size: 0.95rem;
+  color: #f58803;
+  font-weight: 500;
+  transition: 0.2s ease;
+}
+
+.lp-nav-links a:hover {
+  color: red;
+}
+
+/* ------------------ SIGN UP BUTTON ------------------ */
+.lp-signup-btn {
+  padding: 10px 22px;
+  background: #f58803;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 30px;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+.lp-signup-btn:hover {
+  background: #fff;
+  color: #f58803;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+}
+
+/* ------------------ RESPONSIVE ------------------ */
+@media (max-width: 900px) {
+  .lp-nav-links {
+    display: none; 
+  }
+
+  .lp-signup-btn {
+    padding: 8px 18px;
+  }
+}
+
+@media (max-width: 600px) {
+  .lp-logo-text {
+    font-size: 1.1rem;
+  }
+
+  .lp-avatar-icon {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+
+
+/* =============== HERO =================== */
+.lp-hero {
+  width: 100%;
+  min-height: 90vh;
+  padding-top: 120px;  
+  padding-bottom: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; 
+  background-image: url("../assets/landing.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+.lp-hero-inner,
+.lp-header-inner {
+  width: min(1200px, 92vw);
+  margin: 0 auto;
+}
+
+.lp-hero-left {
+  margin-left: calc((100vw - min(1200px, 92vw)) / 2); /* SOLU LOGOYA HİZALAR */
+  max-width: 520px;
+  z-index: 3;
+}
+
+.lp-hero-left h1 {
+  font-size: 4rem;
+  line-height: 1.1;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 20px;
+}
+
+.lp-hero-left .fast {
+  color: #ff7a3c;
+}
+
+.lp-hero-text {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #444;
+  max-width: 480px;
+  margin-bottom: 30px;
+}
+
+
+.lp-hero-content {
+  position: relative; 
+  z-index: 2;
+  width: min(600px, 92vw);
+  margin-left: min(12vw, 140px);
+  color: #ffffff;
+}
+
+
+.lp-hero-content h1 {
+  font-size: 3rem;
+  line-height: 1.2;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+
+.lp-hero-content p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  opacity: 0.95;
+  margin-bottom: 32px;
+  max-width: 540px;
+}
+
+
+.lp-order-btn {
+  display: inline-block;
+  padding: 14px 32px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  background:  #f58803;
+  border-radius: 50px;
+  text-decoration: none;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+  transition: 0.25s ease-in-out;
+}
+
+.lp-order-btn:hover {
+  transform: translateY(-3px);
+  background: #ffffff;
+  color: #f58803;
+}
+
+/* =========== RESPONSIVE =========== */
+@media (max-width: 900px) {
+  .lp-hero {
+    padding: 120px 0 80px;
+  }
+
+  .lp-hero-content h1 {
+    font-size: 2.4rem;
+  }
+
+  .lp-hero-content p {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .lp-hero-content {
+    margin-left: 20px;
+  }
+
+  .lp-hero-content h1 {
+    font-size: 2rem;
+  }
+}
+
+
+
+/* ===================   FOOTER   ====================== */
+
+.lp-footer {
+  background: #f58803;
+  padding: 60px 0 20px;
+}
+
+.lp-footer-inner {
+  width: min(1200px, 92vw);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 60px;
+}
+
+/* ---- Logo Column ---- */
+.lp-footer-logo-text {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: black; 
+}
+
+.lp-footer-desc {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  color: black;
+}
+
+/* Social icons */
+.lp-socials {
+  display: flex;
+  gap: 12px;
+}
+
+.lp-social-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #d9d9d9;
+  display: inline-block;
+  transition: 0.2s ease;
+}
+
+.lp-social-circle:hover {
+  background: #b9b9b9;
+}
+
+/* SOCIAL ICONS WRAPPER */
+.lp-socials {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 25px 0;
+}
+
+/* SOCIAL ICON CIRCLES */
+.lp-social-circle {
+  width: 35px;
+  height: 35px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #444;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 22px;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+/* Hover efekti */
+.lp-social-circle:hover {
+  background: #fff;
+  color: #ff7a00;
+  transform: translateY(-4px);
+}
+
+
+
+
+
+
+
+
+
+/* ---- Footer Columns ---- */
+.lp-footer-col h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.lp-footer-col ul {
+  list-style: none;
+  padding: 0;
+}
+
+.lp-footer-col ul li {
+  font-size: 0.95rem;
+  color: black;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.lp-footer-col ul li:hover {
+  color: #ffffff;
+  transform: translateX(3px);
+}
+
+/* ---- Bottom Footer ---- */
+.lp-footer-bottom {
+  width: min(1200px, 92vw);
+  margin: 40px auto 0;
+  padding-top: 20px;
+  border-top: 1px solid #d6d6d6;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.lp-footer-bottom span {
+  font-size: 0.9rem;
+  color: black;
+}
+
+.lp-footer-bottom-links a {
+  margin-left: 18px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  color: black;
+  transition: 0.2s ease;
+}
+
+.lp-footer-bottom-links a:hover {
+  color: #ff7a3c;
+}
+
+/* ============== RESPONSIVE FOOTER ============== */
+@media (max-width: 900px) {
+  .lp-footer-inner {
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+}
+
+@media (max-width: 600px) {
+  .lp-footer-inner {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .lp-socials {
+    justify-content: center;
+  }
+
+  .lp-footer-bottom {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+}

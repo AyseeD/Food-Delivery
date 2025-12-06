@@ -1,0 +1,104 @@
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-box {
+  background: #fff;
+  width: 420px;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+
+.modal-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.modal-img {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+/* === MODAL OPTIONS SECTION === */
+
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 15px 0 20px 0;
+}
+
+.option-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  background: #f7f7f7;
+  border-radius: 10px;
+  border: 1px solid #e2e2e2;
+  cursor: pointer;
+  transition: 0.2s ease;
+  font-size: 0.95rem;
+}
+
+.option-item:hover {
+  background: #f0f0f0;
+}
+
+/* Remove default checkbox */
+.option-item input[type="checkbox"] {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #f58803;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  transition: 0.2s;
+}
+
+/* Checked state */
+.option-item input[type="checkbox"]:checked {
+  background-color: #f58803;
+  border-color: #f58803;
+}
+
+/* Checkmark icon */
+.option-item input[type="checkbox"]:checked::after {
+  content: "✔";
+  color: white;
+  font-size: 0.85rem;
+  position: absolute;
+  top: -2px;
+  left: 4px;
+}
+
+.modal-add-btn {
+  width: 100%;
+  margin-top: 15px;
+  padding: 12px;
+  background: #ff5722;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+}

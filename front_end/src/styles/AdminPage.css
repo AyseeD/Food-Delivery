@@ -1,0 +1,312 @@
+.admin-page {
+  background: #f5f5f7;
+  min-height: 80vh;
+  padding: 24px 40px;
+}
+
+.admin-layout {
+  display: flex;
+  gap: 24px;
+}
+
+
+.admin-topbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 12px;
+}
+
+.admin-logged-as {
+  font-size: 14px;
+  color: #888;
+}
+
+.admin-logout-btn {
+  background: #ff8c24;
+  color: #ffffff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.admin-logout-btn:hover {
+  background: #dad5d5;
+  color: #000;
+}
+
+
+
+/* SIDEBAR */
+.admin-sidebar {
+  width: 220px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+}
+
+.admin-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.admin-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-nav button {
+  border: none;
+  background: #f5f5f7;
+  padding: 10px 12px;
+  border-radius: 10px;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.admin-nav button.active,
+.admin-nav button:hover {
+  background: #ffefe0;
+  color: #ff8c24;
+}
+
+/* MAIN */
+.admin-main {
+  flex: 1;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+}
+
+.admin-section-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+/* DASHBOARD CARDS */
+.dashboard-cards {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.dash-card {
+  flex: 1;
+  background: #f9fafb;
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.dash-card h4 {
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 6px;
+}
+
+.dash-card p {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+/* STATUS BARS */
+.dashboard-status h4 {
+  margin-bottom: 10px;
+}
+
+.status-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.status-bar {
+  flex: 1;
+  height: 10px;
+  border-radius: 999px;
+  background: #eee;
+  overflow: hidden;
+}
+
+.status-fill {
+  height: 100%;
+}
+
+.status-fill.preparing {
+  background: #ff8c24;
+}
+
+.status-fill.on-the-way {
+  background: #007aff;
+}
+
+.status-fill.delivered {
+  background: #00b14f;
+}
+
+/* FORMS */
+.admin-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.admin-form input {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  flex: 1;
+}
+
+.admin-form button {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  background: #ff8c24;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.admin-form.small {
+  margin-top: 10px;
+}
+
+/* TABLE */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.admin-table th {
+  text-align: left;
+  background: #fafafa;
+}
+
+/* RESTAURANTS */
+.restaurant-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.restaurant-card {
+  border: 1px solid #eee;
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.restaurant-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.restaurant-info {
+  display: flex;
+  gap: 12px;
+}
+
+.restaurant-thumb {
+  width: 70px;
+  height: 70px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.restaurant-desc {
+  font-size: 13px;
+  color: #666;
+}
+
+/* MENUS */
+.menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 6px 0;
+  font-size: 13px;
+}
+
+.menu-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.menu-item-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.menu-thumb {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.menu-actions button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.edit-link {
+  color: #007aff;
+  margin-right: 6px;
+}
+
+.danger-link {
+  color: #ff4b4b;
+}
+
+.menu-empty {
+  color: #aaa;
+}
+
+/* IMAGE PREVIEW */
+.admin-upload-preview {
+  width: 220px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+.admin-upload-preview.small {
+  width: 160px;
+}
+
+/* BUTTONS */
+.danger-btn {
+  border: none;
+  background: #ff4b4b;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+}

@@ -1,0 +1,19 @@
+.status-select {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #d0d0d0;
+  font-size: 15px;
+  cursor: pointer;
+  background: #fafafa;
+  transition: 0.2s ease;
+}
+
+.status-select:hover {
+  border-color: #ff8800;
+}
+
+.status-select:focus {
+  outline: none;
+  border-color: #ff8800;
+  box-shadow: 0 0 0 2px rgba(255,136,0,0.2);
+}
