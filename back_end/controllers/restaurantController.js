@@ -163,8 +163,6 @@ export const remove = async (req, res) => {
     //delete restaurant tags, hours and promotions due to foreign key constraints
     await db.query("DELETE FROM restaurant_tags WHERE restaurant_id = $1", [id]);
 
-    await db.query("DELETE FROM restaurant_hours WHERE restaurant_id = $1", [id]);
-
     await db.query("DELETE FROM promotions WHERE restaurant_id = $1", [id]);
     
     const menuItemsRes = await db.query(

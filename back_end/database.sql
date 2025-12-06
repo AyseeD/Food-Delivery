@@ -111,21 +111,6 @@ CREATE TABLE order_item_options (
 );
 
 -- -------------------------
--- PAYMENTS
--- -------------------------
-
-CREATE TABLE payments (
-    payment_id SERIAL PRIMARY KEY,
-    order_id INT REFERENCES orders(order_id),
-    amount NUMERIC(10,2) NOT NULL,
-    method VARCHAR(50) NOT NULL,   -- PayPal, Stripe, Credit Card, Cash on Delivery
-    status VARCHAR(30) NOT NULL DEFAULT 'pending', 
-        -- pending, paid, failed, refunded
-    transaction_id VARCHAR(200),
-    paid_at TIMESTAMP
-);
-
--- -------------------------
 -- PROMOTIONS
 -- -------------------------
 

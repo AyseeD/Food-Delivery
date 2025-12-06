@@ -94,13 +94,34 @@ export const deleteUser = async (req, res) => {
   const { id } = req.params;
 
   try {
-    //if user has order deactivate them rather than hard delete
-    const orders = await db.query(
+    //check if user exists
+    const userExists = await db.query(
+      "SELECT 1 FROM users WHERE user_id = $1",
+      [id]
+    );
+
+    if (userExists.rowCount === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    //check for any related records that would prevent deletion
+    const hasOrders = await db.query(
       "SELECT 1 FROM orders WHERE user_id = $1 LIMIT 1",
       [id]
     );
 
-    if (orders.rowCount > 0) {
+    const hasCart = await db.query(
+      "SELECT 1 FROM cart WHERE user_id = $1 LIMIT 1",
+      [id]
+    );
+
+    const hasDeliveries = await db.query(
+      "SELECT 1 FROM deliveries WHERE driver_id = $1 LIMIT 1",
+      [id]
+    );
+
+    //if user has any related records, deactivate instead of delete
+    if (hasOrders.rowCount > 0 || hasCart.rowCount > 0 || hasDeliveries.rowCount > 0) {
       await db.query(
         "UPDATE users SET is_active = FALSE WHERE user_id = $1",
         [id]
@@ -109,24 +130,31 @@ export const deleteUser = async (req, res) => {
       return res.json({
         success: true,
         action: "deactivated",
-        message: "User has orders. Deactivated instead of deleted.",
+        message: "User has related records. Deactivated instead of deleted.",
       });
     }
 
-    //hard delete if no order history
+    //if no related records exist, proceed with hard delete
     const result = await db.query(
       "DELETE FROM users WHERE user_id = $1 RETURNING user_id",
       [id]
     );
 
-    //if user that is asked to be deleted do not exist
-    if (result.rowCount === 0) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    res.json({ success: true, action: "deleted" });
+    res.json({ 
+      success: true, 
+      action: "deleted",
+      message: "User permanently deleted" 
+    });
   } catch (err) {
     console.error(err);
+    
+    if (err.code === '23503') { // Foreign key violation
+      return res.status(400).json({ 
+        error: "Cannot delete user due to existing references in other tables",
+        hint: "User might have cart items or other related data"
+      });
+    }
+    
     res.status(500).json({ error: "Could not delete user" });
   }
 };
