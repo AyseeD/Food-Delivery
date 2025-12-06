@@ -1,11 +1,12 @@
 import React, {useState, useEffect} from "react";
 
 function AdminDashboard() {
-  const [loading, setLoading] = useState(true);
-  const [userLength, setUserLength] = useState(0);
-  const [restaurantLength, setRestaurantLength] = useState(0);
-  const [orderLength, setOrderLength] = useState(0);
+  const [loading, setLoading] = useState(true); //for page loading
+  const [userLength, setUserLength] = useState(0); //user amount
+  const [restaurantLength, setRestaurantLength] = useState(0); //restaurant amount
+  const [orderLength, setOrderLength] = useState(0);//order amount
 
+  //get user amount from backend
   useEffect(() => {
     async function fetchUserAmount() {
       try {
@@ -22,6 +23,7 @@ function AdminDashboard() {
     fetchUserAmount();
   }, []);
 
+  //get restaurant amount from backend
   useEffect(() =>{
     async function fetchRestaurantAmount() {
       try{
@@ -38,6 +40,7 @@ function AdminDashboard() {
     fetchRestaurantAmount();
   }, []);
 
+  //get order amount from backend
   useEffect(()=>{
     async function fetchOrderAmount() {
       try{
@@ -54,7 +57,7 @@ function AdminDashboard() {
     fetchOrderAmount();
   }, []);
   
-  if (loading) return <p>Loading menu...</p>;
+  if (loading) return <p>Loading dashboard...</p>;
 
   return (
     <section>

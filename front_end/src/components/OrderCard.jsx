@@ -6,6 +6,7 @@ export default function OrderCard({ order, token }) {
     const [delivery, setDelivery] = useState(null);
     const [promotion, setPromotion] = useState(null);
 
+    //get order items from backend
     async function loadOrderItems() {
         if (items.length > 0) return;
 
@@ -29,7 +30,7 @@ export default function OrderCard({ order, token }) {
         toggleOpen();
     }
 
-    // Calculate item total with quantity and options
+    //calculate item total with quantity and options
     const calculateItemTotal = (item) => {
         const basePrice = Number(item.price_at_purchase || 0);
         const optionsTotal = item.options?.reduce((sum, opt) => 

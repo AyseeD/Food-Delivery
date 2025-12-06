@@ -2,15 +2,16 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/signup.css";
 
-export default function AdminSignIn(){
-    const navigate = useNavigate();
+export default function AdminSignIn() {
+  const navigate = useNavigate(); //for navigating between routes
 
-    const [form, setForm] = useState({
-        full_name: "",
-        email: "",
-        password: "",
-    });
+  const [form, setForm] = useState({
+    full_name: "",
+    email: "",
+    password: "",
+  });
 
+  //login authentication for admin
   async function handleLogin(e) {
     e.preventDefault();
 
@@ -32,6 +33,7 @@ export default function AdminSignIn(){
     }
   }
 
+  //handle change for form
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }

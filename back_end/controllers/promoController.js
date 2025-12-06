@@ -1,10 +1,11 @@
 import { db } from "../db.js";
 
+//apply an existing promotion
 export const applyPromotion = async (req, res) => {
   const { promo_code, restaurant_id } = req.body;
   
   try {
-    // Check if promo code exists and is valid
+    //check if promo code exists and is valid
     const promoRes = await db.query(
       `SELECT * FROM promotions 
        WHERE code = $1 
@@ -36,6 +37,7 @@ export const applyPromotion = async (req, res) => {
   }
 };
 
+//get promotions of a specific restaurant
 export const getPromotionsByRestaurant = async (req, res) => {
   const { restaurantId } = req.params;
   
@@ -57,11 +59,12 @@ export const getPromotionsByRestaurant = async (req, res) => {
   }
 };
 
+//create a new promo code
 export const createPromotion = async (req, res) => {
   const { restaurant_id, code, description, discount_percent, valid_from, valid_until } = req.body;
   
   try {
-    // Check if code already exists
+    //check if code already exists
     const existing = await db.query(
       "SELECT 1 FROM promotions WHERE code = $1",
       [code.toUpperCase()]
@@ -86,12 +89,13 @@ export const createPromotion = async (req, res) => {
   }
 };
 
+//update an existing code
 export const updatePromotion = async (req, res) => {
   const { promoId } = req.params;
   const { is_active } = req.body;
   
   try {
-    // Verify promotion exists and belongs to admin's restaurant
+    //verify promotion exists and belongs to admin's restaurant
     const promoCheck = await db.query(
       "SELECT restaurant_id FROM promotions WHERE promo_id = $1",
       [promoId]

@@ -5,11 +5,12 @@ import { adminRequired } from "../middleware/adminAuth.js";
 
 const router = express.Router();
 
+//public restaurant routes
 router.get("/", getAll);
 router.get("/search", search);
 router.get("/:id", getById);
 
-// Admin routes
+//admin restaurant routes
 router.post("/", authRequired, adminRequired, create);
 router.put("/:id", authRequired, adminRequired, update);
 router.delete("/:id", authRequired, adminRequired, remove);

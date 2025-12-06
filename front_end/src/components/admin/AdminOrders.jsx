@@ -4,8 +4,9 @@ import "../../styles/AdminOrders.css";
 
 function AdminOrders() {
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); //for page loading
 
+  //get orders from backend
   useEffect(() => {
     async function fetchOrders() {
       try{
@@ -22,6 +23,7 @@ function AdminOrders() {
     fetchOrders();
   }, []);
 
+  //update order status to backend
   const updateStatus = async (orderId, newStatus) => {
     try {
       await fetch(`http://localhost:4000/orders/${orderId}/status`, {
@@ -33,7 +35,7 @@ function AdminOrders() {
         body: JSON.stringify({ status: newStatus })
       });
 
-      // update local UI
+      //update local UI after updating status
       setOrders(prev =>
         prev.map(order =>
           order.id === orderId ? { ...order, status: newStatus } : order

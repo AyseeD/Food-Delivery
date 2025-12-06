@@ -1,6 +1,6 @@
 import {db} from "../db.js";
 
-//return the categories, items, options, tags for a restaurant
+//return the categories, items, options, tags for a restaurant for public
 export const getMenuByRestaurant = async (req, res) => {
     const { restaurantId } = req.params;
     const itemsRes = await db.query(`
@@ -47,6 +47,7 @@ export const getMenuByRestaurant = async (req, res) => {
     res.json(enriched);
 };
 
+//get specific item by id
 export const getItemById = async (req, res) =>{
     const {itemId} = req.params;
     const itemRes = await db.query(`SELECT * FROM menu_items WHERE item_id= $1`, [itemId]);
@@ -59,6 +60,7 @@ export const getItemById = async (req, res) =>{
     res.json({...item, options: optionRes.rows, tags: tagsRes.rows});
 }
 
+//create a new item for a menu of a restaurant
 export const createItem = async (req, res) => {
   const { restaurant_id, category_id, name, description, price, image_url, is_available, options = [], tags = [] } = req.body;
   try {
@@ -73,7 +75,7 @@ export const createItem = async (req, res) => {
       await db.query(`INSERT INTO item_options (item_id, name, additional_price) VALUES ($1,$2,$3)`, [item.item_id, opt.name, opt.additional_price ?? 0]);
     }
 
-    //ensure tags exist then link them
+    //make sure tags exist, then link them
     for (const tagName of tags) {
       let tagRes = await db.query(`SELECT tag_id FROM tags WHERE name = $1`, [tagName]);
       let tagId;
@@ -98,7 +100,7 @@ export const getTags = async (req, res) => {
   res.json(r.rows);
 };
 
-// Get categories by restaurant
+//get categories by restaurant
 export const getCategoriesByRestaurant = async (req, res) => {
   const { restaurantId } = req.params;
   try {
@@ -113,13 +115,13 @@ export const getCategoriesByRestaurant = async (req, res) => {
   }
 };
 
-// Update menu item
+//update menu item
 export const updateItem = async (req, res) => {
   const { itemId } = req.params;
   const { name, description, price, image_url, category_id, is_available, tags } = req.body;
   
   try {
-    // Update item
+    //update the item
     const result = await db.query(
       `UPDATE menu_items 
        SET name=$1, description=$2, price=$3, image_url=$4, category_id=$5, is_available=$6 
@@ -131,7 +133,7 @@ export const updateItem = async (req, res) => {
       return res.status(404).json({ error: "Item not found" });
     }
     
-    // Update tags
+    //update tags of item
     await db.query("DELETE FROM item_tags WHERE item_id = $1", [itemId]);
     
     for (const tagName of tags) {
@@ -156,7 +158,7 @@ export const updateItem = async (req, res) => {
   }
 };
 
-// Delete menu item
+//delete menu item
 export const deleteItem = async (req, res) => {
   const { itemId } = req.params;
   try {
@@ -168,7 +170,7 @@ export const deleteItem = async (req, res) => {
   }
 };
 
-// Update item availability
+//update item availability
 export const updateItemAvailability = async (req, res) => {
   const { itemId } = req.params;
   const { is_available } = req.body;
@@ -184,7 +186,7 @@ export const updateItemAvailability = async (req, res) => {
   }
 };
 
-// Create category
+//create a new category for a restaurant
 export const createCategory = async (req, res) => {
   const { restaurant_id, name } = req.body;
   
@@ -200,7 +202,7 @@ export const createCategory = async (req, res) => {
   }
 };
 
-// Update category
+//update existing category
 export const updateCategory = async (req, res) => {
   const { categoryId } = req.params;
   const { name } = req.body;
@@ -222,18 +224,18 @@ export const updateCategory = async (req, res) => {
   }
 };
 
-// Delete category
+//delete category
 export const deleteCategory = async (req, res) => {
   const { categoryId } = req.params;
   
   try {
-    // First, set items in this category to null
+    //first, set items in that category to null
     await db.query(
       "UPDATE menu_items SET category_id = NULL WHERE category_id = $1",
       [categoryId]
     );
     
-    // Then delete the category
+    //delete the category
     const result = await db.query(
       "DELETE FROM menu_categories WHERE category_id = $1 RETURNING *",
       [categoryId]
@@ -250,7 +252,7 @@ export const deleteCategory = async (req, res) => {
   }
 };
 
-// Get options for an item
+//get options for an item
 export const getItemOptions = async (req, res) => {
   const { itemId } = req.params;
   try {
@@ -265,7 +267,7 @@ export const getItemOptions = async (req, res) => {
   }
 };
 
-// Create option for an item
+//create option for an item
 export const createItemOption = async (req, res) => {
   const { itemId } = req.params;
   const { name, additional_price } = req.body;
@@ -283,7 +285,7 @@ export const createItemOption = async (req, res) => {
   }
 };
 
-// Update option
+//update option
 export const updateItemOption = async (req, res) => {
   const { optionId } = req.params;
   const { name, additional_price } = req.body;
@@ -307,7 +309,7 @@ export const updateItemOption = async (req, res) => {
   }
 };
 
-// Delete option
+//delete option
 export const deleteItemOption = async (req, res) => {
   const { optionId } = req.params;
   

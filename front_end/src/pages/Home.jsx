@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // Add this import
 import CategorySlider from "../components/CategorySlider";
 import RestaurantCard from "../components/RestaurantCard";
 import Header from "../components/Header";
@@ -10,9 +9,9 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [restaurants, setRestaurants] = useState([]);
   const [categories, setCategories] = useState(["All"]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); //for loading page
   
-  // Fetch restaurants
+  //fetch restaurants
   useEffect(() => {
     async function fetchRestaurants() {
       try {
@@ -28,6 +27,7 @@ export default function Home() {
     fetchRestaurants();
   }, []);
 
+  //get tags
   useEffect(() => {
     async function fetchTags() {
       try {
@@ -53,7 +53,7 @@ export default function Home() {
     fetchTags();
   }, []);
 
-  // Filter restaurants by tag
+  //filter restaurants by category
   const filteredRestaurants = 
     selectedCategory === "All"
       ? restaurants

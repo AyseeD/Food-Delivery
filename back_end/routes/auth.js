@@ -3,6 +3,8 @@ import { register, login, userInfo, updateUser, updatePassword } from "../contro
 import { authRequired } from "../middleware/auth.js";
 
 const router = express.Router();
+
+//authentication routes
 router.post("/register", register);
 router.post("/login", login);
 router.get("/user", authRequired, userInfo);

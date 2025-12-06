@@ -10,54 +10,54 @@ function LandingPage() {
   return (
     <div className="lp-wrapper">
 
-    {/* Header */}
-    <header className="lp-header">
-          <div className="lp-header-inner">
-    
-            {/* Left: Logo + icon */}
-            <div className="lp-header-left">
-              <img src={logoImg1} alt="logo" className="lp-logo-image" />
-            </div>
-    
-    
-            {/* Right: Sign Up butonu */}
-            <div className="lp-header-right">
-              <div className="lp-nav-links">
-                <a href="#about">Home</a>
-                <a href="#about">About Us</a>
-                <a href="#contact">Contact</a>
-              </div>
-    
-              <Link to="/signup" className="lp-signup-btn">Sign Up</Link>
-            </div>
-    
+      {/* Header */}
+      <header className="lp-header">
+        <div className="lp-header-inner">
+
+          {/* Left: Logo + icon */}
+          <div className="lp-header-left">
+            <img src={logoImg1} alt="logo" className="lp-logo-image" />
           </div>
-    </header>
-  
-    {/* Main */}
-    <main className="lp-main">
 
-      {/* HERO */}
-      <section 
-        className="lp-hero" >
-        <div className="lp-hero-left">
-          <h1>
-              <span className="fast">Fast</span> Food <br /> Delivery
-          </h1>
-          <p className="lp-hero-text">
-            Craving something tasty? From gourmet burgers to fresh salads and  
-            comforting pasta bowls — your favorite meals are now just a tap away.  
-            Order in seconds. Enjoy in minutes.
-          </p>
-          <Link to="/signup" className="lp-order-btn">
-            Order now
-          </Link>
+
+          {/* Right: Sign Up butonu */}
+          <div className="lp-header-right">
+            <div className="lp-nav-links">
+              <a href="#about">Home</a>
+              <a href="#about">About Us</a>
+              <a href="#contact">Contact</a>
+            </div>
+
+            <Link to="/signup" className="lp-signup-btn">Sign Up</Link>
+          </div>
+
         </div>
+      </header>
 
-        
-      </section>
+      {/* Main */}
+      <main className="lp-main">
 
-    </main>
+        {/* HERO */}
+        <section
+          className="lp-hero" >
+          <div className="lp-hero-left">
+            <h1>
+              <span className="fast">Fast</span> Food <br /> Delivery
+            </h1>
+            <p className="lp-hero-text">
+              Craving something tasty? From gourmet burgers to fresh salads and
+              comforting pasta bowls — your favorite meals are now just a tap away.
+              Order in seconds. Enjoy in minutes.
+            </p>
+            <Link to="/signup" className="lp-order-btn">
+              Order now
+            </Link>
+          </div>
+
+
+        </section>
+
+      </main>
 
 
       {/* Footer */}
@@ -74,7 +74,7 @@ function LandingPage() {
             </p>
             <div className="lp-socials">
               <i className="fa-brands fa-facebook lp-social-circle"></i>
-              <i className ="fa-brands fa-twitter lp-social-circle"></i>
+              <i className="fa-brands fa-twitter lp-social-circle"></i>
               <i className="fa-brands fa-instagram lp-social-circle"></i>
             </div>
           </div>

@@ -18,6 +18,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+//add app the routes for each router for backend
 app.use("/auth", authRoutes);
 app.use("/restaurants", restaurantRoutes);
 app.use("/menu", menuRoutes);

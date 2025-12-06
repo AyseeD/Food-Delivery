@@ -10,11 +10,11 @@ import { adminRequired } from "../middleware/adminAuth.js";
 
 const router = express.Router();
 
-// Public routes
+//public promotion routes
 router.get("/restaurant/:restaurantId", getPromotionsByRestaurant);
-router.post("/apply", authRequired, applyPromotion); // For customers to apply promo
+router.post("/apply", authRequired, applyPromotion);
 
-// Admin routes
+//admin promotion routes
 router.post("/", authRequired, adminRequired, createPromotion);
 router.patch("/:promoId", authRequired, adminRequired, updatePromotion);
 

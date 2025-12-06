@@ -1,8 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import "../styles/AdminPage.css";
-
-// Components
 import AdminDashboard from "../components/admin/AdminDashboard";
 import AdminUsers from "../components/admin/AdminUsers";
 import AdminRestaurants from "../components/admin/AdminRestaurants";
@@ -10,8 +7,6 @@ import AdminOrders from "../components/admin/AdminOrders";
 
 function AdminPage() {
   const [activeTab, setActiveTab] = useState("dashboard");
-  const navigate = useNavigate();
-
 
   return (
     <div className="admin-page">

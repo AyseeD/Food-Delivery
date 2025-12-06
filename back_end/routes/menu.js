@@ -21,13 +21,13 @@ import { adminRequired } from "../middleware/adminAuth.js";
 
 const router = express.Router();
 
-// Public routes
+//public routes for menu
 router.get("/restaurant/:restaurantId", getMenuByRestaurant);
 router.get("/item/:itemId", getItemById);
 router.get("/tags", getTags);
 router.get("/categories/:restaurantId", getCategoriesByRestaurant);
 
-// Admin routes
+//admin routes for menu
 router.get("/item/:itemId/options", getItemOptions);
 router.post("/item/:itemId/options", authRequired, adminRequired, createItemOption);
 router.put("/options/:optionId", authRequired, adminRequired, updateItemOption);

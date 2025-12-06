@@ -11,7 +11,7 @@ import AdminPage from "./pages/AdminPage";
 import AdminSignIn from "./pages/AdminSignIn";
 import "./App.css";
 
-
+//add routes for front end
 function App() {
   return (
     <Router>

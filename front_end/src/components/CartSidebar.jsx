@@ -10,13 +10,13 @@ export default function CartSidebar({ isOpen, onClose }) {
   const [userAddress, setUserAddress] = useState(null);
   const [showAddressPrompt, setShowAddressPrompt] = useState(false);
 
-  // Load cart and user info from backend
+  //load cart and user info from backend
   async function loadCartAndUser() {
     const token = localStorage.getItem("token");
     setLoading(true);
 
     try {
-      // Load cart
+      //load cart
       const cartRes = await fetch("http://localhost:4000/cart", {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -24,7 +24,7 @@ export default function CartSidebar({ isOpen, onClose }) {
       const cartData = await cartRes.json();
       setCartItems(cartData.items || []);
       
-      // Get restaurant ID from first item
+      //get restaurant id from first item
       if (cartData.items && cartData.items.length > 0) {
         const firstRestaurantId = cartData.items[0]?.restaurant_id;
         if (firstRestaurantId) {
@@ -33,16 +33,12 @@ export default function CartSidebar({ isOpen, onClose }) {
           const allSameRestaurant = cartData.items.every(
             item => item.restaurant_id === firstRestaurantId
           );
-          
-          if (!allSameRestaurant) {
-            console.warn("Cart contains items from different restaurants");
-          }
         }
       } else {
         setRestaurantId(null);
       }
 
-      // Load user info to get address
+      //load user info to get address
       const userRes = await fetch("http://localhost:4000/auth/user", {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -63,7 +59,7 @@ export default function CartSidebar({ isOpen, onClose }) {
     if (isOpen) loadCartAndUser();
   }, [isOpen]);
 
-  // DELETE cart item
+  //delete cart item
   async function deleteItem(cartItemId) {
     const token = localStorage.getItem("token");
 
@@ -73,7 +69,7 @@ export default function CartSidebar({ isOpen, onClose }) {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      // Refresh cart
+      //refresh cart
       loadCartAndUser();
     } catch (err) {
       console.error("Failed to delete item:", err);
@@ -81,7 +77,7 @@ export default function CartSidebar({ isOpen, onClose }) {
     }
   }
 
-  // Apply promotion code
+  //apply promotion code for that restaurant
   async function applyPromoCode() {
     if (!promoCode.trim()) {
       alert("Please enter a promo code");
@@ -123,9 +119,10 @@ export default function CartSidebar({ isOpen, onClose }) {
     }
   }
 
+  //update quantity
   async function updateQuantity(cartItemId, newQuantity) {
     if (newQuantity < 1) {
-      // If quantity becomes 0, remove item
+      //if quantity becomes zero, remove item
       deleteItem(cartItemId);
       return;
     }
@@ -142,7 +139,7 @@ export default function CartSidebar({ isOpen, onClose }) {
         body: JSON.stringify({ quantity: newQuantity })
       });
 
-      // Refresh cart
+      //refresh cart
       loadCartAndUser();
     } catch (err) {
       console.error("Failed to update quantity:", err);
@@ -150,13 +147,13 @@ export default function CartSidebar({ isOpen, onClose }) {
     }
   }
 
-  // Remove promotion
+  //remove promotion
   function removePromotion() {
     setAppliedPromotion(null);
     setPromoCode("");
   }
 
-  // Calculate subtotal
+  //calculate subtotal
   const calculateSubtotal = () => {
     return cartItems.reduce((total, item) => {
       const basePrice = Number(item.price_at_add || 0);
@@ -168,14 +165,14 @@ export default function CartSidebar({ isOpen, onClose }) {
     }, 0);
   };
 
-  // Calculate discount
+  //calculate discount
   const calculateDiscount = () => {
     if (!appliedPromotion) return 0;
     const subtotal = calculateSubtotal();
     return (subtotal * appliedPromotion.discount_percent) / 100;
   };
 
-  // Calculate total
+  //calculate total
   const calculateTotal = () => {
     const subtotal = calculateSubtotal();
     const discount = calculateDiscount();
@@ -188,9 +185,9 @@ export default function CartSidebar({ isOpen, onClose }) {
       return;
     }
 
-    // Check if user has an address
+    //check if user has an address
     if (!userAddress || userAddress.trim() === "") {
-      // Show address prompt instead of alert
+      //show address prompt
       setShowAddressPrompt(true);
       return;
     }
@@ -238,8 +235,8 @@ export default function CartSidebar({ isOpen, onClose }) {
   }
 
    function goToAccountPage() {
-    onClose(); // Close cart sidebar
-    window.location.href = "/account"; // Navigate to account page
+    onClose(); //close cart sidebar
+    window.location.href = "/account"; //navigate to account page
   }
 
   return (

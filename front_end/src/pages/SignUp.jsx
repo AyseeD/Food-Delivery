@@ -11,17 +11,18 @@ function SignUp() {
     full_name: "",
     email: "",
     password: "",
-    address: "", 
+    address: "", //user adds address when they sign up as well
   });
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
+  //for signing up
   async function handleRegister(e) {
     e.preventDefault();
 
-    // Basic validation
+    //basic validation
     if (!form.full_name || !form.email || !form.password) {
       alert("Please fill in all required fields");
       return;
@@ -42,6 +43,7 @@ function SignUp() {
     }
   }
 
+  //for logging in
   async function handleLogin(e) {
     e.preventDefault();
 

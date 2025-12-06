@@ -9,7 +9,7 @@ function AdminRestaurants() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
 
-  // FETCH RESTAURANTS (Backend)
+  //fetch restaurants from backend
   useEffect(() => {
     async function fetchRestaurants() {
       try {
@@ -24,7 +24,7 @@ function AdminRestaurants() {
     fetchRestaurants();
   }, []);
 
-  // DELETE RESTAURANT
+  //delete restaurant for backend
   const deleteRestaurant = async (id) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this restaurant?");
     if (!confirmDelete) return;
@@ -45,11 +45,11 @@ function AdminRestaurants() {
       }
 
       if (data.action === "deleted") {
-        // Remove restaurant from list
+        //remove restaurant from list
         setRestaurants((prev) => prev.filter((r) => r.restaurant_id !== id));
         alert("Restaurant permanently deleted.");
       } else if (data.action === "deactivated") {
-        // Update restaurant in list to show as inactive
+        //update restaurant in list to show as inactive
         setRestaurants((prev) =>
           prev.map((r) =>
             r.restaurant_id === id ? { ...r, is_active: false } : r

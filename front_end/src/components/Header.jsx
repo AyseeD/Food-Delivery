@@ -9,11 +9,12 @@ export default function Header() {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
+  //for searching restaurant or items
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchTerm.trim().length >= 2) {
       navigate(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
-      setSearchTerm(""); // Clear input after search
+      setSearchTerm(""); //clear input after search
     } else {
       alert("Please enter at least 2 characters to search");
     }

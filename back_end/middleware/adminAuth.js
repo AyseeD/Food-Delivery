@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 
+//function to check user to make sure they are an admin
 export const adminRequired = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
@@ -16,7 +17,7 @@ export const adminRequired = (req, res, next) => {
       return res.status(403).json({ error: "Admins only" });
     }
 
-    req.user = decoded; // contains { user_id, email, role }
+    req.user = decoded; // contains an object of user_id, email, role
     next();
 
   } catch (err) {

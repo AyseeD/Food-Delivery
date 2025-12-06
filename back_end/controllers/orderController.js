@@ -1,5 +1,6 @@
 import { db } from "../db.js";
 
+//get orders of a user
 export const getUserOrders = async (req, res) => {
   const { userId } = req.params;
   
@@ -13,7 +14,7 @@ export const getUserOrders = async (req, res) => {
       [userId]
     );
     
-    // Get items for each order
+    //get items for each order
     const orders = result.rows;
     
     for (const order of orders) {
@@ -35,6 +36,7 @@ export const getUserOrders = async (req, res) => {
   }
 };
 
+//get all order information
 export const getAllOrders = async (req, res) => {
   try {
     const result = await db.query(`
@@ -51,7 +53,7 @@ export const getAllOrders = async (req, res) => {
       ORDER BY o.placed_at DESC
     `);
 
-    // load items for each order WITH QUANTITIES
+    //load items for each order with quantities
     const orders = result.rows;
 
     for (const order of orders) {
@@ -65,7 +67,7 @@ export const getAllOrders = async (req, res) => {
         [order.id]
       );
 
-      // Format items with quantity
+      //format the items with quantity
       order.items = itemsRes.rows.map(r => ({
         name: r.name,
         quantity: r.quantity,
@@ -82,7 +84,7 @@ export const getAllOrders = async (req, res) => {
   }
 };
 
-
+//get specific order
 export const getOrderById = async (req, res) => {
   const { orderId } = req.params;
 
@@ -91,6 +93,7 @@ export const getOrderById = async (req, res) => {
     [orderId]
   );
 
+  //orders with items and item optins 
   const itemsRes = await db.query(
     `SELECT 
       oi.*, 
@@ -116,6 +119,7 @@ export const getOrderById = async (req, res) => {
     [orderId]
   );
 
+  //get delivery information
   const deliveryRes = await db.query(
     `SELECT d.*, u.full_name AS driver_name
      FROM deliveries d
@@ -124,7 +128,7 @@ export const getOrderById = async (req, res) => {
     [orderId]
   );
 
-  // Get promotion info
+  //get promotion info
   const promoRes = await db.query(
     `SELECT p.*
      FROM orders_promotions op
@@ -141,6 +145,7 @@ export const getOrderById = async (req, res) => {
   });
 };
 
+//update the status of the order
 export const updateOrderStatus = async (req, res) => {
   const { orderId } = req.params;
   const { status } = req.body;
@@ -157,6 +162,7 @@ export const updateOrderStatus = async (req, res) => {
   res.json({ ok: true });
 };
 
+//turn the cart items into an order
 export const createOrderFromCart = async (req, res) => {
   const userId = req.user.user_id;
   const { promo_code } = req.body;
@@ -164,7 +170,7 @@ export const createOrderFromCart = async (req, res) => {
   const client = await db.connect();
 
   try {
-    // Get user address FIRST
+    //get user address first to make sure they have an address to order to
     const addrRes = await client.query(
       `SELECT address FROM users WHERE user_id = $1`,
       [userId]
@@ -172,14 +178,14 @@ export const createOrderFromCart = async (req, res) => {
 
     const address = addrRes.rows[0].address;
     
-    // Check if user has an address
+    //check if user has an address
     if (!address || address.trim() === "") {
       return res.status(400).json({ 
         error: "Please add a delivery address to your account before placing an order" 
       });
     }
 
-    // Get cart ID
+    //get cart_id
     const cartRes = await client.query(
       `SELECT cart_id FROM cart WHERE user_id = $1`,
       [userId]
@@ -191,7 +197,7 @@ export const createOrderFromCart = async (req, res) => {
 
     const cartId = cartRes.rows[0].cart_id;
 
-    // Get items in cart grouped by restaurant
+    //get items in cart grouped by restaurant so that each item from a restaurant is assigned to that restaurant
     const itemsRes = await client.query(
       `SELECT ci.cart_item_id, ci.item_id, ci.quantity, ci.price_at_add,
               mi.restaurant_id,
@@ -211,7 +217,7 @@ export const createOrderFromCart = async (req, res) => {
       return res.status(400).json({ error: "Cart is empty" });
     }
 
-    // Group items by restaurant
+    //group items by restaurant
     const itemsByRestaurant = {};
     itemsRes.rows.forEach(item => {
       if (!itemsByRestaurant[item.restaurant_id]) {
@@ -224,23 +230,22 @@ export const createOrderFromCart = async (req, res) => {
       itemsByRestaurant[item.restaurant_id].items.push(item);
     })
 
-    // Begin transaction
+    //begin transaction
     await client.query("BEGIN");
 
     const createdOrders = [];
 
-    // Create separate order for each restaurant
+    //create separate order for each restaurant
     for (const restaurantId in itemsByRestaurant) {
       const restaurantData = itemsByRestaurant[restaurantId];
       const restaurantItems = restaurantData.items;
 
-      // Calculate subtotal for this restaurant
+      //calculate subtotal for that restaurant
       let subtotal = 0;
       for (const it of restaurantItems) {
-        // Multiply base price by quantity
-        subtotal += Number(it.price_at_add) * it.quantity;
+        subtotal += Number(it.price_at_add) * it.quantity; //multiply with quantity
 
-        // Add option prices - also multiply by quantity
+        //add option prices with quantity
         if (it.options && it.options.length) {
           const optPrices = await client.query(
             `SELECT SUM(additional_price) AS sum FROM item_options WHERE option_id = ANY($1::int[])`,
@@ -251,7 +256,7 @@ export const createOrderFromCart = async (req, res) => {
         }
       }
 
-      // Apply promotion if provided (only for this restaurant)
+      //apply promotion if provided only for that restaurant
       let discountAmount = 0;
       let appliedPromoId = null;
       
@@ -271,22 +276,22 @@ export const createOrderFromCart = async (req, res) => {
           appliedPromoId = promotion.promo_id;
           discountAmount = (subtotal * promotion.discount_percent) / 100;
         }
-        // Note: If promo code doesn't apply to this restaurant, we continue without it
+        //if promotion does not apply to that restaurant continue without the promo
       }
 
       const totalAmount = subtotal - discountAmount;
 
-      // 1. Create order for this restaurant
+      //create order for that restaurant
       const orderRes = await client.query(
         `INSERT INTO orders (user_id, restaurant_id, total_amount, delivery_address)
          VALUES ($1, $2, $3, $4)
          RETURNING order_id`,
-        [userId, restaurantId, totalAmount, address] // Use the validated address
+        [userId, restaurantId, totalAmount, address]
       );
 
       const orderId = orderRes.rows[0].order_id;
 
-      // 2. Apply promotion to order if exists
+      //apply promotion to order if exists
       if (appliedPromoId) {
         await client.query(
           `INSERT INTO orders_promotions (order_id, promo_id)
@@ -295,7 +300,7 @@ export const createOrderFromCart = async (req, res) => {
         );
       }
 
-      // 3. Insert order_items for this restaurant
+      // insert order_items for this restaurant
       for (const it of restaurantItems) {
         const oiRes = await client.query(
           `INSERT INTO order_items (order_id, item_id, quantity, price_at_purchase)
@@ -306,7 +311,7 @@ export const createOrderFromCart = async (req, res) => {
 
         const orderItemId = oiRes.rows[0].order_item_id;
 
-        // Insert options
+        //insert options
         for (const optId of it.options) {
           await client.query(
             `INSERT INTO order_item_options (order_item_id, option_id)
@@ -316,7 +321,7 @@ export const createOrderFromCart = async (req, res) => {
         }
       }
 
-      // 4. Assign driver for this order
+      //assign a random driver for this order
       const driverRes = await client.query(
         `SELECT user_id, full_name FROM users
          WHERE role = 'driver'
@@ -346,7 +351,7 @@ export const createOrderFromCart = async (req, res) => {
       });
     }
 
-    // 5. Clear cart
+    //clear cart after order is created
     await client.query(
       `DELETE FROM cart_item_options WHERE cart_item_id IN 
          (SELECT cart_item_id FROM cart_items WHERE cart_id = $1)`,
@@ -367,7 +372,7 @@ export const createOrderFromCart = async (req, res) => {
     });
 
   } catch (err) {
-    await client.query("ROLLBACK");
+    await client.query("ROLLBACK"); //if transaction does not successed
     console.error(err);
     res.status(500).json({ error: "Could not create order from cart" });
   } finally {

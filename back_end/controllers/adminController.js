@@ -1,6 +1,7 @@
 import {db} from "../db.js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcrypt"; //for password hashing
 
+//get number of users
 export const getUsersAmount = async (req, res) => {
     try{
         const users = await db.query("SELECT * FROM users");
@@ -11,17 +12,19 @@ export const getUsersAmount = async (req, res) => {
     }
 }
 
+//create new user
 export const createUser = async (req, res) => {
   const { full_name, email, password, address, role } = req.body;
 
   try {
+    //if email exists warn the user
     const exists = await db.query("SELECT 1 FROM users WHERE email=$1", [email]);
     if (exists.rowCount > 0) {
       return res.status(400).json({ error: "Email already exists" });
     }
 
-    const hash = await bcrypt.hash(password, 10);
-    const userRole = role || "customer";
+    const hash = await bcrypt.hash(password, 10); //hash the new password
+    const userRole = role || "customer"; //default role will be customer
 
     const result = await db.query(
       `INSERT INTO users (full_name, email, password_hash, address, role)
@@ -41,6 +44,7 @@ export const createUser = async (req, res) => {
   }
 };
 
+//get user information for users list
 export const getAllUsers = async (req, res) => {
   try {
     const result = await db.query(`
@@ -63,6 +67,7 @@ export const getAllUsers = async (req, res) => {
   }
 };
 
+//get number of restaurants
 export const getRestaurantAmount = async (req, res) => {
     try{
         const restaurants = await db.query("SELECT * FROM restaurants");
@@ -73,6 +78,7 @@ export const getRestaurantAmount = async (req, res) => {
     }
 }
 
+//get number of orders
 export const getOrderAmount = async (req, res) => {
     try{
         const orders = await db.query("SELECT * FROM orders");
@@ -83,18 +89,18 @@ export const getOrderAmount = async (req, res) => {
     }
 }
 
+//delete existing user
 export const deleteUser = async (req, res) => {
   const { id } = req.params;
 
   try {
-    // 1. Check if user has any orders
+    //if user has order deactivate them rather than hard delete
     const orders = await db.query(
       "SELECT 1 FROM orders WHERE user_id = $1 LIMIT 1",
       [id]
     );
 
     if (orders.rowCount > 0) {
-      // Soft delete
       await db.query(
         "UPDATE users SET is_active = FALSE WHERE user_id = $1",
         [id]
@@ -107,12 +113,13 @@ export const deleteUser = async (req, res) => {
       });
     }
 
-    // Hard delete
+    //hard delete if no order history
     const result = await db.query(
       "DELETE FROM users WHERE user_id = $1 RETURNING user_id",
       [id]
     );
 
+    //if user that is asked to be deleted do not exist
     if (result.rowCount === 0) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -124,6 +131,7 @@ export const deleteUser = async (req, res) => {
   }
 };
 
+//get the menu items, options and tags for a specific restaurant for admins
 export const getAllMenuByRestaurant = async (req,res) =>{
     const {restaurantId} = req.params;
     const itemsRes = await db.query(`

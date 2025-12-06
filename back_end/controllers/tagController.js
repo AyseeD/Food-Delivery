@@ -1,5 +1,6 @@
 import { db } from "../db.js";
 
+//get all tags
 export const getAll = async (req, res) => {
   try {
     const result = await db.query("SELECT * FROM tags ORDER BY tag_id ASC");
@@ -10,6 +11,7 @@ export const getAll = async (req, res) => {
   }
 };
 
+//get tags of restaurant
 export const getRestaurantTags = async (req, res) => {
   try {
     const result = await db.query("SELECT * FROM tags ORDER BY name ASC");

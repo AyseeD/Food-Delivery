@@ -13,9 +13,10 @@ export default function SearchResultsPage() {
     restaurants: [],
     menuItems: []
   });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); //for loading page
   const [error, setError] = useState("");
 
+  //perform search for query
   useEffect(() => {
     if (query.trim().length < 2) {
       setError("Search query must be at least 2 characters");

@@ -6,31 +6,34 @@ import Footer from "../components/Footer";
 import ItemModal from "../components/ItemModal";
 
 export default function RestaurantPage() {
-  const { id } = useParams();
+  const { id } = useParams(); //get clicked on restaurant's id
 
   const [restaurant, setRestaurant] = useState(null);
   const [menuItems, setMenuItems] = useState([]);
   const [categories, setCategories] = useState(["All"]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedItemId, setSelectedItemId] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); //for loading page
 
+  //open item modal
   function openModal(itemId) {
     setSelectedItemId(itemId);
   }
 
+  //close item modal
   function closeModal() {
     setSelectedItemId(null);
   }
 
+  //add item to cart
   async function handleAddToCart(item, selectedOptions, quantity = 1) { // Default quantity to 1
     try {
       const token = localStorage.getItem("token");
 
-      console.log("Adding to cart:", { 
-        item_id: item.item_id, 
-        quantity, 
-        selectedOptions 
+      console.log("Adding to cart:", {
+        item_id: item.item_id,
+        quantity,
+        selectedOptions
       });
 
       const response = await fetch("http://localhost:4000/cart/add", {
@@ -39,10 +42,10 @@ export default function RestaurantPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ 
-          item_id: item.item_id, 
+        body: JSON.stringify({
+          item_id: item.item_id,
           options: selectedOptions,
-          quantity: quantity // This is the key!
+          quantity: quantity //add quantity
         }),
       });
 
@@ -51,7 +54,6 @@ export default function RestaurantPage() {
 
       closeModal();
 
-      // ⬇️ Auto-open the cart after adding
       if (typeof window.openCartSidebar === "function") {
         window.openCartSidebar();
       }
@@ -62,7 +64,7 @@ export default function RestaurantPage() {
     }
   }
 
-  // --- Fetch Restaurant Info ---
+  //get restaurant info
   useEffect(() => {
     async function fetchRestaurant() {
       try {
@@ -77,7 +79,7 @@ export default function RestaurantPage() {
     fetchRestaurant();
   }, [id]);
 
-  // --- Fetch Menu ---
+  //get menu for restaurant
   useEffect(() => {
     async function fetchMenu() {
       try {
@@ -104,11 +106,11 @@ export default function RestaurantPage() {
     fetchMenu();
   }, [id]);
 
-  // --- Loading States ---
+  //loading
   if (loading) return <p>Loading menu...</p>;
   if (!restaurant) return <p>Restaurant not found.</p>;
 
-  // --- Filter Menu By Category ---
+  //filter menu by category
   const filteredMenu =
     selectedCategory === "All"
       ? menuItems
@@ -192,7 +194,7 @@ export default function RestaurantPage() {
         <ItemModal
           itemId={selectedItemId}
           onClose={closeModal}
-          onAdd={handleAddToCart} // This passes quantity from ItemModal
+          onAdd={handleAddToCart} //pass quantity from ItemModal
         />
       )}
 

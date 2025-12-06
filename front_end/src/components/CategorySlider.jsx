@@ -5,7 +5,7 @@ export default function CategorySlider({
   categories,
   onSelectCategory,
   autoplay = true,
-  intervalMs = 2200,     // scroll range
+  intervalMs = 2200,//scroll range
   stepPx = 220,          
   pauseOnHover = true,
 }) {

@@ -10,8 +10,9 @@ function PromoManager({ restaurant, close }) {
     valid_from: new Date().toISOString().split('T')[0],
     valid_until: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
   });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);//for page loading
 
+  //get promotions from backend per restaurants
   useEffect(() => {
     fetchPromotions();
   }, [restaurant.restaurant_id]);
@@ -28,6 +29,7 @@ function PromoManager({ restaurant, close }) {
     }
   };
 
+  //create a new promo for restaurant
   const createPromotion = async (e) => {
     e.preventDefault();
     
@@ -48,10 +50,10 @@ function PromoManager({ restaurant, close }) {
 
       const data = await response.json();
       
-      // Refresh promotions
+      //refresh promotions
       fetchPromotions();
       
-      // Reset form
+      //reset form
       setNewPromo({
         code: "",
         description: "",
@@ -67,6 +69,7 @@ function PromoManager({ restaurant, close }) {
     }
   };
 
+  //deactivate a promo
   const deactivatePromotion = async (promoId) => {
     if (!window.confirm("Are you sure you want to deactivate this promotion?")) return;
 
@@ -82,7 +85,7 @@ function PromoManager({ restaurant, close }) {
 
       if (!response.ok) throw new Error("Failed to deactivate promotion");
 
-      // Refresh promotions
+      //refresh promotions
       fetchPromotions();
       
       alert("Promotion deactivated successfully!");

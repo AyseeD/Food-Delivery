@@ -4,6 +4,7 @@ import { getUsersAmount, getAllMenuByRestaurant, createUser, getRestaurantAmount
 
 const router = express.Router();
 
+//admin routes
 router.post("/login", adminLogin);
 router.get("/userAmount", getUsersAmount);
 router.get("/restaurantAmount", getRestaurantAmount);

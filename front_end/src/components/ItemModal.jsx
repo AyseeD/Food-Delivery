@@ -4,8 +4,9 @@ import "../styles/ItemModal.css";
 export default function ItemModal({ itemId, onClose, onAdd }) {
   const [item, setItem] = useState(null);
   const [selectedOptions, setSelectedOptions] = useState([]);
-  const [quantity, setQuantity] = useState(1); // Add quantity state
+  const [quantity, setQuantity] = useState(1); //quantity state
 
+  //load item info from backend
   useEffect(() => {
     async function loadItem() {
       const res = await fetch(`http://localhost:4000/menu/item/${itemId}`);
@@ -15,6 +16,7 @@ export default function ItemModal({ itemId, onClose, onAdd }) {
     loadItem();
   }, [itemId]);
 
+  //toggle item options
   function toggleOption(optId) {
     setSelectedOptions((prev) =>
       prev.includes(optId)
@@ -23,6 +25,7 @@ export default function ItemModal({ itemId, onClose, onAdd }) {
     );
   }
 
+  //increare or decrease item quality
   function increaseQuantity() {
     setQuantity(prev => prev + 1);
   }
@@ -33,7 +36,7 @@ export default function ItemModal({ itemId, onClose, onAdd }) {
     }
   }
 
-  if (!item) return null;
+  if (!item) return null; //if item does not exist return null
 
   return (
     <div className="modal-backdrop">
@@ -83,7 +86,7 @@ export default function ItemModal({ itemId, onClose, onAdd }) {
 
         <button
           className="modal-add-btn"
-          onClick={() => onAdd(item, selectedOptions, quantity)} // Pass quantity
+          onClick={() => onAdd(item, selectedOptions, quantity)} //pass quantity
         >
           Add to Cart ({quantity})
         </button>

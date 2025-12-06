@@ -1,10 +1,11 @@
 import {db} from "../db.js";
 
+//get all restaurants
 export const getAll = async (req, res) => {
   try {
-    // For customers, only show active restaurants
+    //for customers, only show active restaurants
     const isAdmin = req.user?.role === 'admin';
-    const showAll = isAdmin || req.query.showAll === 'true';
+    const showAll = isAdmin || req.query.showAll === 'true'; //for admins show deactivated ones too
     
     let query = `
       SELECT 
@@ -35,6 +36,7 @@ export const getAll = async (req, res) => {
   }
 };
 
+//get a certain restaurant
 export const getById = async (req, res) => {
     const result = await db.query(
         "SELECT * FROM restaurants WHERE restaurant_id = $1", [req.params.id]
@@ -42,6 +44,7 @@ export const getById = async (req, res) => {
     res.json(result.rows[0] || null);
 };
 
+//create a new restaurant
 export const create = async (req, res) => {
   const { name, description, address, is_active, rating, restaurant_img, tags = [] } = req.body;
   
@@ -54,7 +57,7 @@ export const create = async (req, res) => {
     
     const restaurant = result.rows[0];
     
-    // Add restaurant tags
+    //add restaurant tags
     if (tags.length > 0) {
       for (const tagId of tags) {
         await db.query(
@@ -64,7 +67,7 @@ export const create = async (req, res) => {
       }
     }
     
-    // Get restaurant with tags for response
+    //get restaurant with tags for response
     const restaurantWithTags = await getRestaurantWithTags(restaurant.restaurant_id);
     
     res.json(restaurantWithTags);
@@ -74,11 +77,12 @@ export const create = async (req, res) => {
   }
 };
 
+//update existing restaurant
 export const update = async (req, res) => {
   const { name, description, address, is_active, rating, restaurant_img, tags = [] } = req.body;
   
   try {
-    // Update restaurant
+    //update restaurant
     const result = await db.query(
       `UPDATE restaurants 
        SET name=$1, description=$2, address=$3, is_active=$4, rating=$5, restaurant_img=$6
@@ -88,7 +92,7 @@ export const update = async (req, res) => {
     
     const restaurant = result.rows[0];
     
-    // Update restaurant tags
+    //update restaurant's tags
     await db.query("DELETE FROM restaurant_tags WHERE restaurant_id = $1", [req.params.id]);
     
     if (tags.length > 0) {
@@ -100,7 +104,7 @@ export const update = async (req, res) => {
       }
     }
     
-    // Get restaurant with tags for response
+    //get restaurant with tags for response
     const restaurantWithTags = await getRestaurantWithTags(req.params.id);
     
     res.json(restaurantWithTags);
@@ -110,7 +114,7 @@ export const update = async (req, res) => {
   }
 };
 
-// Helper function to get restaurant with tags
+//function to get restaurant with tags
 const getRestaurantWithTags = async (restaurantId) => {
   const result = await db.query(
     `SELECT 
@@ -136,14 +140,14 @@ export const remove = async (req, res) => {
   const { id } = req.params;
   
   try {
-    // Check if restaurant has any orders
+    //check if restaurant has any orders
     const ordersCheck = await db.query(
       "SELECT 1 FROM orders WHERE restaurant_id = $1 LIMIT 1",
       [id]
     );
 
     if (ordersCheck.rowCount > 0) {
-      // Restaurant has orders, deactivate instead of deleting
+      // if restaurant has orders, deactivate instead of deleting
       await db.query(
         "UPDATE restaurants SET is_active = FALSE WHERE restaurant_id = $1",
         [id]
@@ -155,21 +159,14 @@ export const remove = async (req, res) => {
         message: "Restaurant has orders. Deactivated instead of deleted.",
       });
     }
-
-    // No orders, safe to delete
-    // First delete related records due to foreign key constraints
     
-    // Delete restaurant tags
+    //delete restaurant tags, hours and promotions due to foreign key constraints
     await db.query("DELETE FROM restaurant_tags WHERE restaurant_id = $1", [id]);
-    
-    // Delete restaurant hours
+
     await db.query("DELETE FROM restaurant_hours WHERE restaurant_id = $1", [id]);
-    
-    // Delete promotions
+
     await db.query("DELETE FROM promotions WHERE restaurant_id = $1", [id]);
     
-    // For menu items, we need to handle their related records first
-    // Get all menu item IDs for this restaurant
     const menuItemsRes = await db.query(
       "SELECT item_id FROM menu_items WHERE restaurant_id = $1",
       [id]
@@ -177,21 +174,19 @@ export const remove = async (req, res) => {
     
     const itemIds = menuItemsRes.rows.map(row => row.item_id);
     
+     //delete item tags, options, menu items, menu categories
     if (itemIds.length > 0) {
-      // Delete item tags
+     
       await db.query("DELETE FROM item_tags WHERE item_id = ANY($1::int[])", [itemIds]);
-      
-      // Delete item options
+  
       await db.query("DELETE FROM item_options WHERE item_id = ANY($1::int[])", [itemIds]);
       
-      // Delete menu items
       await db.query("DELETE FROM menu_items WHERE restaurant_id = $1", [id]);
     }
-    
-    // Delete menu categories
+
     await db.query("DELETE FROM menu_categories WHERE restaurant_id = $1", [id]);
     
-    // Finally delete the restaurant
+    //then delete the restaurant
     const result = await db.query(
       "DELETE FROM restaurants WHERE restaurant_id = $1 RETURNING restaurant_id",
       [id]
@@ -224,7 +219,7 @@ export const search = async (req, res) => {
 
     const searchQuery = `%${query}%`;
 
-    // Simpler restaurants search
+    //simpler restaurants search
     const restaurantsRes = await db.query(
       `SELECT 
         r.restaurant_id,
@@ -250,7 +245,7 @@ export const search = async (req, res) => {
       [searchQuery]
     );
 
-    // Get tags for each restaurant separately
+    //get tags for each restaurant separately
     const restaurants = restaurantsRes.rows;
     for (const restaurant of restaurants) {
       const tagsRes = await db.query(
@@ -263,7 +258,7 @@ export const search = async (req, res) => {
       restaurant.tags = tagsRes.rows;
     }
 
-    // Simpler menu items search
+    //simpler menu items search
     const menuItemsRes = await db.query(
       `SELECT 
         mi.item_id,
@@ -295,7 +290,7 @@ export const search = async (req, res) => {
       [searchQuery]
     );
 
-    // Get tags for each menu item separately
+    //get tags for each menu item separately
     const menuItems = menuItemsRes.rows;
     for (const item of menuItems) {
       const tagsRes = await db.query(

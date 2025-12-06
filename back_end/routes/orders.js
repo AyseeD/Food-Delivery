@@ -5,9 +5,12 @@ import {getUserOrders, getAllOrders, getOrderById, updateOrderStatus, createOrde
 
 const router = express.Router();
 
+//user order routes
 router.get("/user/:userId", authRequired, getUserOrders);
 router.get("/:orderId", authRequired, getOrderById);
 router.get("/", getAllOrders);
+
+//admin order routes
 router.put("/:orderId/status", adminRequired, updateOrderStatus);
 router.post("/from-cart", authRequired, createOrderFromCart);
 

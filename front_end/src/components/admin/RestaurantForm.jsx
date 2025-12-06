@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../../styles/RestaurantForm.css";
 
 function RestaurantForm({ closeForm, setRestaurants, restaurant }) {
-  const isEdit = Boolean(restaurant);
+  const isEdit = Boolean(restaurant); //check editing mode
   const [restaurantTags, setRestaurantTags] = useState([]);
   const [selectedRestaurantTags, setSelectedRestaurantTags] = useState([]);
 
@@ -12,14 +12,14 @@ function RestaurantForm({ closeForm, setRestaurants, restaurant }) {
     address: restaurant?.address || "",
     rating: restaurant?.rating || "",
     is_active: restaurant?.is_active ?? true,
-    restaurant_img: restaurant?.restaurant_img || ""  // Add this line
+    restaurant_img: restaurant?.restaurant_img || "" 
   });
 
-  // Fetch restaurant tags
+  //fetch restaurant tags
   useEffect(() => {
     fetchRestaurantTags();
     if (isEdit && restaurant.tags) {
-      // Extract tag IDs from the tag objects
+      //get tag ids from the tag objects
       const tagIds = restaurant.tags.map(tag => 
         typeof tag === 'object' ? tag.tag_id : tag
       );
@@ -37,6 +37,7 @@ function RestaurantForm({ closeForm, setRestaurants, restaurant }) {
     }
   };
 
+  //toggle tags
   const handleTagToggle = (tagId) => {
     setSelectedRestaurantTags(prev => {
       if (prev.includes(tagId)) {
@@ -47,6 +48,7 @@ function RestaurantForm({ closeForm, setRestaurants, restaurant }) {
     });
   };
 
+  //submitting form depending on editing or creating
   const handleSubmit = async (e) => {
     e.preventDefault();
 

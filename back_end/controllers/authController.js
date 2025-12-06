@@ -2,17 +2,18 @@ import { db } from "../db.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-dotenv.config();
+dotenv.config(); //loads .env info as default
 
-const JWT_SECRET = process.env.JWT_SECRET;
-const SALT_ROUNDS = 15;
+const JWT_SECRET = process.env.JWT_SECRET; //for login and authentication tokens
+const SALT_ROUNDS = 15; //password hashing salt rounds
 
+//registering function
 export const register = async (req, res) => {
     const { full_name, email, password, role, address } = req.body;
     if (!full_name || !email || !password) return res.status(400).json({ error: "Missing fields" });
 
     try {
-        const hash = await bcrypt.hash(password, SALT_ROUNDS);
+        const hash = await bcrypt.hash(password, SALT_ROUNDS); //hash password
         const result = await db.query(`
             INSERT INTO users (full_name, email, password_hash, role, address) 
             VALUES ($1, $2, $3, $4, $5) 
@@ -20,6 +21,7 @@ export const register = async (req, res) => {
         `, [full_name, email, hash, role || "customer", address || null]);
 
         const user = result.rows[0];
+        //token for registering
         const token = jwt.sign(
             { user_id: user.user_id, role: user.role, email: user.email },
             JWT_SECRET,
@@ -27,13 +29,14 @@ export const register = async (req, res) => {
         );
         res.json({ user, token });
     } catch (err) {
-        // PostgreSQL error code for unique violation
+        //postgreSQL error code for unique violation
         if (err.code === "23505") return res.status(409).json({ error: "Email already exists" });
         console.error(err);
         res.status(500).json({ error: "Server error" });
     }
 }
 
+//login function
 export const login = async (req, res) => {
     const { email, password } = req.body;
     const result = await db.query(
@@ -44,16 +47,17 @@ export const login = async (req, res) => {
 
     if (!user) return res.status(401).json({ error: "Invalid credentials" });
 
-    // Check if user is active
+    //check if user is active to stop nonactive users from loging in
     if (!user.is_active) {
         return res.status(403).json({ 
             error: "Account is deactivated. Please contact support for assistance." 
         });
     }
 
-    const ok = await bcrypt.compare(password, user.password_hash);
+    const ok = await bcrypt.compare(password, user.password_hash);//check password
     if (!ok) return res.status(401).json({ error: "Invalid password" });
 
+    //token for login
     const token = jwt.sign(
         { user_id: user.user_id, role: user.role, email: user.email },
         JWT_SECRET,
@@ -71,6 +75,7 @@ export const login = async (req, res) => {
     });
 };
 
+//login functions for admins
 export const adminLogin = async (req, res) => {
     const { email, password } = req.body;
 
@@ -82,19 +87,22 @@ export const adminLogin = async (req, res) => {
 
     if (!user) return res.status(401).json({ error: "Invalid credentials" });
 
+    //if admin is not active
     if (!user.is_active) {
         return res.status(403).json({ 
             error: "Account is deactivated. Please contact support for assistance." 
         });
     }
 
-    const ok = await bcrypt.compare(password, user.password_hash);
+    const ok = await bcrypt.compare(password, user.password_hash); //check password
     if (!ok) return res.status(401).json({ error: "Invalid password" });
 
+    //if not admin
     if (user.role !== "admin") {
         return res.status(403).json({ error: "Access denied. Admins only." });
     }
 
+    //token for admin login
     const token = jwt.sign(
         { user_id: user.user_id, role: user.role, email: user.email },
         JWT_SECRET,
@@ -113,6 +121,7 @@ export const adminLogin = async (req, res) => {
     });
 };
 
+//get user information
 export const userInfo = async (req, res) => {
     const result = await db.query(
         "SELECT user_id, full_name, email, role, address, created_at, is_active FROM users WHERE user_id = $1", 
@@ -134,6 +143,7 @@ export const userInfo = async (req, res) => {
     res.json(user);
 };
 
+//update existing user
 export const updateUser = async (req, res) => {
     const { full_name, email, address } = req.body;
     const userId = req.user.user_id;
@@ -153,7 +163,7 @@ export const updateUser = async (req, res) => {
 
         res.json(result.rows[0]);
     } catch (err) {
-        if (err.code === "23505") {
+        if (err.code === "23505") { //unique violation for postgreSQL
             return res.status(409).json({ error: "Email already exists" });
         }
         console.error(err);
@@ -161,11 +171,12 @@ export const updateUser = async (req, res) => {
     }
 };
 
+//update password
 export const updatePassword = async (req, res) => {
     const { current_password, new_password, confirm_password } = req.body;
     const userId = req.user.user_id;
 
-    // Validation
+    //validate
     if (!current_password || !new_password || !confirm_password) {
         return res.status(400).json({ error: "All password fields are required" });
     }
@@ -179,7 +190,7 @@ export const updatePassword = async (req, res) => {
     }
 
     try {
-        // First, verify current password
+        //verify current password
         const userRes = await db.query(
             "SELECT password_hash FROM users WHERE user_id = $1",
             [userId]
@@ -191,16 +202,16 @@ export const updatePassword = async (req, res) => {
 
         const user = userRes.rows[0];
         
-        // Check if current password is correct
+        //check if current password is correct
         const isCurrentPasswordValid = await bcrypt.compare(current_password, user.password_hash);
         if (!isCurrentPasswordValid) {
             return res.status(401).json({ error: "Current password is incorrect" });
         }
 
-        // Hash the new password
+        //hash the new password
         const newPasswordHash = await bcrypt.hash(new_password, SALT_ROUNDS);
 
-        // Update password in database
+        //update password in database
         await db.query(
             "UPDATE users SET password_hash = $1 WHERE user_id = $2",
             [newPasswordHash, userId]

@@ -5,7 +5,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
   const [menuItems, setMenuItems] = useState([]);
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); //for page loading
   const [editingItem, setEditingItem] = useState(null);
   const [newCategoryName, setNewCategoryName] = useState("");
   const [editingCategory, setEditingCategory] = useState(null);
@@ -25,7 +25,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     tags: []
   });
 
-  // Fetch menu items, categories, and tags
+  //fetch menu items, categories, and tags
   useEffect(() => {
     fetchMenuItems();
     fetchCategories();
@@ -64,7 +64,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     }
   };
 
-  // Add new category
+  //add new category
   const addCategory = async (e) => {
     e.preventDefault();
     if (!newCategoryName.trim()) {
@@ -87,7 +87,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
 
       if (!response.ok) throw new Error("Failed to add category");
 
-      // Refresh categories
+      //refresh categories
       fetchCategories();
       setNewCategoryName("");
     } catch (error) {
@@ -96,7 +96,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     }
   };
 
-  // Update category
+  //update category
   const updateCategory = async (e) => {
     e.preventDefault();
     if (!editingCategory.name.trim()) {
@@ -118,7 +118,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
 
       if (!response.ok) throw new Error("Failed to update category");
 
-      // Refresh categories
+      //refresh categories
       fetchCategories();
       setEditingCategory(null);
     } catch (error) {
@@ -127,7 +127,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     }
   };
 
-  // Delete category
+  //delete category
   const deleteCategory = async (categoryId) => {
     if (!window.confirm("Are you sure you want to delete this category? Items in this category will become uncategorized.")) return;
 
@@ -141,7 +141,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
 
       if (!response.ok) throw new Error("Failed to delete category");
 
-      // Refresh categories and menu items
+      //refresh categories and menu items
       fetchCategories();
       fetchMenuItems();
     } catch (error) {
@@ -150,7 +150,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     }
   };
 
-  // Add new menu item
+  //add new menu item
   const addMenuItem = async (e) => {
     e.preventDefault();
 
@@ -172,10 +172,10 @@ function MenuManager({ restaurant, close, setRestaurants }) {
 
       const data = await response.json();
 
-      // Refresh menu items
+      //refresh menu items
       fetchMenuItems();
 
-      // Reset form
+      //reset form
       setNewItem({
         name: "",
         description: "",
@@ -192,7 +192,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     }
   };
 
-  // Update existing menu item
+  //update existing menu item
   const updateMenuItem = async (e) => {
     e.preventDefault();
 
@@ -211,10 +211,10 @@ function MenuManager({ restaurant, close, setRestaurants }) {
 
       if (!response.ok) throw new Error("Failed to update item");
 
-      // Refresh menu items
+      //refresh menu items
       fetchMenuItems();
 
-      // Reset editing state
+      //reset editing state
       setEditingItem(null);
 
     } catch (error) {
@@ -223,7 +223,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     }
   };
 
-  // Delete menu item
+  //delete menu item
   const deleteMenuItem = async (itemId) => {
     if (!window.confirm("Are you sure you want to delete this item?")) return;
 
@@ -237,7 +237,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
 
       if (!response.ok) throw new Error("Failed to delete item");
 
-      // Refresh menu items
+      //refresh menu items
       fetchMenuItems();
 
     } catch (error) {
@@ -246,7 +246,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     }
   };
 
-  // Toggle item availability
+  //toggle item availability
   const toggleAvailability = async (item) => {
     try {
       const response = await fetch(`http://localhost:4000/menu/item/${item.item_id}`, {
@@ -262,7 +262,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
 
       if (!response.ok) throw new Error("Failed to update availability");
 
-      // Refresh menu items
+      //refresh menu items
       fetchMenuItems();
 
     } catch (error) {
@@ -271,7 +271,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     }
   };
 
-  // Handle tag selection
+  //handle tag selection
   const handleTagToggle = (tagName, isEditing = false) => {
     if (isEditing) {
       setEditingItem(prev => {
@@ -297,6 +297,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     }
   };
 
+  //get item options from backend
   const fetchItemOptions = async (itemId) => {
     try {
       const response = await fetch(`http://localhost:4000/menu/item/${itemId}/options`);
@@ -308,6 +309,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     }
   };
 
+  //edit options
   const startEditingOptions = async (item) => {
     const options = await fetchItemOptions(item.item_id);
     setEditingOptions({
@@ -317,7 +319,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     setOptionsForm({ name: "", additional_price: "0" });
   };
 
-  // Add new option
+  //add new option
   const addOption = async (e) => {
     e.preventDefault();
     if (!optionsForm.name.trim()) {
@@ -345,13 +347,13 @@ function MenuManager({ restaurant, close, setRestaurants }) {
 
       const newOption = await response.json();
 
-      // Update local state
+      //update state
       setEditingOptions(prev => ({
         ...prev,
         currentOptions: [...prev.currentOptions, newOption]
       }));
 
-      // Clear form
+      //clear form
       setOptionsForm({ name: "", additional_price: "0" });
 
     } catch (error) {
@@ -360,6 +362,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     }
   };
 
+  //delete option for backend
   const deleteOption = async (optionId) => {
     if (!window.confirm("Are you sure you want to delete this option?")) return;
 
@@ -376,7 +379,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
 
       if (!response.ok) throw new Error("Failed to delete option");
 
-      // Update local state
+      //update state
       setEditingOptions(prev => ({
         ...prev,
         currentOptions: prev.currentOptions.filter(opt => opt.option_id !== optionId)
@@ -388,6 +391,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     }
   };
 
+  //update option for backend
   const updateOption = async (option) => {
     const newName = prompt("Enter new name for option:", option.name);
     if (!newName || newName === option.name) return;
@@ -415,7 +419,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
 
       const updatedOption = await response.json();
 
-      // Update local state
+      //update state
       setEditingOptions(prev => ({
         ...prev,
         currentOptions: prev.currentOptions.map(opt =>
@@ -429,6 +433,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     }
   };
 
+  //for loading page
   if (loading) {
     return (
       <div className="popup-overlay">
@@ -709,7 +714,6 @@ function MenuManager({ restaurant, close, setRestaurants }) {
           </form>
         </div>
       </div>
-      {/* Add Options Manager Modal */}
       {editingOptions && (
         <div className="edit-form-overlay">
           <div className="edit-form">

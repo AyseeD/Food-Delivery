@@ -9,12 +9,12 @@ export default function AccountPage() {
 
   const [user, setUser] = useState(null);
   const [orders, setOrders] = useState([]);
-  const [loadingUser, setLoadingUser] = useState(true);
-  const [loadingOrders, setLoadingOrders] = useState(true);
+  const [loadingUser, setLoadingUser] = useState(true); //for loading user info
+  const [loadingOrders, setLoadingOrders] = useState(true); //for loading order info
   const [editMode, setEditMode] = useState(false);
-  const [showPasswordChange, setShowPasswordChange] = useState(false); // Add this state
+  const [showPasswordChange, setShowPasswordChange] = useState(false);
   const [updatedUser, setUpdatedUser] = useState({});
-  const [passwordForm, setPasswordForm] = useState({ // Add password form state
+  const [passwordForm, setPasswordForm] = useState({ //password form state
     current_password: "",
     new_password: "",
     confirm_password: ""
@@ -24,7 +24,7 @@ export default function AccountPage() {
 
   const token = localStorage.getItem("token");
 
-  // Fetch logged-in user info
+  //fetch logged in user info
   useEffect(() => {
     async function loadUser() {
       try {
@@ -51,7 +51,7 @@ export default function AccountPage() {
     loadUser();
   }, [token]);
 
-  // Fetch user orders
+  //fetch user orders
   useEffect(() => {
     if (!user) return;
 
@@ -78,6 +78,7 @@ export default function AccountPage() {
     loadOrders();
   }, [user, token]);
 
+  //update user info
   const handleUpdateUser = async () => {
     try {
       const res = await fetch("http://localhost:4000/auth/update", {
@@ -103,12 +104,13 @@ export default function AccountPage() {
     }
   };
 
+  //update password
   const handlePasswordChange = async (e) => {
     e.preventDefault();
     setPasswordError("");
     setPasswordSuccess("");
 
-    // Validation
+    //validation
     if (passwordForm.new_password !== passwordForm.confirm_password) {
       setPasswordError("New passwords do not match");
       return;
@@ -137,7 +139,7 @@ export default function AccountPage() {
           new_password: "",
           confirm_password: ""
         });
-        // Clear success message after 3 seconds
+        //clear success message after 3 seconds
         setTimeout(() => {
           setPasswordSuccess("");
           setShowPasswordChange(false);
@@ -156,7 +158,7 @@ export default function AccountPage() {
       <Header />
 
       <div className="account-page-wrapper">
-        
+
         {/* SIDEBAR */}
         <aside className="account-sidebar">
           <h3 className="sidebar-title">My Account</h3>
@@ -231,7 +233,7 @@ export default function AccountPage() {
                         {passwordSuccess && (
                           <div className="success-message">{passwordSuccess}</div>
                         )}
-                        
+
                         <div className="field">
                           <label>Current Password *</label>
                           <input
@@ -279,8 +281,8 @@ export default function AccountPage() {
                           <button type="submit" className="update-btn">
                             Update Password
                           </button>
-                          <button 
-                            type="button" 
+                          <button
+                            type="button"
                             className="cancel-btn"
                             onClick={() => {
                               setShowPasswordChange(false);
@@ -343,15 +345,15 @@ export default function AccountPage() {
                       </div>
 
                       <div className="form-buttons">
-                        <button 
-                          type="button" 
+                        <button
+                          type="button"
                           className="update-btn"
                           onClick={handleUpdateUser}
                         >
                           Save Changes
                         </button>
-                        <button 
-                          type="button" 
+                        <button
+                          type="button"
                           className="cancel-btn"
                           onClick={() => {
                             setEditMode(false);
@@ -384,15 +386,15 @@ export default function AccountPage() {
                         <strong>Account Created:</strong>
                         <span>{new Date(user.created_at).toLocaleDateString()}</span>
                       </div>
-                      
+
                       <div className="action-buttons">
-                        <button 
+                        <button
                           className="edit-btn"
                           onClick={() => setEditMode(true)}
                         >
                           Edit Profile
                         </button>
-                        <button 
+                        <button
                           className="password-change-btn"
                           onClick={() => setShowPasswordChange(true)}
                         >

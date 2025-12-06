@@ -3,6 +3,7 @@ import express from "express";
 
 const router = express.Router();
 
+//home routes
 router.get("/", async (req, res) => {
   try {
     const restaurants = await db.query(
