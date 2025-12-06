@@ -14,6 +14,7 @@ npm i
 
 ### Creating Needed Database
 After installing the node_modules, a database needs to be created to run the backend. Inside the **back_end** folder a SQL file for an example database schema is given to create necessary PostgreSQL database tables.
+
 Create a database in pgAdmin and then run the SQL file called _database.sql_ as a query.
 
 To create an example admin user use this example admin user with example hashed code:
@@ -28,8 +29,10 @@ VALUES (
 );
 ```
 
-This creates the admin user: **Admin User**
+This creates the admin user: **Admin User** 
+
 With E-mail: **admin@example.com**
+
 With Example Password: **admin123**
 
 You can now fill the database tables.
@@ -49,4 +52,3 @@ npm start
 ```
 
 Now the project will open in the browser.
->>>>>>> feature/aysedelen-call-backend
