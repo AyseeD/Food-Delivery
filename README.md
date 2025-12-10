@@ -20,24 +20,7 @@ npm i
 After installing the node_modules, a database needs to be created to run the backend. Inside the **back_end** folder a SQL file for an example database schema is given to create necessary PostgreSQL database tables.
 
 Create a database in pgAdmin and then run the SQL file called _database.sql_ as a query.
-
-To create an example admin user use this example admin user with example hashed code:
-```
-INSERT INTO users (full_name, email, password_hash, address, role)
-VALUES (
-    'Admin User',
-    'admin@example.com',
-    '$2b$12$2pQF0bpE6qX4BJxVhUtLOeIXrY7xP0oCBZJDo6BroV/abcdefg',  -- hashed password
-    '123 Admin Street',
-    'admin'
-);
-```
-
-This creates the admin user: **Admin User** 
-
-With E-mail: **admin@example.com**
-
-With Example Password: **admin123**
+Create a admin user with a hashed password in the database to be ble to sign in as an admin and create users, restaurants etc.
 
 You can now fill the database tables.
 

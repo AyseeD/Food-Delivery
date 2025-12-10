@@ -236,7 +236,7 @@
   border-color: #1c1c1e;
 }
 
-/* Status renk dokunuşu */
+/* Status color */
 .orders-filter-bar button.delivered.active {
   background: #34c759;
   border-color: #34c759;

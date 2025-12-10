@@ -13,6 +13,11 @@
   margin-bottom: 25px;
 }
 
+.top-bar-buttons {
+  display: flex;
+  gap: 15px;
+}
+
 .page-title {
   font-size: 28px;
   font-weight: 700;
@@ -123,8 +128,6 @@
   color: #ef4444;
 }
 
-
-/* Add to your main AdminRestaurants.css or create AdminPromos.css */
 .promo-btn-restaurants {
   background: #A855F7;
   color: #eef2ff;
@@ -158,7 +161,6 @@
   font-style: italic;
 }
 
-/* If you want to show promo status in restaurant cards */
 .restaurant-promo-indicator {
   display: inline-block;
   background: #28a745;
@@ -179,5 +181,216 @@
   }
   100% {
     opacity: 1;
+  }
+}
+
+/* ----------TAGS ---------- */
+.manage-tags-btn {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.manage-tags-btn:hover {
+  background-color: #5a6268;
+}
+
+/* Tags Manager Section */
+.tags-manager-section {
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  padding: 25px;
+  margin-bottom: 30px;
+  border: 1px solid #dee2e6;
+}
+
+.tags-manager-section h3 {
+  margin-top: 0;
+  margin-bottom: 25px;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.tags-manager-section h4 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #495057;
+  font-size: 1.2rem;
+}
+
+/* Tag Form Section */
+.tag-form-section {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.form-row input {
+  flex: 1;
+  padding: 10px 15px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.form-row input:focus {
+  outline: none;
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+.form-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.save-tag-btn {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.save-tag-btn:hover {
+  background-color: #218838;
+}
+
+.cancel-edit-btn {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.cancel-edit-btn:hover {
+  background-color: #5a6268;
+}
+
+/* Tags List Section */
+.tags-list-section {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.no-tags-message {
+  text-align: center;
+  color: #6c757d;
+  padding: 30px;
+  font-style: italic;
+}
+
+.tags-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.tag-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.tag-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.tag-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.tag-name {
+  font-weight: 600;
+  color: #212529;
+  font-size: 16px;
+}
+
+.tag-img-info {
+  color: #6c757d;
+  font-size: 12px;
+  font-style: italic;
+}
+
+.tag-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.edit-tag-btn {
+  background-color: #17a2b8;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.edit-tag-btn:hover {
+  background-color: #138496;
+}
+
+.delete-tag-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.delete-tag-btn:hover {
+  background-color: #c82333;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .top-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .top-bar-buttons {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .form-row {
+    flex-direction: column;
+  }
+  
+  .tags-grid {
+    grid-template-columns: 1fr;
   }
 }

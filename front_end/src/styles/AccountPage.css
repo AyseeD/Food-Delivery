@@ -476,8 +476,6 @@ textarea {
   resize: vertical;
 }
 
-/* Add these styles to your AccountPage.css */
-
 .password-change-section {
   background: #f9f9f9;
   padding: 20px;
@@ -559,7 +557,6 @@ textarea {
   border-color: #ff6b6b;
 }
 
-/* Make sure form buttons are styled properly */
 .form-buttons {
   display: flex;
   gap: 10px;
@@ -670,7 +667,7 @@ textarea {
   transition: 0.2s ease;
 }
 
-/* Fokus veya doluysa */
+
 .floating-field input:focus + label,
 .floating-field input:not(:placeholder-shown) + label {
   top: 0;
@@ -679,9 +676,9 @@ textarea {
   color: #555;
 }
 
-/* Fokus border */
+
 .floating-field input:focus {
-  border-color: #ff7a00; /* senin theme orange */
+  border-color: #ff7a00;
 }
 
 

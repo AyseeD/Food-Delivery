@@ -141,7 +141,7 @@
 
 .apple-dashboard-header h2 {
   font-size: 28px;
-  font-weight: 600; /* Apple uses 500–600 */
+  font-weight: 600;
   color: #1d1d1f;
 }
 
@@ -169,7 +169,6 @@
   transition: all 0.25s ease;
 }
 
-/* subtle hover – Apple style */
 .apple-stat:hover {
   background: #e9e7e7;
 }
@@ -219,7 +218,6 @@
   border-radius: 24px;
   padding: 40px;
 
-  /* Apple-style gradient + image */
   background:
     linear-gradient(
       180deg,

@@ -6,23 +6,38 @@ import "../../styles/AdminRestaurants.css";
 
 function AdminRestaurants() {
   const [restaurants, setRestaurants] = useState([]);
+  const [tags, setTags] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
+  const [showTagsManager, setShowTagsManager] = useState(false);
+  const [newTag, setNewTag] = useState({ name: "", img_url: "" });
+  const [editingTag, setEditingTag] = useState(null);
 
   // FETCH RESTAURANTS FROM BACKEND 
   useEffect(() => {
-    async function fetchRestaurants() {
-      try {
-        const result = await fetch("http://localhost:4000/restaurants");
-        const data = await result.json();
-        setRestaurants(data);
-      } catch (error) {
-        console.error("Failed to load restaurants:", error);
-      }
-    }
-
     fetchRestaurants();
+    fetchTags();
   }, []);
+
+  const fetchRestaurants = async () => {
+    try {
+      const result = await fetch("http://localhost:4000/restaurants");
+      const data = await result.json();
+      setRestaurants(data);
+    } catch (error) {
+      console.error("Failed to load restaurants:", error);
+    }
+  };
+
+  const fetchTags = async () => {
+    try {
+      const result = await fetch("http://localhost:4000/tags");
+      const data = await result.json();
+      setTags(data);
+    } catch (error) {
+      console.error("Failed to load tags:", error);
+    }
+  };
 
   // DELETE RESTAURANT FOR BACKEND
   const deleteRestaurant = async (id) => {
@@ -57,21 +72,222 @@ function AdminRestaurants() {
         );
         alert("Restaurant has existing orders. It has been deactivated instead of deleted.");
       }
-
     } catch (err) {
       console.error("Failed to delete restaurant:", err);
       alert("Failed to delete restaurant");
     }
   };
 
+  // TAG MANAGEMENT FUNCTIONS
+  const handleCreateTag = async (e) => {
+    e.preventDefault();
+    
+    if (!newTag.name.trim()) {
+      alert("Tag name is required");
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:4000/tags/new-tags", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("adminToken")}`
+        },
+        body: JSON.stringify(newTag)
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error || "Failed to create tag");
+        return;
+      }
+
+      setTags(prev => [...prev, data.tag]);
+      setNewTag({ name: "", img_url: "" });
+      alert("Tag created successfully!");
+    } catch (err) {
+      console.error("Failed to create tag:", err);
+      alert("Failed to create tag");
+    }
+  };
+
+  const handleUpdateTag = async (e) => {
+    e.preventDefault();
+    
+    if (!editingTag.name.trim()) {
+      alert("Tag name is required");
+      return;
+    }
+
+    try {
+      const res = await fetch(`http://localhost:4000/tags/${editingTag.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("adminToken")}`
+        },
+        body: JSON.stringify(editingTag)
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error || "Failed to update tag");
+        return;
+      }
+
+      setTags(prev => prev.map(tag => 
+        tag.tag_id === editingTag.id ? { ...tag, ...data.tag } : tag
+      ));
+      setEditingTag(null);
+      alert("Tag updated successfully!");
+    } catch (err) {
+      console.error("Failed to update tag:", err);
+      alert("Failed to update tag");
+    }
+  };
+
+  const handleDeleteTag = async (id) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this tag?");
+    if (!confirmDelete) return;
+
+    try {
+      const res = await fetch(`http://localhost:4000/tags/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("adminToken")}`
+        }
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        if (data.action === "in_use") {
+          alert("Cannot delete tag - it is currently being used by restaurants or menu items.");
+        } else {
+          alert(data.error || "Failed to delete tag");
+        }
+        return;
+      }
+
+      setTags(prev => prev.filter(tag => tag.tag_id !== id));
+      alert("Tag deleted successfully!");
+    } catch (err) {
+      console.error("Failed to delete tag:", err);
+      alert("Failed to delete tag");
+    }
+  };
+
+  const startEditTag = (tag) => {
+    setEditingTag({
+      id: tag.tag_id,
+      name: tag.name,
+      img_url: tag.img_url || ""
+    });
+  };
+
+  const cancelEditTag = () => {
+    setEditingTag(null);
+  };
+
   return (
     <div className="admin-restaurants">
       <div className="top-bar">
         <h2 className="page-title">Restaurants</h2>
-        <button className="add-btn" onClick={() => setShowAddForm(true)}>
-          + Add Restaurant
-        </button>
+        <div className="top-bar-buttons">
+          <button 
+            className="manage-tags-btn"
+            onClick={() => setShowTagsManager(!showTagsManager)}
+          >
+            {showTagsManager ? "Hide Tags" : "Manage Tags"}
+          </button>
+          <button className="add-btn" onClick={() => setShowAddForm(true)}>
+            + Add Restaurant
+          </button>
+        </div>
       </div>
+
+      {/* TAGS MANAGER SECTION */}
+      {showTagsManager && (
+        <div className="tags-manager-section">
+          <h3>Manage Food Tags</h3>
+          
+          {/* ADD/EDIT TAG FORM */}
+          <div className="tag-form-section">
+            <h4>{editingTag ? "Edit Tag" : "Add New Tag"}</h4>
+            <form onSubmit={editingTag ? handleUpdateTag : handleCreateTag}>
+              <div className="form-row">
+                <input
+                  type="text"
+                  placeholder="Tag Name (e.g., Pizza, Burger, Vegan)"
+                  value={editingTag ? editingTag.name : newTag.name}
+                  onChange={(e) => editingTag 
+                    ? setEditingTag({...editingTag, name: e.target.value})
+                    : setNewTag({...newTag, name: e.target.value})
+                  }
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Image URL (optional)"
+                  value={editingTag ? editingTag.img_url : newTag.img_url}
+                  onChange={(e) => editingTag 
+                    ? setEditingTag({...editingTag, img_url: e.target.value})
+                    : setNewTag({...newTag, img_url: e.target.value})
+                  }
+                />
+              </div>
+              <div className="form-buttons">
+                <button type="submit" className="save-tag-btn">
+                  {editingTag ? "Update Tag" : "Add Tag"}
+                </button>
+                {editingTag && (
+                  <button type="button" className="cancel-edit-btn" onClick={cancelEditTag}>
+                    Cancel
+                  </button>
+                )}
+              </div>
+            </form>
+          </div>
+
+          {/* TAGS LIST */}
+          <div className="tags-list-section">
+            <h4>Existing Tags ({tags.length})</h4>
+            {tags.length === 0 ? (
+              <p className="no-tags-message">No tags yet. Add your first tag above.</p>
+            ) : (
+              <div className="tags-grid">
+                {tags.map(tag => (
+                  <div key={tag.tag_id} className="tag-card">
+                    <div className="tag-info">
+                      <span className="tag-name">{tag.name}</span>
+                      {tag.img_url && (
+                        <small className="tag-img-info">Has image</small>
+                      )}
+                    </div>
+                    <div className="tag-actions">
+                      <button 
+                        className="edit-tag-btn"
+                        onClick={() => startEditTag(tag)}
+                      >
+                        Edit
+                      </button>
+                      <button 
+                        className="delete-tag-btn"
+                        onClick={() => handleDeleteTag(tag.tag_id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* RESTAURANT LIST */}
       <div className="restaurant-list">
@@ -85,7 +301,7 @@ function AdminRestaurants() {
                 <span className="inactive-badge">Inactive</span>
               )}
               <p className="restaurant-tags">
-                {rest.tags?.map(tag => tag.name).join(", ")}
+                {rest.tags?.map(tag => tag.name).join(", ") || "No tags"}
               </p>
             </div>
 
@@ -108,7 +324,7 @@ function AdminRestaurants() {
                 Delete
               </button>
 
-               <button 
+              <button 
                 className="promo-btn-restaurants"
                 onClick={() => setSelectedRestaurant({ ...rest, mode: "promo" })}
               >
@@ -124,6 +340,7 @@ function AdminRestaurants() {
         <RestaurantForm
           closeForm={() => setShowAddForm(false)}
           setRestaurants={setRestaurants}
+          allTags={tags}
         />
       )}
 
@@ -132,6 +349,7 @@ function AdminRestaurants() {
           closeForm={() => setSelectedRestaurant(null)}
           setRestaurants={setRestaurants}
           restaurant={selectedRestaurant}
+          allTags={tags}
         />
       )}
 
@@ -149,7 +367,6 @@ function AdminRestaurants() {
           close={() => setSelectedRestaurant(null)}
         />
       )}
-
     </div>
   );
 }
