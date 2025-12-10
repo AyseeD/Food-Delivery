@@ -2,8 +2,9 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "../styles/RestaurantPage.css";
 import Header from "../components/Header";
-import Footer from "../components/Footer";
 import ItemModal from "../components/ItemModal";
+import RestaurantPromotions from "../components/RestaurantPromotions";
+
 
 export default function RestaurantPage() {
   const { id } = useParams(); //get clicked on restaurant's id
@@ -126,12 +127,23 @@ export default function RestaurantPage() {
             <img src={restaurant.restaurant_img} alt={restaurant.name} />
           </div>
 
-          <div className="restaurant-details">
-            <h2>{restaurant.name}</h2>
-            <h3>⭐ {restaurant.rating}</h3>
-            <p>{restaurant.description}</p>
-            <p>{restaurant.address}</p>
-          </div>
+          <div className = "desc-promo">
+            <div className="restaurant-details">
+              <h2>{restaurant.name}</h2>
+              <h3>⭐ {restaurant.rating}</h3>
+              <p>{restaurant.description}</p>
+              <p>{restaurant.address}</p>
+            </div>
+
+            {/*PROMOTIONS */}
+            <div className="restaurant-promotions-wrapper">
+              <RestaurantPromotions restaurantId={restaurant.restaurant_id} />
+            </div>
+          </div>  
+
+
+
+          
         </div>
 
         <div className="restaurant-content">

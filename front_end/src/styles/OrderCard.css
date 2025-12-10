@@ -128,8 +128,10 @@
 .item-options {
   margin-top: 6px;
   padding-left: 16px;
-  opacity: 0.8;
-  font-size: 13px;
+  font-size: 16px;
+  position: relative;
+  bottom: 10px;
+  right: 15px;
 }
 
 /* Promotion box */

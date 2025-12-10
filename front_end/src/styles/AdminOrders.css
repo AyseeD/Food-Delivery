@@ -207,3 +207,42 @@
 }
 
 
+
+
+.orders-filter-bar {
+  display: flex;
+  gap: 12px;
+  margin: 16px 0 24px;
+}
+
+.orders-filter-bar button {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid #e5e5e5;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.orders-filter-bar button:hover {
+  background: #f5f5f7;
+}
+
+.orders-filter-bar button.active {
+  background: #1c1c1e;
+  color: #fff;
+  border-color: #1c1c1e;
+}
+
+/* Status renk dokunuşu */
+.orders-filter-bar button.delivered.active {
+  background: #34c759;
+  border-color: #34c759;
+}
+
+.orders-filter-bar button.cancelled.active {
+  background: #ff3b30;
+  border-color: #ff3b30;
+}

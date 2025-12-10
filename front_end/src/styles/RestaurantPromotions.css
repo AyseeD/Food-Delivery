@@ -1,0 +1,56 @@
+
+.restaurant-promotions-wrapper {
+  margin-top: 20px;
+}
+
+.promo-strip {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.promo-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  background: #f5f5f7;
+  border-radius: 14px;
+  padding: 8px 14px;
+
+  border: 1px dashed #ddd;
+}
+
+.promo-icon {
+  color: #ff7a00;
+  font-weight: 600;
+}
+
+.promo-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.promo-text strong {
+  font-size: 13px;
+}
+
+.promo-text span {
+  font-size: 11px;
+  color: #777;
+}
+
+.promo-copy-btn {
+  background: white;
+  border: none;
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.promo-copy-btn:hover {
+  background: #eee;
+}

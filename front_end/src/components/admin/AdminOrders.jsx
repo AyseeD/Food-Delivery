@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import OrderStatusDropdown from "./OrderStatusDropdown";
 import "../../styles/AdminOrders.css";
 
-function AdminOrders() {
+function AdminOrders({}) {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true); //for page loading
 
@@ -49,10 +49,13 @@ function AdminOrders() {
 
   if (loading) return <p>Loading orders...</p>;
 
+
+
+  
+
   return (
   <div className="admin-orders">
     <h2 className="orders-page-title">Orders</h2>
-
     <div className="orders-wrapper">
         {orders.map(order => (
           <div key={order.id} className="order-card">
