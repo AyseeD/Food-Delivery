@@ -1,6 +1,6 @@
 import express from "express";
 import { adminLogin } from "../controllers/authController.js";
-import { getUsersAmount, getAllMenuByRestaurant, createUser, getRestaurantAmount, getOrderAmount, getAllUsers, deleteUser} from "../controllers/adminController.js";
+import { getUsersAmount, getAllMenuByRestaurant, createUser, getRestaurantAmount, getOrderAmount, getAllUsers, deleteUser,reactivateUser} from "../controllers/adminController.js";
 
 const router = express.Router();
 
@@ -12,6 +12,7 @@ router.get("/orderAmount", getOrderAmount);
 router.get("/users", getAllUsers);
 router.post("/users", createUser);
 router.delete("/users/:id", deleteUser);
+router.patch("/users/:id/reactivate", reactivateUser);
 router.get("/restaurant/:restaurantId", getAllMenuByRestaurant);
 
 export default router;

@@ -15,21 +15,21 @@ function AdminUsers() {
   const [roleFilter, setRoleFilter] = useState("all"); // FOR ROLE FILTER 
   const [activityFilter, setActivityFilter] = useState("all"); // FOR ACTIVITY FILTER 
 
-  //  FETCH USERS FROM THE BACKEND 
+  // FETCH USERS FROM THE BACKEND 
   useEffect(() => {
-    async function fetchUsers() {
-      try{
-        const res = await fetch("http://localhost:4000/auth/admin/users");
-        const data = await res.json();
-        setUsers(data);
-        setFilteredUsers(data);
-      }catch(err){
-        console.error("Failed to load users:", err);
-      }
-    }
-
     fetchUsers();
   }, []);
+
+  const fetchUsers = async () => {
+    try {
+      const res = await fetch("http://localhost:4000/auth/admin/users");
+      const data = await res.json();
+      setUsers(data);
+      setFilteredUsers(data);
+    } catch(err) {
+      console.error("Failed to load users:", err);
+    }
+  };
 
   // APPLY FILTERS 
   useEffect(() => {
@@ -49,9 +49,9 @@ function AdminUsers() {
     setFilteredUsers(result);
   }, [roleFilter, activityFilter, users]);
  
-  // DELETE USER 
-  const deleteUser = async (id) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this user?");
+  // DELETE/DEACTIVATE USER 
+  const handleDeleteUser = async (id) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this user? If the user has orders, cart, or deliveries, they will be deactivated instead.");
     if (!confirmDelete) return;
 
     try {
@@ -70,12 +70,12 @@ function AdminUsers() {
         // REMOVE USER FROM LIST 
         setUsers((prev) => prev.filter((u) => u.id !== id));
       } 
-      
       else if (data.action === "deactivated") {
-        // REFRESH USER LIST : so UI shows their updated activity
-        const refreshed = await fetch("http://localhost:4000/auth/admin/users");
-        const newData = await refreshed.json();
-        setUsers(newData);
+        // UPDATE USER STATUS IN STATE
+        setUsers(prev => prev.map(user => 
+          user.id === id ? { ...user, is_active: false } : user
+        ));
+        alert("User deactivated successfully (has related records).");
       }
 
     } catch (err) {
@@ -83,6 +83,35 @@ function AdminUsers() {
     }
   };
 
+  // REACTIVATE USER
+  const handleReactivateUser = async (id) => {
+    const confirmReactivate = window.confirm("Are you sure you want to reactivate this user?");
+    if (!confirmReactivate) return;
+
+    try {
+      const res = await fetch(`http://localhost:4000/auth/admin/users/${id}/reactivate`, {
+        method: "PATCH",
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error || "Reactivate failed");
+        return;
+      }
+
+      if (data.action === "reactivated") {
+        // UPDATE USER STATUS IN STATE
+        setUsers(prev => prev.map(user => 
+          user.id === id ? { ...user, is_active: true } : user
+        ));
+        alert("User reactivated successfully!");
+      }
+
+    } catch (err) {
+      console.error("Failed to reactivate user:", err);
+    }
+  };
 
   // ADD NEW USER
   const handleAddUser = async (e) => {
@@ -121,6 +150,8 @@ function AdminUsers() {
         address: "",
         role: "customer",
       });
+
+      alert("User created successfully!");
 
     } catch (err) {
       console.error("Failed to add user:", err);
@@ -198,7 +229,7 @@ function AdminUsers() {
               <th>Email</th>
               <th>Role</th>
               <th>Activity</th>
-              <th style={{ width: "120px" }}>Actions</th>
+              <th style={{ width: "140px" }}>Actions</th>
             </tr>
           </thead>
 
@@ -218,9 +249,21 @@ function AdminUsers() {
                   </span>
                 </td>
                 <td>
-                  <button className="delete-btn-users" onClick={() => deleteUser(user.id)}>
-                    Delete
-                  </button>
+                  {user.is_active ? (
+                    <button 
+                      className="delete-btn-users" 
+                      onClick={() => handleDeleteUser(user.id)}
+                    >
+                      Delete
+                    </button>
+                  ) : (
+                    <button 
+                      className="reactivate-btn-users" 
+                      onClick={() => handleReactivateUser(user.id)}
+                    >
+                      Reactivate
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}

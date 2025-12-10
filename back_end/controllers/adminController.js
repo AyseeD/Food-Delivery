@@ -122,6 +122,19 @@ export const deleteUser = async (req, res) => {
 
     //if user has any related records, deactivate instead of delete
     if (hasOrders.rowCount > 0 || hasCart.rowCount > 0 || hasDeliveries.rowCount > 0) {
+      //first check if user is already inactive
+      const currentUser = await db.query(
+        "SELECT is_active FROM users WHERE user_id = $1",
+        [id]
+      );
+      
+      if (currentUser.rows[0].is_active === false) {
+        return res.status(400).json({ 
+          error: "User is already deactivated",
+          action: "already_deactivated"
+        });
+      }
+      
       await db.query(
         "UPDATE users SET is_active = FALSE WHERE user_id = $1",
         [id]
@@ -151,7 +164,8 @@ export const deleteUser = async (req, res) => {
     if (err.code === '23503') { // Foreign key violation
       return res.status(400).json({ 
         error: "Cannot delete user due to existing references in other tables",
-        hint: "User might have cart items or other related data"
+        hint: "User might have cart items or other related data",
+        action: "foreign_key_violation"
       });
     }
     
@@ -203,4 +217,41 @@ export const getAllMenuByRestaurant = async (req,res) =>{
     }));
 
     res.json(enriched);
+};
+
+//reactivate existing user
+export const reactivateUser = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    //check if user exists
+    const userExists = await db.query(
+      "SELECT * FROM users WHERE user_id = $1",
+      [id]
+    );
+
+    if (userExists.rowCount === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    //reactivate the user
+    const result = await db.query(
+      `UPDATE users 
+       SET is_active = TRUE 
+       WHERE user_id = $1 
+       RETURNING user_id AS id, full_name, email, role, is_active`,
+      [id]
+    );
+
+    res.json({
+      success: true,
+      action: "reactivated",
+      message: "User successfully reactivated",
+      user: result.rows[0]
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Could not reactivate user" });
+  }
 };
