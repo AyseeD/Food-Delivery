@@ -9,7 +9,7 @@ function AdminRestaurants() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
 
-  //fetch restaurants from backend
+  // FETCH RESTAURANTS FROM BACKEND 
   useEffect(() => {
     async function fetchRestaurants() {
       try {
@@ -24,7 +24,7 @@ function AdminRestaurants() {
     fetchRestaurants();
   }, []);
 
-  //delete restaurant for backend
+  // DELETE RESTAURANT FOR BACKEND
   const deleteRestaurant = async (id) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this restaurant?");
     if (!confirmDelete) return;
@@ -45,11 +45,11 @@ function AdminRestaurants() {
       }
 
       if (data.action === "deleted") {
-        //remove restaurant from list
+        // REMOVE RESTAURANT FROM LIST 
         setRestaurants((prev) => prev.filter((r) => r.restaurant_id !== id));
         alert("Restaurant permanently deleted.");
       } else if (data.action === "deactivated") {
-        //update restaurant in list to show as inactive
+        // UPDATE RESTAURANT IN LIST :  to show as inactive
         setRestaurants((prev) =>
           prev.map((r) =>
             r.restaurant_id === id ? { ...r, is_active: false } : r
@@ -90,26 +90,26 @@ function AdminRestaurants() {
             </div>
 
             <div className="buttons">
-              <button className="menu-btn" onClick={() => setSelectedRestaurant(rest)}>
+              <button className="manage-menu-btn" onClick={() => setSelectedRestaurant(rest)}>
                 Manage Menu
               </button>
 
               <button
-                className="edit-btn"
+                className="edit-btn-restaurants"
                 onClick={() => setSelectedRestaurant({ ...rest, mode: "edit" })}
               >
                 Edit
               </button>
 
               <button 
-                className="delete-btn" 
+                className="delete-btn-restaurants" 
                 onClick={() => deleteRestaurant(rest.restaurant_id)}
               >
                 Delete
               </button>
 
                <button 
-                className="promo-btn"
+                className="promo-btn-restaurants"
                 onClick={() => setSelectedRestaurant({ ...rest, mode: "promo" })}
               >
                 Manage Promos

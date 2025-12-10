@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from "react";
 
+
 function AdminDashboard() {
   const [loading, setLoading] = useState(true); //for page loading
   const [userLength, setUserLength] = useState(0); //user amount
@@ -59,28 +60,122 @@ function AdminDashboard() {
   
   if (loading) return <p>Loading dashboard...</p>;
 
-  return (
-    <section>
-      <h3 className="admin-section-title">Dashboard Overview</h3>
+  // return (
+  //   <section>
+  //     <h3 className="admin-section-title">Dashboard Overview</h3>
 
-      <div className="dashboard-cards">
-        <div className="dash-card">
-          <h4>Total Users</h4>
-          <p>{userLength}</p>
-        </div>
+  //     <div className="dashboard-cards">
+  //       <div className="dash-card">
+  //         <h4>Total Users</h4>
+  //         <p>{userLength}</p>
+  //       </div>
 
-        <div className="dash-card">
-          <h4>Total Restaurants</h4>
-          <p>{restaurantLength}</p>
-        </div>
+  //       <div className="dash-card">
+  //         <h4>Total Restaurants</h4>
+  //         <p>{restaurantLength}</p>
+  //       </div>
 
-        <div className="dash-card">
-          <h4>Total Orders</h4>
-          <p>{orderLength}</p>
+  //       <div className="dash-card">
+  //         <h4>Total Orders</h4>
+  //         <p>{orderLength}</p>
+  //       </div>
+  //     </div>
+  //   </section>
+  // );
+
+ 
+ return (
+  // <section className="apple-dashboard">
+
+  //   <div className="apple-dashboard-header">
+  //     <h2>Dashboard</h2>
+  //     <p>Overview of your platform</p>
+  //   </div>
+
+  //   <div className="apple-stats">
+  //     <div className="apple-stat">
+  //       <span className="value">{userLength}</span>
+  //       <span className="label">Users</span>
+  //     </div>
+
+  //     <div className="apple-stat">
+  //       <span className="value">{restaurantLength}</span>
+  //       <span className="label">Restaurants</span>
+  //     </div>
+
+  //     <div className="apple-stat">
+  //       <span className="value">{orderLength}</span>
+  //       <span className="label">Orders</span>
+  //     </div>
+  //   </div>
+
+
+  
+
+  // </section>
+
+
+
+  <section>
+
+  
+    <div className="dashboard-hero">
+      <div className="hero-content">
+        <h2>Welcome 👋</h2>
+        <p>Here’s what’s happening on your platform today.</p>
+
+      </div>
+    </div>
+
+    <div className="apple-dashboard">
+
+     <div className="apple-dashboard-header">
+       <h2>Dashboard</h2>
+       <p>Overview of your platform</p>
+     </div>
+
+     <div className="apple-stats">
+      <div className="apple-stat">
+        <i className="fa-solid fa-user"></i>
+        <div>
+          <span className="value">{userLength}</span>
+          <span className="label">Users</span>
         </div>
       </div>
-    </section>
-  );
+
+      <div className="apple-stat">
+        <i className="fa-solid fa-store"></i>
+        <div>
+          <span className="value">{restaurantLength}</span>
+          <span className="label">Restaurants</span>
+        </div>
+      </div>
+
+      <div className="apple-stat">
+        <i className="fa-solid fa-bag-shopping"></i>
+        <div>
+          <span className="value">{orderLength}</span>
+          <span className="label">Orders</span>
+        </div>
+      </div>
+    </div>
+
+    </div>
+
+
+  </section>  
+
+);
+
+
+    
+
+
+
+
+
+
+
 }
 
 export default AdminDashboard;

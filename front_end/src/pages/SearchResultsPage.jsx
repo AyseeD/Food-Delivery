@@ -121,7 +121,7 @@ export default function SearchResultsPage() {
         )}
       </div>
       
-      <Footer />
+    
     </div>
   );
 }

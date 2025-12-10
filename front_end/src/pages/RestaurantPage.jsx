@@ -198,7 +198,6 @@ export default function RestaurantPage() {
         />
       )}
 
-      <Footer />
     </div>
   );
 }

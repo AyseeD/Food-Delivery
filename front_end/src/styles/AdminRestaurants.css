@@ -74,38 +74,65 @@
 
 /* BUTTON GROUP */
 .buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;             
+  margin-top: 14px;
 }
 
-.menu-btn {
-  background: #007bff;
-  color: #fff;
+.buttons button {
   border: none;
-  padding: 8px 12px;
+  padding: 10px 0;
   border-radius: 8px;
   font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
-  transition: 0.15s ease;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.30);
 }
 
-.menu-btn:hover {
-  background: #0066d6;
+
+.manage-menu-btn {
+  background: #3b82f6;
+  color: #eef2ff;
 }
 
-.delete-btn {
-  background: #ff4444;
-  color: #fff;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
+.manage-menu-btn:hover {
+  background-color: #EFF6FF;
+  color: #3b82f6;
 }
 
-.delete-btn:hover {
-  background: #e13232;
+
+.edit-btn-restaurants{
+  background: #6366F1;
+  color: #eef2ff;
+}
+
+.edit-btn-restaurants:hover{
+  background-color: #EEF2FF;
+  color: #6366F1;
+}
+
+.delete-btn-restaurants {
+  background: #ef4444;
+  color: #eef2ff;
+}
+
+.delete-btn-restaurants:hover {
+  background-color: #FEF2F2;
+  color: #ef4444;
+}
+
+
+/* Add to your main AdminRestaurants.css or create AdminPromos.css */
+.promo-btn-restaurants {
+  background: #A855F7;
+  color: #eef2ff;
+}
+
+.promo-btn-restaurants:hover {
+  background-color: #FAF5FF;
+  color: #A855F7;
 }
 
 .restaurant-info {
@@ -129,24 +156,6 @@
   font-size: 14px;
   margin-top: 5px;
   font-style: italic;
-}
-
-/* Add to your main AdminRestaurants.css or create AdminPromos.css */
-.promo-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  margin: 5px;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.promo-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
 }
 
 /* If you want to show promo status in restaurant cards */

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import "../styles/AccountPage.css";
+import "../styles/OrderCard.css";
 import OrderCard from "../components/OrderCard";
 
 export default function AccountPage() {
@@ -158,7 +159,6 @@ export default function AccountPage() {
       <Header />
 
       <div className="account-page-wrapper">
-
         {/* SIDEBAR */}
         <aside className="account-sidebar">
           <h3 className="sidebar-title">My Account</h3>
@@ -215,98 +215,101 @@ export default function AccountPage() {
 
           {/* ACCOUNT DETAILS TAB */}
           {activeTab === "details" && (
-            <section className="account-details">
-              <h2 className="details-header">Account Details</h2>
+            <section className="account-details-section">
+              <div className="account-details-card">
 
-              {loadingUser ? (
-                <p>Loading...</p>
-              ) : (
-                <div className="details-form-container">
-                  {/* Password Change Section */}
-                  {showPasswordChange ? (
-                    <div className="password-change-section">
-                      <h3>Change Password</h3>
-                      <form onSubmit={handlePasswordChange} className="password-form">
-                        {passwordError && (
-                          <div className="error-message">{passwordError}</div>
-                        )}
-                        {passwordSuccess && (
-                          <div className="success-message">{passwordSuccess}</div>
-                        )}
+                <h2 className="details-title">Account Details</h2>
 
-                        <div className="field">
-                          <label>Current Password *</label>
-                          <input
-                            type="password"
-                            value={passwordForm.current_password}
-                            onChange={(e) => setPasswordForm({
-                              ...passwordForm,
-                              current_password: e.target.value
-                            })}
-                            required
-                            placeholder="Enter your current password"
-                          />
-                        </div>
+                {loadingUser ? (
+                  <p>Loading...</p>
+                ) : (
+                  <div className="details-content">
+                    {/* Password Change Section */}
+                    {showPasswordChange ? (
+                      <div className="password-change-box">
+                        <h3 className="box-title">Change Password</h3>
+                        <form onSubmit={handlePasswordChange} className="modern-form">
+                          {passwordError && (
+                            <div className="error-box">{passwordError}</div>
+                          )}
+                          {passwordSuccess && (
+                            <div className="success-box">{passwordSuccess}</div>
+                          )}
 
-                        <div className="field">
-                          <label>New Password *</label>
-                          <input
-                            type="password"
-                            value={passwordForm.new_password}
-                            onChange={(e) => setPasswordForm({
-                              ...passwordForm,
-                              new_password: e.target.value
-                            })}
-                            required
-                            placeholder="At least 6 characters"
-                            minLength="6"
-                          />
-                        </div>
 
-                        <div className="field">
-                          <label>Confirm New Password *</label>
-                          <input
-                            type="password"
-                            value={passwordForm.confirm_password}
-                            onChange={(e) => setPasswordForm({
-                              ...passwordForm,
-                              confirm_password: e.target.value
-                            })}
-                            required
-                            placeholder="Confirm your new password"
-                          />
-                        </div>
+                          <div className="floating-field">
+                            <label>Current Password *</label>
+                            <input
+                              type="password"
+                              value={passwordForm.current_password}
+                              onChange={(e) => setPasswordForm({
+                                ...passwordForm,
+                                current_password: e.target.value
+                              })}
+                              required
+                              placeholder="Enter your current password"
+                            />
+                          </div>
 
-                        <div className="form-buttons">
-                          <button type="submit" className="update-btn">
-                            Update Password
-                          </button>
-                          <button
-                            type="button"
-                            className="cancel-btn"
-                            onClick={() => {
-                              setShowPasswordChange(false);
-                              setPasswordError("");
-                              setPasswordSuccess("");
-                              setPasswordForm({
-                                current_password: "",
-                                new_password: "",
-                                confirm_password: ""
-                              });
-                            }}
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      </form>
-                    </div>
-                  ) : editMode ? (
-                    <form className="details-form">
-                      <div className="row">
-                        <div className="field">
-                          <label>Full Name *</label>
+                          <div className="floating-field">
+                            <label>New Password *</label>
+                            <input
+                              type="password"
+                              value={passwordForm.new_password}
+                              onChange={(e) => setPasswordForm({
+                                ...passwordForm,
+                                new_password: e.target.value
+                              })}
+                              required
+                              placeholder="At least 6 characters"
+                              minLength="6"
+                            />
+                          </div>
+
+                          <div className="floating-field">
+                            <label>Confirm New Password *</label>
+                            <input
+                              type="password"
+                              value={passwordForm.confirm_password}
+                              onChange={(e) => setPasswordForm({
+                                ...passwordForm,
+                                confirm_password: e.target.value
+                              })}
+                              required
+                              placeholder="Confirm your new password"
+                            />
+                          </div>
+
+                          <div className="form-buttons">
+                            <button type="submit" className="btn-primary">
+                              Update Password
+                            </button>
+                            <button
+                              type="button"
+                              className="btn-secondary"
+                              onClick={() => {
+                                setShowPasswordChange(false);
+                                setPasswordError("");
+                                setPasswordSuccess("");
+                                setPasswordForm({
+                                  current_password: "",
+                                  new_password: "",
+                                  confirm_password: ""
+                                });
+                              }}
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </form>
+                      </div>
+                    ) : editMode ? (
+                      <form className="modern-form">
+
+                        <div className="floating-field">
                           <input
                             type="text"
+                            id = "name"
                             value={updatedUser.full_name}
                             onChange={(e) => setUpdatedUser({
                               ...updatedUser,
@@ -314,103 +317,104 @@ export default function AccountPage() {
                             })}
                             required
                           />
+                          <label for= "name"> Full Name </label>
+
+                        </div>
+
+                        <div className="floating-field">
+                          <input
+                            type="email"
+                            value={updatedUser.email}
+                            onChange={(e) => setUpdatedUser({
+                              ...updatedUser,
+                              email: e.target.value
+                            })}
+                            required
+                          />
+                          <label for = "email" >Email </label>
+                        </div>
+
+                        <div className="floating-field">
+                          <label>Delivery Address</label>
+                          <textarea
+                            value={updatedUser.address || ""}
+                            onChange={(e) => setUpdatedUser({
+                              ...updatedUser,
+                              address: e.target.value
+                            })}
+                            placeholder="Enter your delivery address"
+                            rows="3"
+                          />
+                          <small>Street, City, ZIP Code</small>
+                        </div>
+
+                        <div className="form-buttons">
+                          <button
+                            type="button"
+                            className="btn-primary"
+                            onClick={handleUpdateUser}
+                          >
+                            Save Changes
+                          </button>
+                          <button
+                            type="button"
+                            className="btn-secondary"
+                            onClick={() => {
+                              setEditMode(false);
+                              setUpdatedUser({
+                                full_name: user.full_name,
+                                email: user.email,
+                                address: user.address || ""
+                              });
+                            }}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </form>
+                    ) : (
+                      /* VIEW MODE */
+
+                      <div className="user-info-grid">
+                        <div className="info-card">
+                          <p>Name: <span>{user.full_name}</span></p>
+                        </div>
+                        <div className="info-card">
+                          <p>Email: <span>{user.email}</span></p>
+                        </div>
+                        <div className="info-card">
+                          <p>Address: <span>{user.address || "Not provided"}</span></p>
+                        </div>
+                        <div className="info-card">
+                          <p>Account Created: <span>{new Date(user.created_at).toLocaleDateString()}</span></p>
+                        </div>
+
+
+                        <div className="action-buttons">
+                          <button
+                            className="btn-primary"
+                            onClick={() => setEditMode(true)}
+                          >
+                            Edit Profile
+                          </button>
+                          <button
+                            className="btn-secondary"
+                            onClick={() => setShowPasswordChange(true)}
+                          >
+                            Change Password
+                          </button>
                         </div>
                       </div>
-
-                      <div className="field full">
-                        <label>Email *</label>
-                        <input
-                          type="email"
-                          value={updatedUser.email}
-                          onChange={(e) => setUpdatedUser({
-                            ...updatedUser,
-                            email: e.target.value
-                          })}
-                          required
-                        />
-                      </div>
-
-                      <div className="field full">
-                        <label>Delivery Address</label>
-                        <textarea
-                          value={updatedUser.address || ""}
-                          onChange={(e) => setUpdatedUser({
-                            ...updatedUser,
-                            address: e.target.value
-                          })}
-                          placeholder="Enter your delivery address"
-                          rows="3"
-                        />
-                        <small>Street, City, ZIP Code</small>
-                      </div>
-
-                      <div className="form-buttons">
-                        <button
-                          type="button"
-                          className="update-btn"
-                          onClick={handleUpdateUser}
-                        >
-                          Save Changes
-                        </button>
-                        <button
-                          type="button"
-                          className="cancel-btn"
-                          onClick={() => {
-                            setEditMode(false);
-                            setUpdatedUser({
-                              full_name: user.full_name,
-                              email: user.email,
-                              address: user.address || ""
-                            });
-                          }}
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </form>
-                  ) : (
-                    <div className="user-info-display">
-                      <div className="info-row">
-                        <strong>Name:</strong>
-                        <span>{user.full_name}</span>
-                      </div>
-                      <div className="info-row">
-                        <strong>Email:</strong>
-                        <span>{user.email}</span>
-                      </div>
-                      <div className="info-row">
-                        <strong>Address:</strong>
-                        <span>{user.address || "Not provided"}</span>
-                      </div>
-                      <div className="info-row">
-                        <strong>Account Created:</strong>
-                        <span>{new Date(user.created_at).toLocaleDateString()}</span>
-                      </div>
-
-                      <div className="action-buttons">
-                        <button
-                          className="edit-btn"
-                          onClick={() => setEditMode(true)}
-                        >
-                          Edit Profile
-                        </button>
-                        <button
-                          className="password-change-btn"
-                          onClick={() => setShowPasswordChange(true)}
-                        >
-                          Change Password
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
+                    )}
+                  </div>
+                )}
+              </div>
             </section>
           )}
         </main>
       </div>
 
-      <Footer />
+      
     </div>
   );
 }

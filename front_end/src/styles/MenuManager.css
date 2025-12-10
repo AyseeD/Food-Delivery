@@ -1,4 +1,3 @@
-
 .menu-manager-box {
   width: 520px !important;
   height: 700px;
@@ -10,83 +9,6 @@
   overflow-x: hidden;
 }
 
-/* MENU LIST */
-.menu-list {
-  max-height: 260px;
-  overflow-y: auto;
-  margin-bottom: 22px;
-  padding-right: 6px;
-}
-
-.menu-item {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  padding: 10px 0;
-  border-bottom: 1px solid #eee;
-}
-
-.menu-item img {
-  width: 65px;
-  height: 65px;
-  border-radius: 10px;
-  object-fit: cover;
-}
-
-.menu-item .price {
-  margin-left: auto;
-  font-weight: 600;
-  font-size: 15px;
-}
-
-/* ADD MENU FORM */
-/* Buton grubu */
-.modal-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 20px;
-  width: 100%;
-}
-
-/* Add Menu Button */
-.add-menu-btn {
-  width: 100%;
-  background: #007bff;
-  color: white;
-  padding: 12px 0;
-  border-radius: 8px;
-  border: none;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-/* Close Button */
-.close-menu-btn {
-  width: 100%;
-  background: #333;
-  color: white;
-  padding: 12px 0;
-  border-radius: 8px;
-  border: none;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.add-menu-form {
-  display: flex;
-  flex-direction: column;
-}
-
-.add-menu-form input {
-  padding: 12px;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  margin-bottom: 12px;
-}
-
 .menu-manager-header {
   display: flex;
   justify-content: space-between;
@@ -94,269 +16,6 @@
   margin-bottom: 20px;
   padding-bottom: 10px;
   border-bottom: 2px solid #eee;
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #666;
-}
-
-.menu-items-list {
-  margin-bottom: 30px;
-}
-
-.menu-items-list h4 {
-  margin-bottom: 15px;
-  color: #333;
-}
-
-.menu-item-card {
-  display: flex;
-  align-items: flex-start;
-  padding: 15px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  margin-bottom: 15px;
-  background: #f9f9f9;
-}
-
-.item-image {
-  width: 100px;
-  height: 100px;
-  margin-right: 20px;
-  flex-shrink: 0;
-}
-
-.item-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 6px;
-}
-
-.item-details {
-  flex: 1;
-}
-
-.item-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.item-header h4 {
-  margin: 0;
-  color: #333;
-}
-
-.status {
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: bold;
-}
-
-.status.available {
-  background: #d4edda;
-  color: #155724;
-}
-
-.status.unavailable {
-  background: #f8d7da;
-  color: #721c24;
-}
-
-.item-description {
-  color: #666;
-  margin-bottom: 8px;
-  font-size: 14px;
-}
-
-.item-price {
-  font-weight: bold;
-  color: #e63946;
-  margin-bottom: 8px;
-}
-
-.item-category {
-  color: #555;
-  font-size: 14px;
-  margin-bottom: 8px;
-}
-
-.item-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin-bottom: 8px;
-}
-
-.tag {
-  background: #e0e7ff;
-  color: #3730a3;
-  padding: 3px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-}
-
-.item-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-left: 15px;
-}
-
-.item-actions button {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  min-width: 80px;
-}
-
-.edit-btn {
-  background: #3b82f6;
-  color: white;
-}
-
-.toggle-btn {
-  color: white;
-}
-
-.disable-btn {
-  background: #f59e0b;
-}
-
-.enable-btn {
-  background: #10b981;
-}
-
-.delete-btn {
-  background: #ef4444;
-  color: white;
-}
-
-.add-item-form {
-  background: #f8fafc;
-  padding: 20px;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-}
-
-.add-item-form h4 {
-  margin-bottom: 15px;
-  color: #333;
-}
-
-.form-row {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 15px;
-}
-
-.form-row input,
-.form-row select {
-  flex: 1;
-}
-
-textarea {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  margin-bottom: 15px;
-  resize: vertical;
-  min-height: 80px;
-}
-
-.tags-selection {
-  margin-bottom: 20px;
-}
-
-.tags-selection p {
-  margin-bottom: 10px;
-  font-weight: 500;
-}
-
-.tags-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.tag-checkbox {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  background: #f1f5f9;
-  padding: 6px 12px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.tag-checkbox input {
-  cursor: pointer;
-}
-
-.form-buttons {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-}
-
-.add-btn, .save-btn {
-  background: #10b981;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.cancel-btn, .close-form-btn {
-  background: #6b7280;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.no-items {
-  text-align: center;
-  color: #666;
-  padding: 20px;
-  background: #f8f9fa;
-  border-radius: 8px;
-}
-
-.edit-form-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.edit-form {
-  background: white;
-  padding: 30px;
-  border-radius: 8px;
-  width: 500px;
-  max-width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
 }
 
 /* Category Management Styles */
@@ -392,6 +51,28 @@ textarea {
   color: #333;
 }
 
+.category-edit-form {
+  display: flex;
+  gap: 8px;
+  width: 100%; 
+}
+
+.category-edit-form input {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+} 
+
+.category-edit-form button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
 .category-actions {
   display: flex;
   gap: 8px;
@@ -400,7 +81,7 @@ textarea {
 .category-actions button {
   padding: 4px 12px;
   font-size: 13px;
-  border-radius: 4px;
+  border-radius: 20px;
   border: none;
   cursor: pointer;
 }
@@ -415,44 +96,9 @@ textarea {
   color: white;
 }
 
-.category-edit-form {
-  display: flex;
-  gap: 8px;
-  width: 100%;
-}
-
-.category-edit-form input {
-  flex: 1;
-  padding: 6px 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-.category-edit-form button {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 13px;
-}
-
-.category-edit-form .save-btn {
-  background: #4CAF50;
-  color: white;
-}
-
-.category-edit-form .cancel-btn {
-  background: #757575;
-  color: white;
-}
-
-.add-category-form {
+.add-category-form input {
   display: flex;
   gap: 10px;
-}
-
-.add-category-form input {
   flex: 1;
   padding: 8px 12px;
   border: 1px solid #ddd;
@@ -460,21 +106,467 @@ textarea {
   font-size: 14px;
 }
 
-.add-category-form .add-btn {
+.add-category-form {
+  display: flex;
+  gap: 10px;
   padding: 8px 16px;
-  background: #2196F3;
   color: white;
-  border: none;
-  border-radius: 4px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
 }
 
-.add-category-form .add-btn:hover {
-  background: #1976D2;
+
+/* CATEGORY MANAGEMENT BUTTONS */
+
+.category-management-btn{
+  display: flex;
+  padding: 5px;
+  gap: 5px;
 }
 
+.btn-category-save{
+  background: #10b981;
+  color: #fff;
+}
+
+.btn-category-cancel{
+  background: #ef4444;
+  color: #fff;
+}
+
+.btn-category-edit{
+  background: #007bff;
+  color: #fff;
+}
+
+.btn-category-delete{
+  background: #ef4444;
+  color: #fff;
+}
+
+.btn-add-category{
+  background: #10b981;
+  color: #fff;
+  border: none;
+  padding: 7px 17px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+
+
+/* EXISTING MENU ITEMS */
+
+.menu-items-list {
+  margin-bottom: 30px;
+}
+
+.menu-items-list h4 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.no-items {
+  text-align: center;
+  color: #666;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+
+.menu-item-card {
+  display: flex;
+  align-items: flex-start;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  background: #f9f9f9;
+}
+
+
+.item-image {
+  width: 100px;
+  height: 100px;
+  margin-right: 20px;
+  flex-shrink: 0;
+}
+
+.item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.item-details {
+  flex: 1;
+}
+
+.item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 20px;
+}
+
+.item-header h4 {
+  margin: 0;
+  color: #333;
+}
+
+
+.status {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.status.available {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status.unavailable {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+
+.item-description {
+  color: #666;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.item-price {
+  font-weight: bold;
+  color: #e63946;
+  margin-bottom: 8px;
+}
+
+.item-category {
+  color: #555;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.item-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 8px;
+}
+
+.item-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-left: 15px;
+}
+
+.item-actions button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 12px;
+  min-width: 80px;
+}
+
+.item-actions-buttons {
+  display: flex;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 12px;
+  min-width: 80px;
+  gap: 8px;
+  margin-left: 15px;
+}
+
+
+.btn-item-actions-edit{
+  background: #007bff;
+  color: #fff;
+}
+
+.btn-item-actions-manage-options{
+  background: #534ad0;
+  color: #fff;
+}
+
+.btn-item-actions-disable{
+  background: #fc9f24;
+  color: #fff;
+
+}
+
+.btn-item-actions-delete{
+  background: #ef4444;
+  color: #fff;
+}
+
+
+
+
+/* MENU LIST */
+.menu-list {
+  max-height: 260px;
+  overflow-y: auto;
+  margin-bottom: 22px;
+  padding-right: 6px;
+}
+
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.menu-item img {
+  width: 65px;
+  height: 65px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.menu-item .price {
+  margin-left: auto;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+
+
+
+.add-menu-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.add-menu-form input {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  margin-bottom: 12px;
+}
+
+
+.tag {
+  background: #e0e7ff;
+  color: #3730a3;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+
+.tags-selection {
+  margin-bottom: 20px;
+  padding: 10px 0;
+}
+
+.tags-selection p {
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #444;
+}
+
+.tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+
+.tag-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f3f4f6;     
+  padding: 6px 12px;
+  border-radius: 16px;     
+  cursor: pointer;
+  color: #555;
+  font-size: 12px;
+  border: 1px solid #e5e7eb; 
+  transition: background 0.2s ease;
+}
+
+.tag-checkbox:hover {
+  background: #e5e7eb;
+}
+
+.tag-checkbox input {
+  cursor: pointer;
+}
+
+
+
+/* ADD NEW ITEM FORM */
+.add-item-form {
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.add-item-form h4 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.form-row input {
+  flex: 1;
+}
+
+.form-row select {
+  flex: 1;
+  padding: 5px 5px;
+  background: #f8fafc;
+  width: 100%;
+  border-radius: 20px;
+  border: 1px solid #d1d5db; 
+  background-color: #f3f4f6; 
+  font-size: 12px;
+  color: #555;
+  cursor: pointer;
+  transition: border 0.2s ease, background 0.2s ease;
+
+}
+
+.form-row select:focus{
+  outline: none;
+  border-color: #3b82f6; 
+  background-color: #fff;
+}
+
+.form-row select option{
+  background: white;
+  color: #333;
+  padding: 8px;
+}
+
+
+.input-price{
+  border: 1px solid #ccc;
+  font-size: 12px;
+}
+
+
+textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  resize: vertical;
+  min-height: 80px;
+  font-size: 12px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+
+
+.form-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.btn-add-item{
+  background: #10b981;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.btn-close-item{
+  background: #2c2e2d;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.btn-save-changes{
+  background: #10b981;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.btn-cancel-changes{
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.select-cat{
+  border-radius: 20px;
+  padding: 8px 18px;
+}
+
+
 /* Options Management Styles */
+
+
+/* EDIT ITEM FORM */
+.edit-form-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.edit-form {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  width: 500px;
+  max-width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.form-header{
+  margin-bottom: 15px;
+}
+
+
 .options-btn {
   background-color: #6c757d;
   color: white;
@@ -490,6 +582,12 @@ textarea {
   background-color: #5a6268;
 }
 
+
+
+
+
+
+
 .add-option-form {
   background: #f8f9fa;
   padding: 15px;
@@ -502,6 +600,57 @@ textarea {
   margin-bottom: 10px;
   color: #495057;
 }
+
+.btn-add-option{
+  background: #10b981;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+
+.btn-close-add-option{
+  background: #2c2e2d;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+
+.add-new-option-form{
+  padding: 20px;
+  border-radius: 15px;
+}
+
+.btn-edit{
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.btn-delete{
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+
+
+
 
 .options-list {
   margin: 20px 0;

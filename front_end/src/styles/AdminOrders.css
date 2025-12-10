@@ -1,3 +1,4 @@
+
 /* MAIN WRAPPER */
 .admin-orders {
   padding: 30px;
@@ -13,103 +14,182 @@
   color: #1e1e1e;
 }
 
-/* ORDERS CONTAINER */
+/* ORDERS LIST */
 .orders-wrapper {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-/* ORDER CARD */
+/* ------- ORDER CARD (FULL WIDTH) ------- */
 .order-card {
-  background: #fff;
-  width: 900px;
-  max-width: 100%;
-  padding: 20px 24px;
-  border-radius: 18px;
+  width: 100%;
+  background: #ffffff;
+  padding: 24px 28px;
+  border-radius: 16px;
   border: 1px solid #e5e5e5;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
-  margin-bottom: 4px;
-  transition: 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: 0.25s ease;
+  display: block;
 }
 
 .order-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
 }
 
-/* HEADER */
+/* ------- HEADER ------- */
 .order-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 14px;
+  align-items: center;
+  margin-bottom: 12px;
 }
 
 .restaurant-name {
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 700;
   color: #222;
 }
 
-.order-price {
-  color: #ff7a00;
-  font-size: 17px;
-  font-weight: 600;
+.order-id {
+  font-weight: 500;
+  color: #777;
 }
 
-/* BODY */
+/* ------- BODY ------- */
+.order-body {
+  margin-bottom: 18px;
+}
+
 .order-body p {
   margin-bottom: 6px;
   color: #333;
 }
 
+/* ------- ITEMS SECTION ------- */
+.order-items-section {
+  margin: 16px 0;
+  display: grid;
+  gap: 5px;
+}
+
+.order-items-section strong {
+  display: block;
+  margin-bottom: 8px;
+}
+
+
 .order-items {
-  opacity: 0.75;
-  margin-left: 15px;
-  margin-top: 5px;
+  background: #fafafa;
+  padding: 16px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.order-items li {
-  font-size: 14px;
-  line-height: 1.6;
+
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #eee;
+}
+
+.order-item:last-child {
+  border-bottom: none;
+}
+
+.order-item-row{
+  display: flex;
+  flex-direction: column;
+  
+}
+
+.item-name {
+  flex: 2;
+  font-weight: 500;
 }
 
 
-/* Status */
+.item-quantity {
+  flex: 1;
+  text-align: center;
+  color: #777;
+}
+
+.item-price {
+  text-align: right;
+  font-weight: 700;
+  color: #e74c3c;
+}
+
+
+.item-price {
+  flex: 1;
+  text-align: right;
+  font-weight: 700;
+  color: #e74c3c;
+}
+
+/* ------- FOOTER ------- */
+.order-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 18px;
+}
+
+/* STATUS BADGE */
 .status-badge {
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 14px;
+  font-size: 12px;
+  font-weight: 700;
   color: white;
   text-transform: capitalize;
 }
 
-/* STATUS COLORS */
+
+
+
+.status-badge.accepted {
+  background-color: #2e2d29;
+  color: #fff;
+}
+
+.status-badge.preparing {
+  background-color: #f0cd20;
+}
+
+.status-badge.picked-up{
+  background-color: #166ecd;
+}
+
+.status-badge.delivering {
+  background-color: #ff9f43;
+}
 .status-badge.delivered {
   background-color: #28c76f;
 }
 
-.status-badge.delivering {
-  background-color: #ff9f43; 
-}
-
-.status-badge.cancelled{
-  background-color: #ea5455; 
+.status-badge.cancelled {
+  background-color: #ea5455;
 }
 
 
-/* FOOTER */
-.order-footer {
-  display: flex;
-  justify-content: flex-end;  /* sağa yasla */
-}
 
+
+
+/* ------- ACTIONS (RIGHT SIDE) ------- */
 .order-actions {
   display: flex;
-  flex-direction: column;    
-  align-items: flex-end;     
-  gap: 10px;                
+  align-items: center;
+  gap: 14px;
 }
 
 .order-actions .order-price {
@@ -118,29 +198,12 @@
   color: #ff7a00;
 }
 
-.order-items-section {
-  margin: 10px 0;
+
+.order-right{
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 130px;
+  
 }
 
-.order-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 5px 0;
-  border-bottom: 1px solid #eee;
-}
 
-.item-name {
-  flex: 2;
-}
-
-.item-quantity {
-  flex: 1;
-  text-align: center;
-  color: #666;
-}
-
-.item-price {
-  flex: 1;
-  text-align: right;
-  font-weight: bold;
-}

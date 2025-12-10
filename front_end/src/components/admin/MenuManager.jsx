@@ -25,7 +25,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     tags: []
   });
 
-  //fetch menu items, categories, and tags
+  // FETCH MENU ITEMS , CATEGORIES and TAGS 
   useEffect(() => {
     fetchMenuItems();
     fetchCategories();
@@ -64,7 +64,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     }
   };
 
-  //add new category
+  // ADD NEW CATEGORY
   const addCategory = async (e) => {
     e.preventDefault();
     if (!newCategoryName.trim()) {
@@ -87,7 +87,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
 
       if (!response.ok) throw new Error("Failed to add category");
 
-      //refresh categories
+      // REFRESH CATEGORIES
       fetchCategories();
       setNewCategoryName("");
     } catch (error) {
@@ -96,7 +96,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     }
   };
 
-  //update category
+  // UODATE CATEGORY
   const updateCategory = async (e) => {
     e.preventDefault();
     if (!editingCategory.name.trim()) {
@@ -118,7 +118,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
 
       if (!response.ok) throw new Error("Failed to update category");
 
-      //refresh categories
+      // REFRESH CATEGORIES
       fetchCategories();
       setEditingCategory(null);
     } catch (error) {
@@ -127,7 +127,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     }
   };
 
-  //delete category
+  // DELETE CATEGORY
   const deleteCategory = async (categoryId) => {
     if (!window.confirm("Are you sure you want to delete this category? Items in this category will become uncategorized.")) return;
 
@@ -141,7 +141,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
 
       if (!response.ok) throw new Error("Failed to delete category");
 
-      //refresh categories and menu items
+      // REFRESH CATEGORIES and MENU ITEMS
       fetchCategories();
       fetchMenuItems();
     } catch (error) {
@@ -150,7 +150,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     }
   };
 
-  //add new menu item
+  // ADD NEW MENU ITEM
   const addMenuItem = async (e) => {
     e.preventDefault();
 
@@ -172,10 +172,10 @@ function MenuManager({ restaurant, close, setRestaurants }) {
 
       const data = await response.json();
 
-      //refresh menu items
+      // REFRESH MENU ITEMS 
       fetchMenuItems();
 
-      //reset form
+      // RESET FORM 
       setNewItem({
         name: "",
         description: "",
@@ -192,7 +192,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     }
   };
 
-  //update existing menu item
+  // UPDATE EXISTING MENU ITEM
   const updateMenuItem = async (e) => {
     e.preventDefault();
 
@@ -211,10 +211,10 @@ function MenuManager({ restaurant, close, setRestaurants }) {
 
       if (!response.ok) throw new Error("Failed to update item");
 
-      //refresh menu items
+      // REFRESH MENU ITEMS
       fetchMenuItems();
 
-      //reset editing state
+      // RESET EDITING STATE
       setEditingItem(null);
 
     } catch (error) {
@@ -223,7 +223,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     }
   };
 
-  //delete menu item
+  // DELETE MENU ITEM
   const deleteMenuItem = async (itemId) => {
     if (!window.confirm("Are you sure you want to delete this item?")) return;
 
@@ -237,7 +237,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
 
       if (!response.ok) throw new Error("Failed to delete item");
 
-      //refresh menu items
+      // REFRESH MENU ITEMS
       fetchMenuItems();
 
     } catch (error) {
@@ -246,7 +246,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     }
   };
 
-  //toggle item availability
+  // TOGGLE ITEM AVAILABILITY 
   const toggleAvailability = async (item) => {
     try {
       const response = await fetch(`http://localhost:4000/menu/item/${item.item_id}`, {
@@ -262,7 +262,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
 
       if (!response.ok) throw new Error("Failed to update availability");
 
-      //refresh menu items
+      // REFRESH MENU ITEMS
       fetchMenuItems();
 
     } catch (error) {
@@ -271,7 +271,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     }
   };
 
-  //handle tag selection
+  // HANDLE TAG SELECTION 
   const handleTagToggle = (tagName, isEditing = false) => {
     if (isEditing) {
       setEditingItem(prev => {
@@ -297,7 +297,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     }
   };
 
-  //get item options from backend
+  // GET ITEM OPTIONS : from backend
   const fetchItemOptions = async (itemId) => {
     try {
       const response = await fetch(`http://localhost:4000/menu/item/${itemId}/options`);
@@ -309,7 +309,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     }
   };
 
-  //edit options
+  // EDIT OPTIONS
   const startEditingOptions = async (item) => {
     const options = await fetchItemOptions(item.item_id);
     setEditingOptions({
@@ -319,7 +319,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     setOptionsForm({ name: "", additional_price: "0" });
   };
 
-  //add new option
+  // ADD NEW OPTION
   const addOption = async (e) => {
     e.preventDefault();
     if (!optionsForm.name.trim()) {
@@ -347,13 +347,13 @@ function MenuManager({ restaurant, close, setRestaurants }) {
 
       const newOption = await response.json();
 
-      //update state
+      // UPDATE STATE 
       setEditingOptions(prev => ({
         ...prev,
         currentOptions: [...prev.currentOptions, newOption]
       }));
 
-      //clear form
+      // CLEAR FORM 
       setOptionsForm({ name: "", additional_price: "0" });
 
     } catch (error) {
@@ -362,7 +362,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     }
   };
 
-  //delete option for backend
+  // DELETE OPTION : for backend
   const deleteOption = async (optionId) => {
     if (!window.confirm("Are you sure you want to delete this option?")) return;
 
@@ -379,7 +379,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
 
       if (!response.ok) throw new Error("Failed to delete option");
 
-      //update state
+      // UPDATE STATE
       setEditingOptions(prev => ({
         ...prev,
         currentOptions: prev.currentOptions.filter(opt => opt.option_id !== optionId)
@@ -391,7 +391,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     }
   };
 
-  //update option for backend
+  // UPDATE OPTION : for backend
   const updateOption = async (option) => {
     const newName = prompt("Enter new name for option:", option.name);
     if (!newName || newName === option.name) return;
@@ -419,7 +419,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
 
       const updatedOption = await response.json();
 
-      //update state
+      // UPDATE STATE 
       setEditingOptions(prev => ({
         ...prev,
         currentOptions: prev.currentOptions.map(opt =>
@@ -433,7 +433,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     }
   };
 
-  //for loading page
+  // FOR LOADING PAGE 
   if (loading) {
     return (
       <div className="popup-overlay">
@@ -444,12 +444,14 @@ function MenuManager({ restaurant, close, setRestaurants }) {
     );
   }
 
+
+
   return (
     <div className="popup-overlay">
       <div className="popup-box menu-manager-box">
         <div className="menu-manager-header">
           <h3>Manage Menu – {restaurant.name}</h3>
-          <button className="close-btn" onClick={close}>×</button>
+          {/* <button className = "btn x-close-btn" onClick={close}>×</button> */}
         </div>
 
         {/* CATEGORY MANAGEMENT */}
@@ -466,23 +468,27 @@ function MenuManager({ restaurant, close, setRestaurants }) {
                       onChange={(e) => setEditingCategory({ ...editingCategory, name: e.target.value })}
                       autoFocus
                     />
-                    <button type="submit" className="save-btn">Save</button>
-                    <button type="button" className="cancel-btn" onClick={() => setEditingCategory(null)}>
-                      Cancel
-                    </button>
+
+                    <div className="category-management-btn">
+                      <button type="submit" className="btn-category-save">Save</button>
+                      <button type="button" className="btn-category-cancel" onClick={() => setEditingCategory(null)}>
+                        Cancel
+                      </button>
+                    </div>
                   </form>
+
                 ) : (
                   <>
                     <span>{category.name}</span>
                     <div className="category-actions">
                       <button
-                        className="edit-btn"
+                        className="btn-category-edit"
                         onClick={() => setEditingCategory(category)}
                       >
                         Edit
                       </button>
                       <button
-                        className="delete-btn"
+                        className = "btn-category-delete"
                         onClick={() => deleteCategory(category.category_id)}
                       >
                         Delete
@@ -501,7 +507,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
               onChange={(e) => setNewCategoryName(e.target.value)}
               required
             />
-            <button type="submit" className="add-btn">Add Category</button>
+            <button type="submit" className="btn-add-category">Add Category</button>
           </form>
         </div>
 
@@ -538,36 +544,45 @@ function MenuManager({ restaurant, close, setRestaurants }) {
                   )}
                 </div>
                 <div className="item-actions">
-                  <button
-                    className="edit-btn"
-                    onClick={() => {
-                      const normalizedItem = {
-                        ...item,
-                        tags: item.tags.map(t => typeof t === 'object' ? t.name : t)
-                      };
-                      setEditingItem(normalizedItem);
-                    }}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="options-btn"
-                    onClick={() => startEditingOptions(item)}
-                  >
-                    Manage Options
-                  </button>
-                  <button
-                    className={`toggle-btn ${item.is_available ? 'disable-btn' : 'enable-btn'}`}
-                    onClick={() => toggleAvailability(item)}
-                  >
-                    {item.is_available ? 'Disable' : 'Enable'}
-                  </button>
-                  <button
-                    className="delete-btn"
-                    onClick={() => deleteMenuItem(item.item_id)}
-                  >
-                    Delete
-                  </button>
+
+                  <div className="item-actions-buttons">
+                    <button
+                      className="btn-item-actions-edit"
+                      onClick={() => {
+                        const normalizedItem = {
+                          ...item,
+                          tags: item.tags.map(t => typeof t === 'object' ? t.name : t)
+                        };
+                        setEditingItem(normalizedItem);
+                      }}
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      className="btn-item-actions-manage-options"
+                      onClick={() => startEditingOptions(item)}
+                    >
+                      Manage Options
+                    </button>
+
+
+                    <button
+                      className={`btn-item-actions-disable ${item.is_available ? 'disable-btn' : 'enable-btn'}`}
+                      onClick={() => toggleAvailability(item)}
+                    >
+                      {item.is_available ? 'Disable' : 'Enable'}
+                    </button>
+
+
+                    <button
+                      className="btn-item-actions-delete"
+                      onClick={() => deleteMenuItem(item.item_id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+
                 </div>
               </div>
             ))
@@ -607,6 +622,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
                   onChange={(e) => setEditingItem({ ...editingItem, image_url: e.target.value })}
                 />
                 <select
+                  className="select-cat"
                   value={editingItem.category_id || ''}
                   onChange={(e) => setEditingItem({ ...editingItem, category_id: e.target.value })}
                 >
@@ -635,8 +651,8 @@ function MenuManager({ restaurant, close, setRestaurants }) {
                   </div>
                 </div>
                 <div className="form-buttons">
-                  <button type="submit" className="save-btn">Save Changes</button>
-                  <button type="button" className="cancel-btn" onClick={() => setEditingItem(null)}>
+                  <button type="submit" className="btn-save-changes">Save Changes</button>
+                  <button type="button" className="btn-cancel-changes" onClick={() => setEditingItem(null)}>
                     Cancel
                   </button>
                 </div>
@@ -658,6 +674,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
                 required
               />
               <input
+                className="input-price"
                 type="number"
                 placeholder="Price"
                 step="0.01"
@@ -706,26 +723,26 @@ function MenuManager({ restaurant, close, setRestaurants }) {
               </div>
             </div>
             <div className="form-buttons">
-              <button type="submit" className="add-btn">Add Item</button>
-              <button type="button" className="close-form-btn" onClick={close}>
+              <button type="submit" className="btn-add-item">Add Item</button>
+              <button type="button" className="btn-close-item" onClick={close}>
                 Close
               </button>
             </div>
           </form>
         </div>
       </div>
+
       {editingOptions && (
         <div className="edit-form-overlay">
           <div className="edit-form">
             <div className="form-header">
               <h4>Manage Options for {editingOptions.name}</h4>
-              <button className="close-btn" onClick={() => setEditingOptions(null)}>×</button>
             </div>
 
             {/* Add New Option Form */}
             <div className="add-option-form">
               <h5>Add New Option</h5>
-              <form onSubmit={addOption}>
+              <form className = "add-new-option-form" onSubmit={addOption}>
                 <div className="form-row">
                   <input
                     type="text"
@@ -743,7 +760,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
                     min="0"
                   />
                 </div>
-                <button type="submit" className="add-btn">Add Option</button>
+                <button type="submit" className="btn-add-option">Add Option</button>
               </form>
             </div>
 
@@ -762,13 +779,13 @@ function MenuManager({ restaurant, close, setRestaurants }) {
                       </div>
                       <div className="option-actions">
                         <button
-                          className="edit-btn"
+                          className="btn-edit"
                           onClick={() => updateOption(option)}
                         >
                           Edit
                         </button>
                         <button
-                          className="delete-btn"
+                          className="btn-delete"
                           onClick={() => deleteOption(option.option_id)}
                         >
                           Delete
@@ -782,7 +799,7 @@ function MenuManager({ restaurant, close, setRestaurants }) {
 
             <div className="form-buttons">
               <button
-                className="close-btn"
+                className="btn-close-add-option"
                 onClick={() => setEditingOptions(null)}
               >
                 Close

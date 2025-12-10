@@ -1,5 +1,4 @@
 .admin-page {
-  background: #f5f5f7;
   min-height: 80vh;
   padding: 24px 40px;
 }
@@ -28,7 +27,7 @@
   color: #ffffff;
   border: none;
   padding: 8px 16px;
-  border-radius: 8px;
+  border-radius: 20px;
   cursor: pointer;
   font-weight: 600;
   transition: 0.2s;
@@ -118,6 +117,170 @@
   font-size: 22px;
   font-weight: 700;
 }
+
+
+
+
+
+
+
+
+
+
+
+/* WRAPPER */
+.apple-dashboard {
+  padding: 32px;
+  border-radius: 24px;
+}
+
+/* HEADER */
+.apple-dashboard-header {
+  margin-bottom: 28px;
+}
+
+.apple-dashboard-header h2 {
+  font-size: 28px;
+  font-weight: 600; /* Apple uses 500–600 */
+  color: #1d1d1f;
+}
+
+.apple-dashboard-header p {
+  font-size: 14px;
+  color: #6e6e73;
+  margin-top: 4px;
+}
+
+/* STATS */
+.apple-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(160px, 1fr));
+  gap: 24px;
+}
+
+/* STAT CARD */
+.apple-stat {
+  background: #fafafa;
+  border-radius: 20px;
+  padding: 22px 24px;
+
+  backdrop-filter: blur(12px);
+
+  transition: all 0.25s ease;
+}
+
+/* subtle hover – Apple style */
+.apple-stat:hover {
+  background: #e9e7e7;
+}
+
+/* NUMBER */
+.apple-stat .value {
+  font-size: 34px;
+  font-weight: 600;
+  color: #1d1d1f;
+  letter-spacing: -0.5px;
+}
+
+/* LABEL */
+.apple-stat .label {
+  font-size: 14px;
+  color: #6e6e73;
+  margin-top: 4px;
+  display: block;
+}
+
+
+
+.apple-stat {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.apple-stat i {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  backdrop-filter: blur(10px);
+}
+
+
+
+
+.dashboard-hero {
+  width: 100%;
+  min-height: 260px;
+
+  border-radius: 24px;
+  padding: 40px;
+
+  /* Apple-style gradient + image */
+  background:
+    linear-gradient(
+      180deg,
+      rgba(0,0,0,0.15),
+      rgba(0,0,0,0.55)
+    ),
+    url("https://images.unsplash.com/photo-1556740749-887f6717d7e4");
+
+  background-size: cover;
+  background-position: center;
+
+  display: flex;
+  align-items: flex-end;
+  color: white;
+}
+
+/* TEXT */
+.hero-content h2 {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.hero-content p {
+  font-size: 15px;
+  opacity: 0.85;
+  margin-bottom: 22px;
+}
+
+/* STATS */
+.hero-stats {
+  display: flex;
+  gap: 32px;
+}
+
+.hero-stats div span {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.hero-stats div small {
+  display: block;
+  font-size: 13px;
+  opacity: 0.75;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* STATUS BARS */
 .dashboard-status h4 {

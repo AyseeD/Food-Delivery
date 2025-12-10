@@ -264,7 +264,7 @@
 /* ORDER HISTORY */
 /* ORDER CARD BASE */
 .order-card {
-  width: 420px;
+
   background: #fff;
   border-radius: 16px;
   padding: 18px 22px;
@@ -332,6 +332,7 @@
   margin-bottom: 15px;
   border-radius: 12px;
   box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  width: 100%;
 }
 
 .order-card-left {
@@ -352,13 +353,7 @@
   text-transform: capitalize;
 }
 
-/* Status colors */
-.status-badge.pending { background: #ffe9a9; }
-.status-badge.accepted { background: #c9ffd8; }
-.status-badge.preparing { background: #ffdaa9; }
-.status-badge.delivering { background: #a9caff; }
-.status-badge.delivered { background: #b5ffa9; }
-.status-badge.cancelled { background: #ffb3b3; }
+
 
 .order-details {
   margin-top: 10px;
@@ -599,4 +594,215 @@ textarea {
 
 .cancel-btn:hover {
   background: #bbb;
+}
+
+
+
+
+
+
+/* === Container === */
+.account-details-section {
+  display: flex;
+  justify-content: center;
+  padding: 30px 10px;
+}
+
+.account-details-card {
+  width: 520px;
+  background: #fff;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  border: 1px solid #e5e5e5;
+  animation: fadeIn 0.25s ease;
+}
+
+.details-title {
+  font-size: 26px;
+  text-align: center;
+  font-weight: 700;
+  margin-bottom: 28px;
+}
+
+/* === Shared Form Styling === */
+.modern-form{
+  border-radius: 20px;
+  padding: 20px;
+
+}
+
+.modern-form {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+}
+
+
+.floating-field {
+  position: relative;
+  width: 100%;
+  margin-bottom: 22px;
+}
+
+.floating-field input {
+  width: 100%;
+  padding: 18px 16px 14px;
+  font-size: 16px;
+  border-radius: 14px;
+  border: 1.5px solid #d9d9d9;
+  outline: none;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+/* Label */
+.floating-field label {
+  position: absolute;
+  top: -10%;
+  left: 14px;
+  transform: translateY(-50%);
+  background: white;
+  padding: 0 6px;
+  font-size: 14px;
+  color: #9a9a9a;
+  pointer-events: none;
+  transition: 0.2s ease;
+}
+
+/* Fokus veya doluysa */
+.floating-field input:focus + label,
+.floating-field input:not(:placeholder-shown) + label {
+  top: 0;
+  left: 0;
+  font-size: 14px;
+  color: #555;
+}
+
+/* Fokus border */
+.floating-field input:focus {
+  border-color: #ff7a00; /* senin theme orange */
+}
+
+
+
+.modern-form label {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 6px;
+  font-weight: 600;
+  left: 0;
+}
+
+.modern-form input,
+.modern-form textarea {
+  padding: 12px 15px;
+  border-radius: 10px;
+  background: #fafafa;
+  border: 1px solid #ddd;
+  font-size: 15px;
+  transition: 0.2s;
+}
+
+.modern-form input:focus,
+.modern-form textarea:focus {
+  border-color: #ff7f32;
+  background: #fff;
+}
+
+/* === Buttons === */
+.form-buttons,
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.btn-primary {
+  background: #00b14f;
+  color: #fff;
+  padding: 12px 22px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.btn-primary:hover {
+  background: #23ae62;
+}
+
+.btn-secondary {
+  background: #e6e6e6;
+  color: #333;
+  padding: 12px 22px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-secondary:hover {
+  background: #d4d4d4;
+}
+
+/* === User Info Grid === */
+.user-info-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.info-card {
+  padding: 0 12px;
+  border-radius: 14px;
+  
+}
+
+.info-card span {
+  font-size: 15px;
+  color: #777;
+  font-weight: 500;
+}
+
+.info-card p {
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+/* === Password Change Box === */
+.password-change-box {
+  background: #fafafa;
+  padding: 20px;
+  border-radius: 18px;
+  border: 1px solid #eaeaea;
+}
+
+.box-title {
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+/* === Alerts === */
+.error-box {
+  padding: 10px;
+  background: #ffe2e2;
+  border-left: 4px solid #ff4d4d;
+  margin-bottom: 12px;
+  border-radius: 8px;
+}
+
+.success-box {
+  padding: 10px;
+  background: #e2ffe6;
+  border-left: 4px solid #28c76f;
+  margin-bottom: 12px;
+  border-radius: 8px;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }

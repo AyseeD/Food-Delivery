@@ -14,3 +14,20 @@ a {
   text-decoration: none;
   color: inherit;
 }
+
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+.layout-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.layout-content {
+  flex: 1; /* içerik boş olsa bile footer aşağıda kalır */
+}
+

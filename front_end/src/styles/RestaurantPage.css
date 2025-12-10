@@ -173,6 +173,7 @@
   cursor: pointer;
   transition: background 0.2s;
   font-size: 0.9rem;
+  font-weight: 600;
 }
 
 .res-add-btn:hover {

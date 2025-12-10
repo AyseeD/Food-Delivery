@@ -9,14 +9,14 @@ import AccountPage from "./pages/AccountPage";
 import SearchResultsPage from "./pages/SearchResultsPage";
 import AdminPage from "./pages/AdminPage";
 import AdminSignIn from "./pages/AdminSignIn";
-import "./App.css";
+import "./index.css";
 
 //add routes for front end
 function App() {
   return (
+
     <Router>
       <Routes>
-
         <Route path="/" element={<LandingPage />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/admin/login" element={<AdminSignIn />}/>
@@ -25,10 +25,11 @@ function App() {
         <Route path="/restaurant/:id" element={<RestaurantPage />} />
         <Route path="/account" element={<AccountPage />} />
         <Route path="/admin" element={<AdminPage />} /> 
-       
-
       </Routes>
     </Router>
+
+
+    
   );
 }
 

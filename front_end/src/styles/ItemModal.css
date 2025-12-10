@@ -12,23 +12,28 @@
 }
 
 .modal-box {
-  background: #fff;
-  width: 420px;
-  padding: 20px;
-  border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.2);
   animation: fadeIn 0.2s ease-in-out;
+  position: relative;   
+  background: #fff;
+  border-radius: 20px;
+  padding: 30px;
+  width: 420px;
+  max-width: 95%;
+  margin: auto;
 }
 
 
 .modal-close-btn {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 15px;
+  right: 15px;
   background: transparent;
   border: none;
-  font-size: 20px;
+  font-size: 22px;
   cursor: pointer;
+  color: #333;
+  z-index: 10;
 }
 
 .modal-img {

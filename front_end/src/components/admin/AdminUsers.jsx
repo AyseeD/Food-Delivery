@@ -12,10 +12,10 @@ function AdminUsers() {
     role: "customer",
   });
 
-  const [roleFilter, setRoleFilter] = useState("all"); //for role filter
-  const [activityFilter, setActivityFilter] = useState("all"); //for activity filter
+  const [roleFilter, setRoleFilter] = useState("all"); // FOR ROLE FILTER 
+  const [activityFilter, setActivityFilter] = useState("all"); // FOR ACTIVITY FILTER 
 
-  //  Backend'ten kullanıcıları çekme
+  //  FETCH USERS FROM THE BACKEND 
   useEffect(() => {
     async function fetchUsers() {
       try{
@@ -31,16 +31,16 @@ function AdminUsers() {
     fetchUsers();
   }, []);
 
-  //apply filters
+  // APPLY FILTERS 
   useEffect(() => {
     let result = users;
 
-    //apply role filter
+    // APPLY ROLE FILTER
     if (roleFilter !== "all") {
       result = result.filter(user => user.role === roleFilter);
     }
 
-    //apply activity filter
+    // APPLY ACTIVITY FILTER
     if (activityFilter !== "all") {
       const isActiveFilter = activityFilter === "active";
       result = result.filter(user => user.is_active === isActiveFilter);
@@ -49,7 +49,7 @@ function AdminUsers() {
     setFilteredUsers(result);
   }, [roleFilter, activityFilter, users]);
  
-  //   Kullanıcı silme
+  // DELETE USER 
   const deleteUser = async (id) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this user?");
     if (!confirmDelete) return;
@@ -67,12 +67,12 @@ function AdminUsers() {
       }
 
       if (data.action === "deleted") {
-        //remove user from list
+        // REMOVE USER FROM LIST 
         setUsers((prev) => prev.filter((u) => u.id !== id));
       } 
       
       else if (data.action === "deactivated") {
-        //refresh user list so UI shows their updated activity
+        // REFRESH USER LIST : so UI shows their updated activity
         const refreshed = await fetch("http://localhost:4000/auth/admin/users");
         const newData = await refreshed.json();
         setUsers(newData);
@@ -84,7 +84,7 @@ function AdminUsers() {
   };
 
 
-  //   Yeni kullanıcı ekleme
+  // ADD NEW USER
   const handleAddUser = async (e) => {
     e.preventDefault();
 
@@ -110,10 +110,10 @@ function AdminUsers() {
         return;
       }
 
-      //add new user to UI
+      // ADD NEW USER TO UI 
       setUsers((prev) => [...prev, data.user]);
 
-      //clear add form
+      // CLEAR ADD FORM 
       setNewUser({
         full_name: "",
         email: "",
@@ -127,7 +127,7 @@ function AdminUsers() {
     }
   };
 
-  //function to reset filters
+  // RESET FILTERS 
   const resetFilters = () => {
     setRoleFilter("all");
     setActivityFilter("all");
@@ -178,7 +178,7 @@ function AdminUsers() {
             </button>
           </div>
 
-          {/* Filter Summary */}
+          {/* FILTER SUMMARY */}
           <div className="filter-summary">
             <span className="user-count">
               Showing {filteredUsers.length} of {users.length} users
@@ -218,7 +218,7 @@ function AdminUsers() {
                   </span>
                 </td>
                 <td>
-                  <button className="delete-btn" onClick={() => deleteUser(user.id)}>
+                  <button className="delete-btn-users" onClick={() => deleteUser(user.id)}>
                     Delete
                   </button>
                 </td>
@@ -227,7 +227,7 @@ function AdminUsers() {
           </tbody>
         </table>
 
-        {/* Empty state */}
+        {/* EMPTY STATE */}
         {filteredUsers.length === 0 && (
           <div className="no-users-message">
             <p>No users found with the current filters.</p>

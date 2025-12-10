@@ -1,8 +1,8 @@
 .status-select {
-  padding: 10px 14px;
+  padding: 6px 5px;
   border-radius: 10px;
   border: 1px solid #d0d0d0;
-  font-size: 15px;
+  font-size: 13px;
   cursor: pointer;
   background: #fafafa;
   transition: 0.2s ease;

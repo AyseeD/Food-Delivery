@@ -41,7 +41,7 @@ export default function ItemModal({ itemId, onClose, onAdd }) {
   return (
     <div className="modal-backdrop">
       <div className="modal-box">
-        <button className="modal-close-btn" onClick={onClose}>✖</button>
+        <button className="modal-close-btn" onClick={onClose}> ✖</button>
 
         <img className="modal-img" src={item.image_url} alt={item.name} />
 

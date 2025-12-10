@@ -15,11 +15,11 @@ function RestaurantForm({ closeForm, setRestaurants, restaurant }) {
     restaurant_img: restaurant?.restaurant_img || "" 
   });
 
-  //fetch restaurant tags
+  // FETCH RESTAURANT TAGS
   useEffect(() => {
     fetchRestaurantTags();
     if (isEdit && restaurant.tags) {
-      //get tag ids from the tag objects
+      // GET TAG IDS : from the tag objects
       const tagIds = restaurant.tags.map(tag => 
         typeof tag === 'object' ? tag.tag_id : tag
       );
@@ -37,7 +37,7 @@ function RestaurantForm({ closeForm, setRestaurants, restaurant }) {
     }
   };
 
-  //toggle tags
+  // TOGGLE TAGS 
   const handleTagToggle = (tagId) => {
     setSelectedRestaurantTags(prev => {
       if (prev.includes(tagId)) {
@@ -48,7 +48,7 @@ function RestaurantForm({ closeForm, setRestaurants, restaurant }) {
     });
   };
 
-  //submitting form depending on editing or creating
+  // SUBMITTING FORM : depending on editing or creating
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -139,6 +139,7 @@ function RestaurantForm({ closeForm, setRestaurants, restaurant }) {
           />
 
           <select
+            className="select-cat"
             value={form.is_active}
             onChange={(e) => setForm({ ...form, is_active: e.target.value === "true" })}
           >
@@ -166,9 +167,11 @@ function RestaurantForm({ closeForm, setRestaurants, restaurant }) {
           <button className="submit-btn">
             {isEdit ? "Save Changes" : "Add Restaurant"}
           </button>
+
+          <button className="close-btn" onClick={closeForm}>Close</button>
         </form>
 
-        <button className="close-btn" onClick={closeForm}>Close</button>
+        
       </div>
     </div>
   );
