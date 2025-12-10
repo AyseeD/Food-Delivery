@@ -59,13 +59,25 @@ export const updateTag = async (req, res) => {
   const { id } = req.params;
   const { name, img_url } = req.body;
 
+  console.log("Update tag request received with ID:", id); // Debug log
+
+  if (!id || id === "undefined") {
+    return res.status(400).json({ error: "Invalid tag ID" });
+  }
+
   if (!name) {
     return res.status(400).json({ error: "Tag name is required" });
   }
 
   try {
+    //convert id to integer
+    const tagId = parseInt(id);
+    if (isNaN(tagId)) {
+      return res.status(400).json({ error: "Invalid tag ID format" });
+    }
+
     //check if tag exists
-    const tagExists = await db.query("SELECT 1 FROM tags WHERE tag_id = $1", [id]);
+    const tagExists = await db.query("SELECT 1 FROM tags WHERE tag_id = $1", [tagId]);
     if (tagExists.rowCount === 0) {
       return res.status(404).json({ error: "Tag not found" });
     }
@@ -73,7 +85,7 @@ export const updateTag = async (req, res) => {
     //check if new name conflicts with existing tag
     const nameConflict = await db.query(
       "SELECT 1 FROM tags WHERE name = $1 AND tag_id != $2",
-      [name, id]
+      [name, tagId]
     );
     if (nameConflict.rowCount > 0) {
       return res.status(400).json({ error: "Tag name already exists" });
@@ -84,7 +96,7 @@ export const updateTag = async (req, res) => {
        SET name = $1, img_url = $2 
        WHERE tag_id = $3 
        RETURNING tag_id AS id, name, img_url`,
-      [name, img_url || null, id]
+      [name, img_url || null, tagId]
     );
 
     res.json({
@@ -97,13 +109,24 @@ export const updateTag = async (req, res) => {
   }
 };
 
-//delete tag
 export const deleteTag = async (req, res) => {
   const { id } = req.params;
 
+  console.log("Delete tag request received with ID:", id, "Type:", typeof id); // Debug log
+
+  if (!id || id === "undefined") {
+    return res.status(400).json({ error: "Invalid tag ID" });
+  }
+
   try {
+    //convert id to integer
+    const tagId = parseInt(id);
+    if (isNaN(tagId)) {
+      return res.status(400).json({ error: "Invalid tag ID format" });
+    }
+
     //check if tag exists
-    const tagExists = await db.query("SELECT 1 FROM tags WHERE tag_id = $1", [id]);
+    const tagExists = await db.query("SELECT 1 FROM tags WHERE tag_id = $1", [tagId]);
     if (tagExists.rowCount === 0) {
       return res.status(404).json({ error: "Tag not found" });
     }
@@ -111,11 +134,11 @@ export const deleteTag = async (req, res) => {
     //check if tag is used in restaurant_tags or item_tags
     const restaurantTags = await db.query(
       "SELECT 1 FROM restaurant_tags WHERE tag_id = $1 LIMIT 1",
-      [id]
+      [tagId]
     );
     const itemTags = await db.query(
       "SELECT 1 FROM item_tags WHERE tag_id = $1 LIMIT 1",
-      [id]
+      [tagId]
     );
 
     if (restaurantTags.rowCount > 0 || itemTags.rowCount > 0) {
@@ -125,7 +148,7 @@ export const deleteTag = async (req, res) => {
       });
     }
 
-    await db.query("DELETE FROM tags WHERE tag_id = $1", [id]);
+    await db.query("DELETE FROM tags WHERE tag_id = $1", [tagId]);
 
     res.json({ 
       success: true,
@@ -133,7 +156,7 @@ export const deleteTag = async (req, res) => {
       message: "Tag deleted successfully" 
     });
   } catch (err) {
-    console.error(err);
+    console.error("Delete tag error:", err);
     res.status(500).json({ error: "Could not delete tag" });
   }
 };

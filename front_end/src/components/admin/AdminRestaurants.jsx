@@ -60,7 +60,7 @@ function AdminRestaurants() {
       }
 
       if (data.action === "deleted") {
-        // REMOVE RESTAURANT FROM LIST 
+        // REMOVE RESTAURANT FROM LIST
         setRestaurants((prev) => prev.filter((r) => r.restaurant_id !== id));
         alert("Restaurant permanently deleted.");
       } else if (data.action === "deactivated") {
@@ -152,6 +152,11 @@ function AdminRestaurants() {
   const handleDeleteTag = async (id) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this tag?");
     if (!confirmDelete) return;
+
+    if (!id || id === "undefined") {
+      alert("Invalid tag ID");
+      return;
+    }
 
     try {
       const res = await fetch(`http://localhost:4000/tags/${id}`, {
@@ -259,30 +264,34 @@ function AdminRestaurants() {
               <p className="no-tags-message">No tags yet. Add your first tag above.</p>
             ) : (
               <div className="tags-grid">
-                {tags.map(tag => (
-                  <div key={tag.tag_id} className="tag-card">
-                    <div className="tag-info">
-                      <span className="tag-name">{tag.name}</span>
-                      {tag.img_url && (
-                        <small className="tag-img-info">Has image</small>
-                      )}
+                {tags.map(tag => {
+                  return (
+                    <div key={tag.tag_id} className="tag-card">
+                      <div className="tag-info">
+                        <span className="tag-name">{tag.name}</span>
+                        {tag.img_url && (
+                          <small className="tag-img-info">Has image</small>
+                        )}
+                      </div>
+                      <div className="tag-actions">
+                        <button 
+                          className="edit-tag-btn"
+                          onClick={() => startEditTag(tag)}
+                        >
+                          Edit
+                        </button>
+                        <button 
+                          className="delete-tag-btn"
+                          onClick={() => {
+                            handleDeleteTag(tag.tag_id);
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </div>
-                    <div className="tag-actions">
-                      <button 
-                        className="edit-tag-btn"
-                        onClick={() => startEditTag(tag)}
-                      >
-                        Edit
-                      </button>
-                      <button 
-                        className="delete-tag-btn"
-                        onClick={() => handleDeleteTag(tag.tag_id)}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
