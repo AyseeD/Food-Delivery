@@ -40,7 +40,7 @@ export const createTag = async (req, res) => {
     const result = await db.query(
       `INSERT INTO tags (name, img_url) 
        VALUES ($1, $2) 
-       RETURNING tag_id AS id, name, img_url`,
+       RETURNING tag_id, name, img_url`,
       [name, img_url || null]
     );
 
@@ -54,12 +54,11 @@ export const createTag = async (req, res) => {
   }
 };
 
-//update tag
 export const updateTag = async (req, res) => {
   const { id } = req.params;
   const { name, img_url } = req.body;
 
-  console.log("Update tag request received with ID:", id); // Debug log
+  console.log("Update tag request received with ID:", id);
 
   if (!id || id === "undefined") {
     return res.status(400).json({ error: "Invalid tag ID" });
@@ -95,7 +94,7 @@ export const updateTag = async (req, res) => {
       `UPDATE tags 
        SET name = $1, img_url = $2 
        WHERE tag_id = $3 
-       RETURNING tag_id AS id, name, img_url`,
+       RETURNING tag_id, name, img_url`,
       [name, img_url || null, tagId]
     );
 

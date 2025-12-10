@@ -122,13 +122,16 @@ function AdminRestaurants() {
     }
 
     try {
-      const res = await fetch(`http://localhost:4000/tags/${editingTag.id}`, {
+      const res = await fetch(`http://localhost:4000/tags/${editingTag.tag_id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${localStorage.getItem("adminToken")}`
         },
-        body: JSON.stringify(editingTag)
+        body: JSON.stringify({
+          name: editingTag.name,
+          img_url: editingTag.img_url
+        })
       });
 
       const data = await res.json();
@@ -139,7 +142,7 @@ function AdminRestaurants() {
       }
 
       setTags(prev => prev.map(tag => 
-        tag.tag_id === editingTag.id ? { ...tag, ...data.tag } : tag
+        tag.tag_id === editingTag.tag_id ? { ...tag, ...data.tag } : tag
       ));
       setEditingTag(null);
       alert("Tag updated successfully!");
@@ -187,7 +190,7 @@ function AdminRestaurants() {
 
   const startEditTag = (tag) => {
     setEditingTag({
-      id: tag.tag_id,
+      tag_id: tag.tag_id,
       name: tag.name,
       img_url: tag.img_url || ""
     });
@@ -195,6 +198,11 @@ function AdminRestaurants() {
 
   const cancelEditTag = () => {
     setEditingTag(null);
+  };
+
+  //helper function to get the tag ID
+  const getTagId = (tag) => {
+    return tag.tag_id || tag.id;
   };
 
   return (
@@ -265,8 +273,9 @@ function AdminRestaurants() {
             ) : (
               <div className="tags-grid">
                 {tags.map(tag => {
+                  const tagId = getTagId(tag);
                   return (
-                    <div key={tag.tag_id} className="tag-card">
+                    <div key={tagId} className="tag-card">
                       <div className="tag-info">
                         <span className="tag-name">{tag.name}</span>
                         {tag.img_url && (
@@ -283,7 +292,7 @@ function AdminRestaurants() {
                         <button 
                           className="delete-tag-btn"
                           onClick={() => {
-                            handleDeleteTag(tag.tag_id);
+                            handleDeleteTag(tagId);
                           }}
                         >
                           Delete
