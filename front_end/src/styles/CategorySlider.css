@@ -28,8 +28,9 @@
   flex: 0 0 auto;
   transition: transform .2s, border .2s;
 }
-.category-card:hover { transform: scale(1.05); }
+.category-card:hover { transform: scale(1.05); background-color: #f58803; color: #fff; font-weight: bold;}
 .category-card.active { border: 2px solid #f58803; }
+.category-card.active:hover { border: 2px solid rgb(255, 51, 0); }
 
 .category-image-wrapper {
   width: 80px; height: 80px;

@@ -20,6 +20,10 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
+  background-color: #f58803;
+  padding: 10px 15px;
+  border-radius: 20px;
+  color: white;
 }
 
 .cart-close-btn {
@@ -27,6 +31,11 @@
   border: none;
   font-size: 20px;
   cursor: pointer;
+  color: white;
+}
+
+.cart-close-btn:hover{
+  text-shadow: 3px 5px chocolate;
 }
 
 .cart-items {

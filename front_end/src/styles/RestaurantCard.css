@@ -9,6 +9,7 @@
 
 .restaurant-card:hover {
   transform: translateY(-5px);
+  border: 2px solid #f58803;
 }
 
 
@@ -45,5 +46,5 @@
 }
 
 .view-btn:hover {
-  background-color: #f58803;
+  background-color: #ff5100;
 }

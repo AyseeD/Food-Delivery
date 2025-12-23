@@ -7,8 +7,7 @@ function OrderStatusDropdown({ currentStatus, onChange }) {
     { value: "preparing", label: "Preparing" },
     { value: "delivering", label: "Delivering" },
     { value: "delivered", label: "Delivered" },
-    { value: "cancelled", label: "Cancelled" },
-    { value: "picked-up", label: "Picked Up" }
+    { value: "cancelled", label: "Cancelled" }
   ]; //statuses for orders
 
   return (

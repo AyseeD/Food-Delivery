@@ -28,6 +28,10 @@
   background-color: #fff;
 }
 
+#header-my-cart:hover{
+  color: #ff5100;
+}
+
 #header-my-account {
   margin-left: 10px;
   color: #f58803;
@@ -37,6 +41,9 @@
   font-size: 15px;
 }
 
+#header-my-account:hover{
+  color: #ff5100;
+}
 
 @media (max-width: 768px) {
   .header {
