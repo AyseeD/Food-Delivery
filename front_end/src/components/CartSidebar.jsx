@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import PaymentProcessor from "../components/PaymentProcessor";
 import "../styles/CartSidebar.css";
 
 export default function CartSidebar({ isOpen, onClose }) {
@@ -9,6 +10,11 @@ export default function CartSidebar({ isOpen, onClose }) {
   const [loading, setLoading] = useState(false);
   const [userAddress, setUserAddress] = useState(null);
   const [showAddressPrompt, setShowAddressPrompt] = useState(false);
+  const [selectedCardId, setSelectedCardId] = useState(null);
+  const [userCards, setUserCards] = useState([]);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [paymentProcessing, setPaymentProcessing] = useState(false);
+  const [selectedCard, setSelectedCard] = useState(null);
 
   //load cart and user info from backend
   async function loadCartAndUser() {
@@ -23,13 +29,13 @@ export default function CartSidebar({ isOpen, onClose }) {
 
       const cartData = await cartRes.json();
       setCartItems(cartData.items || []);
-      
+
       //get restaurant id from first item
       if (cartData.items && cartData.items.length > 0) {
         const firstRestaurantId = cartData.items[0]?.restaurant_id;
         if (firstRestaurantId) {
           setRestaurantId(firstRestaurantId);
-          
+
           const allSameRestaurant = cartData.items.every(
             item => item.restaurant_id === firstRestaurantId
           );
@@ -90,7 +96,7 @@ export default function CartSidebar({ isOpen, onClose }) {
     }
 
     const token = localStorage.getItem("token");
-    
+
     try {
       const res = await fetch(`http://localhost:4000/promotions/apply`, {
         method: "POST",
@@ -105,7 +111,7 @@ export default function CartSidebar({ isOpen, onClose }) {
       });
 
       const data = await res.json();
-      
+
       if (data.error) {
         alert(data.error);
         return;
@@ -132,9 +138,9 @@ export default function CartSidebar({ isOpen, onClose }) {
     try {
       await fetch(`http://localhost:4000/cart/${cartItemId}/quantity`, {
         method: "PATCH",
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}` 
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({ quantity: newQuantity })
       });
@@ -157,7 +163,7 @@ export default function CartSidebar({ isOpen, onClose }) {
   const calculateSubtotal = () => {
     return cartItems.reduce((total, item) => {
       const basePrice = Number(item.price_at_add || 0);
-      const optionsTotal = item.options?.reduce((sum, opt) => 
+      const optionsTotal = item.options?.reduce((sum, opt) =>
         sum + Number(opt.additional_price || 0), 0) || 0;
       const pricePerItem = basePrice + optionsTotal;
       const itemTotal = pricePerItem * item.quantity;
@@ -179,29 +185,114 @@ export default function CartSidebar({ isOpen, onClose }) {
     return subtotal - discount;
   };
 
+  async function processPayment() {
+    if (!selectedCardId) {
+      alert("Please select a payment method");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    //show processing modal
+    setPaymentProcessing(true);
+    setShowPaymentModal(false);
+
+    try {
+      //payment processing with steps
+      const steps = [
+        "Initializing payment...",
+        "Validating card details...",
+        "Processing payment...",
+        "Verifying transaction...",
+        "Finalizing order..."
+      ];
+
+      //show each step with delay
+      for (let i = 0; i < steps.length; i++) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+
+      //actual order creation
+      const orderData = {
+        promo_code: appliedPromotion?.code || null
+      };
+
+      const res = await fetch("http://localhost:4000/orders/from-cart", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(orderData)
+      });
+
+      const data = await res.json();
+
+      if (data.error) {
+        setPaymentProcessing(false);
+        alert("Failed to place order: " + data.error);
+        return;
+      }
+
+      //show success for 2 seconds
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      setPaymentProcessing(false);
+
+      if (data.orders && data.orders.length > 1) {
+        alert(`Payment successful! Created ${data.orders.length} separate orders for different restaurants.`);
+      } else {
+        alert("Payment successful! Order placed successfully!");
+      }
+
+      onClose();
+      setCartItems([]);
+      setAppliedPromotion(null);
+      setPromoCode("");
+      setRestaurantId(null);
+      setUserAddress(null);
+      window.location.reload();
+    } catch (err) {
+      console.error("Failed to process payment:", err);
+      setPaymentProcessing(false);
+      alert("Payment failed. Please try again.");
+    }
+  }
+
   async function submitOrder() {
     if (cartItems.length === 0) {
       alert("Your cart is empty!");
       return;
     }
 
-    //check if user has an address
     if (!userAddress || userAddress.trim() === "") {
-      //show address prompt
       setShowAddressPrompt(true);
       return;
     }
 
+    //load user cards first
+    await loadUserCards();
+
+    if (userCards.length === 0) {
+      //if no cards exist, show payment modal with option to add card
+      setShowPaymentModal(true);
+    } else {
+      //show payment modal with card selection
+      setShowPaymentModal(true);
+    }
+  }
+
+  const handlePaymentSuccess = async () => {
     const token = localStorage.getItem("token");
 
-    const orderData = {
-      promo_code: appliedPromotion?.code || null
-    };
-
     try {
+      const orderData = {
+        promo_code: appliedPromotion?.code || null
+      };
+
       const res = await fetch("http://localhost:4000/orders/from-cart", {
         method: "POST",
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`
         },
@@ -214,29 +305,64 @@ export default function CartSidebar({ isOpen, onClose }) {
         alert("Failed to place order: " + data.error);
         return;
       }
-      
+
+      setShowPaymentModal(false);
+
       if (data.orders && data.orders.length > 1) {
-        alert(`Order placed successfully! Created ${data.orders.length} separate orders for different restaurants.`);
+        alert(`Payment successful! Created ${data.orders.length} separate orders for different restaurants.`);
       } else {
-        alert("Order placed successfully!");
+        alert("Payment successful! Order placed successfully!");
       }
-      
+
       onClose();
       setCartItems([]);
       setAppliedPromotion(null);
       setPromoCode("");
       setRestaurantId(null);
-      setUserAddress(null);
       window.location.reload();
     } catch (err) {
       console.error("Failed to place order:", err);
-      alert("Failed to place order. Please try again.");
+      alert("Payment successful but order creation failed. Please contact support.");
     }
-  }
+  };
 
-   function goToAccountPage() {
+  function goToAccountPage() {
     onClose(); //close cart sidebar
     window.location.href = "/account"; //navigate to account page
+  }
+
+  //load credit cards
+  async function loadUserCards() {
+    const token = localStorage.getItem("token");
+
+    try {
+      //get user info
+      const userRes = await fetch("http://localhost:4000/auth/user", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (userRes.ok) {
+        const userData = await userRes.json();
+
+        //get user's credit cards
+        const cardsRes = await fetch(`http://localhost:4000/credit-cards/${userData.user_id}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        if (cardsRes.ok) {
+          const cardsData = await cardsRes.json();
+          setUserCards(cardsData);
+
+          //set default card if exists
+          const defaultCard = cardsData.find(card => card.is_default);
+          if (defaultCard) {
+            setSelectedCardId(defaultCard.card_id);
+          }
+        }
+      }
+    } catch (err) {
+      console.error("Failed to load credit cards:", err);
+    }
   }
 
   return (
@@ -266,13 +392,13 @@ export default function CartSidebar({ isOpen, onClose }) {
             <h3>Delivery Address Required</h3>
             <p>You need to add a delivery address to place an order.</p>
             <div className="modal-buttons">
-              <button 
+              <button
                 onClick={goToAccountPage}
                 className="modal-primary-btn"
               >
                 Go to Account to Add Address
               </button>
-              <button 
+              <button
                 onClick={() => setShowAddressPrompt(false)}
                 className="modal-secondary-btn"
               >
@@ -304,8 +430,8 @@ export default function CartSidebar({ isOpen, onClose }) {
               className="promo-input"
               disabled={!restaurantId || cartItems.length === 0}
             />
-            <button 
-              onClick={applyPromoCode} 
+            <button
+              onClick={applyPromoCode}
               className="apply-promo-btn"
               disabled={!restaurantId || cartItems.length === 0}
             >
@@ -340,14 +466,14 @@ export default function CartSidebar({ isOpen, onClose }) {
 
                   {/* Add Quantity Controls */}
                   <div className="cart-quantity">
-                    <button 
+                    <button
                       className="quantity-btn-small"
                       onClick={() => updateQuantity(item.cart_item_id, item.quantity - 1)}
                     >
                       −
                     </button>
                     <span className="quantity-display-small">{item.quantity}</span>
-                    <button 
+                    <button
                       className="quantity-btn-small"
                       onClick={() => updateQuantity(item.cart_item_id, item.quantity + 1)}
                     >
@@ -388,14 +514,14 @@ export default function CartSidebar({ isOpen, onClose }) {
             <span>Subtotal:</span>
             <span>{calculateSubtotal().toFixed(2)} ₺</span>
           </div>
-          
+
           {appliedPromotion && (
             <div className="summary-row discount">
               <span>Discount ({appliedPromotion.discount_percent}%):</span>
               <span>-{calculateDiscount().toFixed(2)} ₺</span>
             </div>
           )}
-          
+
           <div className="summary-row total">
             <span><strong>Total:</strong></span>
             <span><strong>{calculateTotal().toFixed(2)} ₺</strong></span>
@@ -404,14 +530,43 @@ export default function CartSidebar({ isOpen, onClose }) {
       )}
 
       {cartItems.length !== 0 && (
-        <button 
-          className="order-button" 
+        <button
+          className="order-button"
           onClick={submitOrder}
           disabled={!userAddress || userAddress.trim() === ""}
           title={!userAddress ? "Please add a delivery address first" : ""}
         >
           {!userAddress ? "Add Address to Order" : "Order Now!"}
         </button>
+      )}
+
+      {showPaymentModal && (
+        <div className="modal-overlay">
+          <div className="payment-modal-container">
+            <PaymentProcessor
+              amount={calculateTotal()}
+              selectedCard={selectedCard}
+              onSuccess={handlePaymentSuccess}
+              onCancel={() => setShowPaymentModal(false)}
+              showDemoTips={true}
+            />
+          </div>
+        </div>
+      )}
+
+      {paymentProcessing && (
+        <div className="modal-overlay">
+          <div className="payment-processing-modal">
+            <div className="payment-spinner"></div>
+            <h3>Processing Payment...</h3>
+            <p>Please wait while we process your payment.</p>
+            <div className="payment-progress">
+              <div className="progress-bar">
+                <div className="progress-fill"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

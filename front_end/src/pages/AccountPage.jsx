@@ -4,6 +4,7 @@ import Footer from "../components/Footer";
 import "../styles/AccountPage.css";
 import "../styles/OrderCard.css";
 import OrderCard from "../components/OrderCard";
+import CreditCardSection from "../components/CreditCardSection";
 
 export default function AccountPage() {
   const [activeTab, setActiveTab] = useState("orders");
@@ -22,7 +23,8 @@ export default function AccountPage() {
   });
   const [passwordError, setPasswordError] = useState("");
   const [passwordSuccess, setPasswordSuccess] = useState("");
-
+  const [paymentProcessing, setPaymentProcessing] = useState(false);
+  const [processingStep, setProcessingStep] = useState(0);
   const token = localStorage.getItem("token");
 
   //fetch logged in user info
@@ -154,6 +156,32 @@ export default function AccountPage() {
     }
   };
 
+  //simulate paymebt
+  const payment = async (orderData) => {
+    setPaymentProcessing(true);
+    setProcessingStep(0);
+
+    const steps = [
+      "Initializing payment...",
+      "Validating card details...",
+      "Processing payment...",
+      "Verifying transaction...",
+      "Finalizing order..."
+    ];
+
+    for (let i = 0; i < steps.length; i++) {
+      setProcessingStep(i);
+      await new Promise(resolve => setTimeout(resolve, 1000)); //1 second per each payment step
+    }
+
+    //complete payment
+    setProcessingStep(5);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    setPaymentProcessing(false);
+    return { success: true, message: "Payment successful!" };
+  };
+
   return (
     <div className="account-container">
       <Header />
@@ -181,6 +209,14 @@ export default function AccountPage() {
             >
               <i className="fa-solid fa-user"></i>
               <span className="side-btn">Account Details</span>
+            </button>
+
+            <button
+              className={activeTab === "payments" ? "active" : ""}
+              onClick={() => setActiveTab("payments")}
+            >
+              <i className="fa-solid fa-credit-card"></i>
+              <span className="side-btn">Payment Methods</span>
             </button>
 
             <button className="logout-btn" onClick={() => {
@@ -309,7 +345,7 @@ export default function AccountPage() {
                         <div className="floating-field">
                           <input
                             type="text"
-                            id = "name"
+                            id="name"
                             value={updatedUser.full_name}
                             onChange={(e) => setUpdatedUser({
                               ...updatedUser,
@@ -317,7 +353,7 @@ export default function AccountPage() {
                             })}
                             required
                           />
-                          <label for= "name"> Full Name </label>
+                          <label for="name"> Full Name </label>
 
                         </div>
 
@@ -331,7 +367,7 @@ export default function AccountPage() {
                             })}
                             required
                           />
-                          <label for = "email" >Email </label>
+                          <label for="email" >Email </label>
                         </div>
 
                         <div className="floating-field">
@@ -411,10 +447,64 @@ export default function AccountPage() {
               </div>
             </section>
           )}
+
+          {activeTab === "payments" && (
+            <section className="payments-section">
+              <h2 className="section-title">Payment Methods</h2>
+              <CreditCardSection userId={user?.user_id} token={token} />
+            </section>
+          )}
+
+          {paymentProcessing && (
+            <div className="payment-processing">
+              <div className="payment-modal">
+                <div className="payment-spinner"></div>
+                <h3>Processing Payment...</h3>
+                <p>Please wait while we process your payment.</p>
+                
+                <div className="payment-steps">
+                  <div className={`payment-step ${processingStep >= 1 ? (processingStep === 1 ? 'active' : 'completed') : ''}`}>
+                    <span className="step-icon">
+                      {processingStep > 1 ? '✓' : '1'}
+                    </span>
+                    Initializing payment...
+                  </div>
+                  
+                  <div className={`payment-step ${processingStep >= 2 ? (processingStep === 2 ? 'active' : 'completed') : ''}`}>
+                    <span className="step-icon">
+                      {processingStep > 2 ? '✓' : '2'}
+                    </span>
+                    Validating card details...
+                  </div>
+                  
+                  <div className={`payment-step ${processingStep >= 3 ? (processingStep === 3 ? 'active' : 'completed') : ''}`}>
+                    <span className="step-icon">
+                      {processingStep > 3 ? '✓' : '3'}
+                    </span>
+                    Processing payment...
+                  </div>
+                  
+                  <div className={`payment-step ${processingStep >= 4 ? (processingStep === 4 ? 'active' : 'completed') : ''}`}>
+                    <span className="step-icon">
+                      {processingStep > 4 ? '✓' : '4'}
+                    </span>
+                    Verifying transaction...
+                  </div>
+                  
+                  <div className={`payment-step ${processingStep >= 5 ? (processingStep === 5 ? 'active' : 'completed') : ''}`}>
+                    <span className="step-icon">
+                      {processingStep > 5 ? '✓' : '5'}
+                    </span>
+                    Finalizing order...
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </main>
       </div>
 
-      
+
     </div>
   );
 }

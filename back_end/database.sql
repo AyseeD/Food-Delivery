@@ -168,3 +168,20 @@ CREATE TABLE deliveries (
     assigned_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );
+
+
+-- ---------------------
+-- PAYMENT
+-- ---------------------
+CREATE TABLE credit_cards (
+    card_id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
+    card_nickname VARCHAR(50),
+    card_number VARCHAR(16) NOT NULL,
+    card_holder VARCHAR(100) NOT NULL,
+    expiry_month INT NOT NULL CHECK (expiry_month BETWEEN 1 AND 12),
+    expiry_year INT NOT NULL,
+    cvv VARCHAR(4) NOT NULL,
+    is_default BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT NOW()
+);

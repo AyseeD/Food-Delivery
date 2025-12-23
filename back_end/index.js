@@ -12,6 +12,7 @@ import homeRoutes from "./routes/home.js";
 import tagsRoutes from "./routes/tags.js"
 import cartRoutes from "./routes/cart.js"
 import adminRoutes from "./routes/admin.js";
+import creditRoutes from "./routes/creditCards.js"
 
 const app = express();
 app.use(cors());
@@ -27,6 +28,7 @@ app.use("/home", homeRoutes);
 app.use("/tags", tagsRoutes);
 app.use("/cart", cartRoutes);
 app.use("/auth/admin", adminRoutes);
+app.use("/credit-cards", creditRoutes);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Backend listening on ${port}`));
