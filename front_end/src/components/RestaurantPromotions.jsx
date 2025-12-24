@@ -30,32 +30,6 @@ export default function RestaurantPromotions({ restaurantId }) {
 
   if (promos.length === 0) return null;
 
-//   return (
-//     <div className="promo-section">
-//       <h4 className="promo-title">Available Promotions</h4>
-
-//       <div className="promo-list">
-//         {promos.map((promo) => (
-//           <div key={promo.promo_id} className="promo-card">
-//             <div className="promo-left">
-//               <span className="promo-code">{promo.code}</span>
-//               <span className="promo-desc">
-//                 {promo.discount_percent}% OFF
-//               </span>
-//             </div>
-
-//             <button
-//               className="copy-btn"
-//               onClick={() => copyCode(promo.code)}
-//             >
-//               {copiedCode === promo.code ? "Copied ✓" : "Copy"}
-//             </button>
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-//   );
-
 return (
   <div className="promo-strip">
     {promos.map((promo) => (
@@ -77,10 +51,5 @@ return (
     ))}
   </div>
 );
-
-
-
-
-
 
 }
