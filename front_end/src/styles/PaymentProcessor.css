@@ -15,6 +15,7 @@
 .payment-header h3 {
   margin: 0 0 12px 0;
   color: #333;
+  font-size: 24px;
 }
 
 .demo-alert {
@@ -53,8 +54,13 @@
   border-bottom: none;
 }
 
+.summary-item span:first-child {
+  font-size: 14px;
+  color: #666;
+}
+
 .summary-item .amount {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: bold;
   color: #4CAF50;
 }
@@ -112,6 +118,7 @@
 .payment-progress h4 {
   margin: 0 0 24px 0;
   color: #333;
+  font-size: 20px;
 }
 
 .progress-steps {
@@ -150,6 +157,7 @@
   justify-content: center;
   font-weight: bold;
   color: #666;
+  font-size: 14px;
 }
 
 .step.active .step-number {
@@ -171,6 +179,7 @@
   font-weight: 600;
   color: #333;
   margin-bottom: 2px;
+  font-size: 14px;
 }
 
 .step-description {
@@ -208,7 +217,7 @@
 }
 
 .success-icon {
-  font-size: 64px;
+  font-size: 48px;
   color: #4CAF50;
   margin-bottom: 16px;
 }
@@ -216,6 +225,13 @@
 .payment-success h4 {
   margin: 0 0 12px 0;
   color: #333;
+  font-size: 22px;
+}
+
+.payment-success p {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 20px;
 }
 
 .transaction-details {
@@ -229,6 +245,16 @@
 .transaction-details p {
   margin: 8px 0;
   color: #555;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.transaction-details strong {
+  font-weight: 600;
+  color: #333;
+  margin-right: 8px;
+  min-width: 120px;
+  display: inline-block;
 }
 
 .status-completed {
@@ -250,6 +276,7 @@
   font-weight: bold;
   cursor: pointer;
   transition: background 0.2s;
+  margin-top: 16px;
 }
 
 .continue-button:hover {
@@ -279,4 +306,34 @@
 .demo-tips li {
   margin-bottom: 6px;
   line-height: 1.4;
+}
+
+@media (max-width: 480px) {
+  .payment-processor {
+    padding: 16px;
+  }
+  
+  .payment-header h3 {
+    font-size: 20px;
+  }
+  
+  .success-icon {
+    font-size: 40px;
+  }
+  
+  .payment-success h4 {
+    font-size: 20px;
+  }
+  
+  .payment-success p {
+    font-size: 14px;
+  }
+  
+  .transaction-details p {
+    font-size: 13px;
+  }
+  
+  .summary-item .amount {
+    font-size: 18px;
+  }
 }

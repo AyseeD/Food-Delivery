@@ -12,11 +12,15 @@ import homeRoutes from "./routes/home.js";
 import tagsRoutes from "./routes/tags.js"
 import cartRoutes from "./routes/cart.js"
 import adminRoutes from "./routes/admin.js";
-import creditRoutes from "./routes/creditCards.js"
+import creditRoutes from "./routes/creditCards.js";
+import { startDeliveryScheduler } from "./schedule.js";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+//start the delivery scheduler
+startDeliveryScheduler();
 
 //add app the routes for each router for backend
 app.use("/auth", authRoutes);
