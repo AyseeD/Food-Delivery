@@ -77,6 +77,12 @@ function SignUp() {
         <div className="form-container sign-up-container">
           <form onSubmit={handleRegister}>
             <h1>Create Account</h1>
+            <div class="social-container">
+              <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+              <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+            <span className="signup-span">or use your email for registration</span>
             <input 
               name="full_name" 
               type="text" 
@@ -113,6 +119,12 @@ function SignUp() {
         <div className="form-container sign-in-container">
           <form onSubmit={handleLogin}>
             <h1>Sign in</h1>
+             <div class="social-container">
+              <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+              <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+            <span className="signup-span">or use your email for registration</span>
             <input 
               name="email" 
               type="email" 
@@ -127,7 +139,7 @@ function SignUp() {
               onChange={handleChange} 
               required 
             />
-            <a href="/admin/login">Sign In as Admin</a>
+            <a href="/admin/login" className="signup-page-admin-btn">Sign In as Admin</a>
             <button className="btn">Sign In</button>
           </form>
         </div>
@@ -137,7 +149,7 @@ function SignUp() {
           <div className="overlay">
             <div className="overlay-panel overlay-left">
               <h1>Welcome Back!</h1>
-              <p>If you already have an account, login here</p>
+              <p className="signup-p">If you already have an account, login here</p>
               <button className="btn ghost" onClick={() => setRightPanelActive(false)}>
                 Sign In
               </button>
@@ -145,7 +157,7 @@ function SignUp() {
 
             <div className="overlay-panel overlay-right">
               <h1>Hello Friend!</h1>
-              <p>Enter your details to create an account</p>
+              <p className="signup-p">Enter your details to create an account</p>
               <button className="btn ghost" onClick={() => setRightPanelActive(true)}>
                 Sign Up
               </button>

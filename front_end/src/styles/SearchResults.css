@@ -116,7 +116,7 @@
 .search-container {
   position: relative;
   flex: 1;
-  max-width: 600px;
+  max-width: 900px;
   margin: 0 20px;
 }
 
@@ -136,7 +136,7 @@
 
 .search-button {
   position: absolute;
-  right: 10px;
+  right: 60px;
   top: 50%;
   transform: translateY(-50%);
   background: none;

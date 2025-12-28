@@ -48,7 +48,7 @@ export default function AdminSignIn() {
             <h1>Sign in</h1>
             <input name="email" type="email" placeholder="Email" onChange={handleChange} />
             <input name="password" type="password" placeholder="Password" onChange={handleChange} />
-            <a href="/signup">Sign In as Customer</a>
+            <a href="/signup" className="signup-page-admin-btn">Sign In as Customer</a>
             <button className="btn">Sign In</button>
           </form>
         </div>
@@ -58,7 +58,7 @@ export default function AdminSignIn() {
           <div className="overlay">
             <div className="overlay-panel overlay-right">
               <h1>Welcome Admin!</h1>
-              <p>Enter your details to add an account</p>
+              <p className="signup-p">Enter your details to add an account</p>
             </div>
           </div>
         </div>
