@@ -2,7 +2,7 @@
 This is a Food Delivery website project using React as the main JavaScript library, Node.js with Express.js as the framework and Axios with PostgreSQL for database connection.
 
 ⚠️ This project is for learning and demonstration only.
-⚠️ The database schema, admin credentials, and .env examples are NOT for production use.
+⚠️ The database schema and .env examples are NOT for production use.
 
 
 ## To Run the Project:
@@ -20,7 +20,7 @@ npm i
 After installing the node_modules, a database needs to be created to run the backend. Inside the **back_end** folder a SQL file for an example database schema is given to create necessary PostgreSQL database tables.
 
 Create a database in pgAdmin and then run the SQL file called _database.sql_ as a query.
-Create a admin user with a hashed password in the database to be ble to sign in as an admin and create users, restaurants etc.
+Create a admin user with a hashed password in the database to be able to sign in as an admin and create users, restaurants etc.
 
 You can now fill the database tables.
 

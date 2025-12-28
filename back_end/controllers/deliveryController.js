@@ -7,7 +7,7 @@ export const checkAndUpdateDeliveringOrders = async () => {
       `SELECT order_id, updated_at 
        FROM orders 
        WHERE status = 'delivering' 
-         AND updated_at <= NOW() - INTERVAL '30 seconds'`
+         AND updated_at <= NOW() - INTERVAL '10 seconds'`
     );
     
     //if an order has been "delivering" 30 seconds then change it to delivered.
