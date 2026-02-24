@@ -1,5 +1,5 @@
 # Food Delivery Website
-This is a Food Delivery website project using React as the main JavaScript library, Node.js with Express.js as the framework and Axios with PostgreSQL for database connection.
+This is a Food Delivery website project using React as the main JavaScript library, Node.js with Express.js as the framework and with PostgreSQL for database connection.
 
 ⚠️ This project is for learning and demonstration only.
 ⚠️ The database schema and .env examples are NOT for production use.
